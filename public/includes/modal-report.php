@@ -85,3 +85,138 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const btnGetLocation = document.getElementById('get-location');
+        const inputLocation  = document.getElementById('location');
+        const statusLocation = document.getElementById('location-status');
+
+        btnGetLocation.addEventListener('click', () => {
+            if (!navigator.geolocation) {
+                statusLocation.textContent = 'La geolocalización no es compatible con tu navegador.';
+                return;
+            }
+            statusLocation.textContent = 'Obteniendo ubicación...';
+            btnGetLocation.classList.add('is-loading');
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    const latlng = { lat: latitude, lng: longitude };
+                    inputLocation.value = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+                    statusLocation.textContent = 'Buscando dirección...';
+                    const geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({ location: latlng }, (results, status) => {
+                        btnGetLocation.classList.remove('is-loading');
+                        if (status === 'OK') {
+                            if (results[0]) {
+                                inputLocation.value = results[0].formatted_address;
+                                const loc = results[0].geometry && results[0].geometry.location
+                                    ? results[0].geometry.location : latlng;
+                                document.getElementById('lat').value = loc.lat();
+                                document.getElementById('lng').value = loc.lng();
+                                statusLocation.textContent = 'Dirección obtenida.';
+                            } else {
+                                document.getElementById('lat').value = latitude;
+                                document.getElementById('lng').value = longitude;
+                                statusLocation.textContent = 'Coordenadas obtenidas.';
+                            }
+                        } else {
+                            statusLocation.textContent = 'Error de dirección: ' + status;
+                        }
+                    });
+                },
+                () => {
+                    statusLocation.textContent = 'No se pudo obtener la ubicación.';
+                    btnGetLocation.classList.remove('is-loading');
+                }
+            );
+        });
+
+        function readFileAsDataURL(file) {
+            return new Promise((resolve, reject) => {
+                if (!file) return resolve(null);
+                const fr = new FileReader();
+                fr.onload  = () => resolve(fr.result);
+                fr.onerror = reject;
+                fr.readAsDataURL(file);
+            });
+        }
+
+        function geocodeAddress(address) {
+            return new Promise((resolve) => {
+                if (!window.google || !google.maps || !google.maps.Geocoder) return resolve(null);
+                const geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ address }, (results, status) => {
+                    if (status === 'OK' && results && results[0]) {
+                        const loc = results[0].geometry.location;
+                        return resolve({ lat: loc.lat(), lng: loc.lng() });
+                    }
+                    return resolve(null);
+                });
+            });
+        }
+
+        const formReport = document.getElementById('form-report');
+        formReport.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = formReport.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = 'Enviando...';
+            try {
+                const nombre    = document.getElementById('reporter-name').value.trim();
+                const email     = document.getElementById('reporter-email').value.trim();
+                const tipo      = document.getElementById('failure-type').value;
+                const direccion = document.getElementById('location').value.trim();
+                let lat         = document.getElementById('lat').value;
+                let lng         = document.getElementById('lng').value;
+                const descripcion = document.getElementById('description').value.trim();
+                const photoFile   = document.getElementById('photo').files[0];
+
+                if ((!lat || !lng) && direccion) {
+                    const geo = await geocodeAddress(direccion);
+                    if (geo) {
+                        lat = geo.lat; lng = geo.lng;
+                        document.getElementById('lat').value = lat;
+                        document.getElementById('lng').value = lng;
+                    }
+                }
+
+                const fotoData = await readFileAsDataURL(photoFile);
+                const payload  = {
+                    nombre_ciudadano: nombre     || null,
+                    email:            email      || null,
+                    direccion:        direccion  || null,
+                    latitud:          lat        || null,
+                    longitud:         lng        || null,
+                    tipo_incidencia:  tipo       || null,
+                    descripcion:      descripcion || null,
+                    estatus: 'pendiente',
+                    foto:    fotoData   || null
+                };
+
+                const resp = await fetch('/api/incidencias.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await resp.json();
+                if (!data.ok) { alert(data.error || 'No se pudo enviar el reporte.'); return; }
+
+                document.getElementById('report-id').textContent = data.id ? '#INC-' + data.id : '#INC-0000';
+                formReport.style.display = 'none';
+                document.getElementById('report-success').style.display = 'block';
+
+                if (gMap && data.row && data.row.latitud && data.row.longitud) {
+                    gMarkers[data.row.id] = buildMarker(gMap, data.row);
+                }
+            } catch (err) {
+                console.error('Error enviando reporte:', err);
+                alert('Error al enviar el reporte. Revisa la consola.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Enviar Reporte';
+            }
+        });
+    });
+</script>
