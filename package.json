@@ -25,7 +25,13 @@
         "build:js": "run-s lint uglify",
         "build:images": "run-s imagemin",
         "build:fonts": "rsync -azP --delete src/fonts/ public/fonts/",
-        "build": "run-s build:*"
+        "build": "run-s build:*",
+        "start": "node server.js"
+    },
+    "dependencies": {
+        "dotenv": "^16.6.1",
+        "express": "^4.22.1",
+        "mysql2": "^3.18.1"
     },
     "devDependencies": {
         "autoprefixer": "^9.0.1",
