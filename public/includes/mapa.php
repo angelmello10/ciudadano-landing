@@ -1,61 +1,98 @@
 <section id="mapa" class="dashboard section has-top-divider">
     <div class="container">
-        <div class="dashboard-inner section-inner">
+        <div class="section-inner" style="padding-bottom:0">
+
+            <!-- Header -->
             <div class="section-header center-content">
                 <div class="container-xs">
+                    <span class="section-label">Mapa en vivo</span>
                     <h2 class="mt-0 mb-16">Monitoreo de incidencias en tiempo real</h2>
-                    <p class="m-0">Monitorea el estado de tu comunidad. Mira los reportes activos y las
-                        estadísticas de resolución en tu zona.</p>
+                    <p class="m-0">Monitorea el estado de tu comunidad. Mira los reportes activos y las estadísticas de resolución en tu zona.</p>
                 </div>
             </div>
-            <div class="split-wrap">
-                <div class="split-item" style="align-items: flex-start;">
-                    <div class="split-item-content center-content-mobile reveal-from-left">
-                        <h3 class="mt-0 mb-16">Mapa de Incidencias</h3>
-                        <p class="mb-32 text-sm">Explora el mapa para ver qué problemas se han reportado
-                            cerca de ti. Selecciona un pin para ver más detalles.</p>
 
-                        <div class="stats-grid mb-32">
-                            <div class="stat-card reveal-from-bottom" data-reveal-delay="100">
-                                <div id="stat-total" class="stat-value h3">0</div>
-                                <div class="stat-label text-xxs tt-u fw-600">Total Reportes</div>
-                            </div>
-                            <div class="stat-card reveal-from-bottom" data-reveal-delay="200">
-                                <div id="stat-resolved" class="stat-value h3 text-color-success">0</div>
-                                <div class="stat-label text-xxs tt-u fw-600">Resueltos</div>
-                            </div>
-                            <div class="stat-card reveal-from-bottom" data-reveal-delay="300">
-                                <div id="stat-inprogress" class="stat-value h3 text-color-primary">0</div>
-                                <div class="stat-label text-xxs tt-u fw-600">En Proceso</div>
-                            </div>
-                            <div class="stat-card reveal-from-bottom" data-reveal-delay="400">
-                                <div id="stat-pending" class="stat-value h3" style="color: #f59e0b;">0</div>
-                                <div class="stat-label text-xxs tt-u fw-600">Pendiente</div>
-                            </div>
-                        </div>
-
-                        <div class="legend mt-24">
-                            <div class="legend-item"><span class="dot bg-pending"></span> Pendiente</div>
-                            <div class="legend-item"><span class="dot bg-error"></span> Rechazado</div>
-                            <div class="legend-item"><span class="dot bg-primary"></span> En Proceso</div>
-                            <div class="legend-item"><span class="dot bg-success"></span> Resuelto</div>
-                        </div>
-
-                        <button type="button" class="button button-primary btn-my-location mt-24"
-                            onclick="verMiUbicacion()">Ver mi ubicación en el mapa</button>
+            <!-- Stats row -->
+            <div class="map-stats-row reveal-from-bottom">
+                <div class="map-stat-card map-stat--total">
+                    <div class="map-stat-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
                     </div>
-                    <div class="split-item-image reveal-from-right" style="position: relative;">
-                        <div id="map" class="map-mockup"></div>
-
-                        <!-- Pin Details Tooltip -->
-                        <div id="pin-details" class="pin-details-card">
-                            <h6 id="pin-title" class="m-0 text-sm"></h6>
-                            <p id="pin-meta" class="text-xxs mb-0"></p>
-                            <span id="pin-status" class="status-pill mt-8"></span>
-                        </div>
+                    <div class="map-stat-body">
+                        <span id="stat-total" class="map-stat-num">—</span>
+                        <span class="map-stat-label">Total Reportes</span>
+                    </div>
+                </div>
+                <div class="map-stat-card map-stat--resolved">
+                    <div class="map-stat-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </div>
+                    <div class="map-stat-body">
+                        <span id="stat-resolved" class="map-stat-num">—</span>
+                        <span class="map-stat-label">Resueltos</span>
+                    </div>
+                </div>
+                <div class="map-stat-card map-stat--inprogress">
+                    <div class="map-stat-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                    </div>
+                    <div class="map-stat-body">
+                        <span id="stat-inprogress" class="map-stat-num">—</span>
+                        <span class="map-stat-label">En Proceso</span>
+                    </div>
+                </div>
+                <div class="map-stat-card map-stat--pending">
+                    <div class="map-stat-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    </div>
+                    <div class="map-stat-body">
+                        <span id="stat-pending" class="map-stat-num">—</span>
+                        <span class="map-stat-label">Pendientes</span>
                     </div>
                 </div>
             </div>
+
+            <!-- Map frame -->
+            <div class="map-frame reveal-from-bottom" data-reveal-delay="80">
+
+                <!-- Controls bar (floats above the map) -->
+                <div class="map-controls-bar">
+                    <div class="map-legend">
+                        <span class="map-legend-item"><span class="map-legend-dot" style="background:#f59e0b"></span>Pendiente</span>
+                        <span class="map-legend-item"><span class="map-legend-dot" style="background:#ef4444"></span>Rechazado</span>
+                        <span class="map-legend-item"><span class="map-legend-dot" style="background:#3b82f6"></span>En Proceso</span>
+                        <span class="map-legend-item"><span class="map-legend-dot" style="background:#10b981"></span>Resuelto</span>
+                    </div>
+                    <div class="map-controls-right">
+                        <!-- Folio quick-search -->
+                        <div class="map-folio-wrap">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input id="map-folio-input" type="text" placeholder="N&uacute;m. seguimiento&hellip;"
+                                maxlength="20" autocomplete="off" spellcheck="false">
+                            <button type="button" id="map-folio-btn">Buscar</button>
+                        </div>
+                        <button type="button" class="map-loc-btn" onclick="verMiUbicacion()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><line x1="12" y1="0" x2="12" y2="5"></line><line x1="12" y1="19" x2="12" y2="24"></line><line x1="0" y1="12" x2="5" y2="12"></line><line x1="19" y1="12" x2="24" y2="12"></line></svg>
+                            Ver mi ubicaci&oacute;n
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Google Map -->
+                <div id="map" class="map-mockup"></div>
+
+                <!-- Pin details tooltip -->
+                <div id="pin-details" class="pin-details-card">
+                    <button class="pin-details-close" onclick="document.getElementById('pin-details').classList.remove('is-active')" aria-label="Cerrar">&times;</button>
+                    <h6 id="pin-title" class="m-0"></h6>
+                    <p id="pin-meta" class="pin-meta"></p>
+                    <span id="pin-status" class="status-pill"></span>
+                </div>
+            </div><!-- /map-frame -->
+
         </div>
     </div>
 </section>
@@ -169,7 +206,29 @@
         google.maps.event.trigger(marker, 'click');
     };
 
-    let userMarker = null;
+    /* ── MAP FOLIO SEARCH ── */
+    (function () {
+        const input = document.getElementById('map-folio-input');
+        const btn   = document.getElementById('map-folio-btn');
+        if (!input || !btn) return;
+
+        function buscarFolio() {
+            const id = parseInt(input.value.trim(), 10);
+            if (!id || id < 1) { input.focus(); return; }
+            if (gMarkers[id]) {
+                verEnMapa(id);
+                input.value = '';
+            } else {
+                input.style.borderColor = '#ef4444';
+                input.title = 'Folio no encontrado o sin ubicación';
+                setTimeout(() => { input.style.borderColor = ''; input.title = ''; }, 2000);
+            }
+        }
+
+        btn.addEventListener('click', buscarFolio);
+        input.addEventListener('keydown', e => { if (e.key === 'Enter') buscarFolio(); });
+    })();
+
     window.verMiUbicacion = function () {
         if (!navigator.geolocation) {
             alert('Tu navegador no soporta geolocalización.');
@@ -196,7 +255,7 @@
                     },
                     zIndex: 999
                 });
-                const iw = new google.maps.InfoWindow({ content: '<strong style="color:#9D1B32">📍 Estás aquí</strong>' });
+                const iw = new google.maps.InfoWindow({ content: '<strong style="color:#9D1B32">Estás aquí</strong>' });
                 iw.open(gMap, userMarker);
                 userMarker.addListener('click', () => iw.open(gMap, userMarker));
             },

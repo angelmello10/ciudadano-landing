@@ -9,6 +9,7 @@
         <?php require_once 'includes/hero.php'; ?>
         <?php require_once 'includes/features.php'; ?>
         <?php require_once 'includes/mapa.php'; ?>
+        <?php require_once 'includes/carrusel.php'; ?>
         <?php require_once 'includes/tabla.php'; ?>
         <?php require_once 'includes/cta.php'; ?>
     </main>

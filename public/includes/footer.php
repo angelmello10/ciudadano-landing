@@ -49,28 +49,25 @@
 
 <style>
     .site-footer {
-        background: #080808 !important;
-        border-top: 4px solid var(--primary);
-        color: #94a3b8;
+        background: linear-gradient(160deg, #06080c 0%, #0d0e14 100%) !important;
+        border-top: 1px solid rgba(157,27,50,0.3);
+        padding: 3rem 0 2rem;
     }
-    .site-footer a {
-        color: #cbd5e1 !important;
-        text-decoration: none;
-        transition: color 0.2s ease;
-    }
-    .site-footer a:hover {
-        color: var(--primary) !important;
-    }
-    .footer-social li a svg {
-        fill: currentColor;
-        width: 20px;
-        height: 20px;
-    }
-    .footer-nav li {
-        display: inline-block;
-        margin-right: 1.5rem;
-    }
+    .site-footer, .site-footer .invert-color { color: #64748b !important; }
+    .site-footer a { color: #64748b !important; text-decoration: none; transition: color .2s ease; }
+    .site-footer a:hover { color: #e2e8f0 !important; }
+    .footer-social li { display: inline-block; margin-left: 14px; }
+    .footer-social li a svg { fill: currentColor; width: 18px; height: 18px; transition: fill .2s; }
+    .footer-social li a:hover svg { fill: var(--primary-light, #c42845); }
+    .footer-nav ul { display: flex; flex-wrap: wrap; gap: 6px 20px; list-style: none; margin: 0; padding: 0; }
+    .footer-nav li a { font-size: 0.82rem; font-weight: 600; letter-spacing: 0.01em; }
     .footer-copyright {
-        color: #64748b;
+        color: #475569; font-size: 0.78rem;
+        border-top: 1px solid rgba(255,255,255,0.06);
+        margin-top: 1.5rem; padding-top: 1.5rem;
+        text-align: center;
+    }
+    .footer-brand-tagline {
+        font-size: 0.72rem; color: #374151; margin-top: 4px; font-weight: 500;
     }
 </style>

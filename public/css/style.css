@@ -422,12 +422,12 @@ td:last-child {
 
 html {
     font-size: 20px;
-    line-height: 30px;
+    line-height: 32px;
     letter-spacing: -0.1px
 }
 
 body {
-    color: #627183;
+    color: #64748b;
     font-size: 1rem
 }
 
@@ -452,10 +452,10 @@ h6,
 .h4,
 .h5,
 .h6 {
-    font-family: "Playfair Display", serif;
-    font-weight: 900;
+    font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+    font-weight: 700;
     clear: both;
-    color: #101D2D;
+    color: #0f172a;
     word-wrap: break-word;
     overflow-wrap: break-word
 }
@@ -463,19 +463,19 @@ h6,
 h1,
 .h1 {
     font-size: 44px;
-    line-height: 54px
+    line-height: 56px
 }
 
 h2,
 .h2 {
     font-size: 32px;
-    line-height: 42px
+    line-height: 44px
 }
 
 h3,
 .h3 {
     font-size: 24px;
-    line-height: 34px;
+    line-height: 36px;
     letter-spacing: -0.1px
 }
 
@@ -519,7 +519,7 @@ figcaption {
 }
 
 a:not(.button) {
-    color: #627183;
+    color: #64748b;
     text-decoration: underline
 }
 
@@ -665,11 +665,11 @@ strong {
 }
 
 .invert-color {
-    color: #95A4B4
+    color: #94a3b8
 }
 
 .invert-color a:not(.button) {
-    color: #95A4B4;
+    color: #94a3b8;
     text-decoration: underline
 }
 
@@ -748,13 +748,13 @@ strong {
     h1,
     .h1 {
         font-size: 52px;
-        line-height: 62px
+        line-height: 66px
     }
 
     h2,
     .h2 {
         font-size: 44px;
-        line-height: 54px
+        line-height: 56px
     }
 
     h3,
@@ -818,7 +818,7 @@ strong {
     padding: 11px 31px;
     height: 48px;
     text-decoration: none !important;
-    color: #627183;
+    color: #64748b;
     background-color: #F3F5F8;
     border-width: 1px;
     border-style: solid;
@@ -858,7 +858,7 @@ strong {
     margin-top: -12px;
     top: 50%;
     left: 50%;
-    border: 2px solid #627183;
+    border: 2px solid #64748b;
     border-radius: 50%;
     border-right-color: transparent !important;
     border-top-color: transparent !important;
@@ -869,13 +869,13 @@ strong {
 
 .button[disabled] {
     cursor: not-allowed;
-    color: #95A4B4;
+    color: #94a3b8;
     background-color: #E7ECF2 !important;
     border-color: rgba(0, 0, 0, 0)
 }
 
 .button[disabled].is-loading::after {
-    border-color: #95A4B4
+    border-color: #94a3b8
 }
 
 .button-sm {
@@ -885,7 +885,7 @@ strong {
 
 .button-dark {
     color: #fff;
-    background-color: #2d3a4b;
+    background-color: #1e293b;
     border-color: rgba(0, 0, 0, 0)
 }
 
@@ -913,12 +913,12 @@ strong {
 
 .button-secondary {
     color: #fff;
-    background-color: #2BBF96;
+    background-color: #6e1122;
     border-color: rgba(0, 0, 0, 0)
 }
 
 .button-secondary:hover {
-    background-color: #2ecba0
+    background-color: #9D1B32
 }
 
 .button-secondary.is-loading::after {
@@ -994,7 +994,7 @@ fieldset {
 .form-label,
 .form-switch,
 .form-slider {
-    color: #627183;
+    color: #64748b;
     font-weight: 500
 }
 
@@ -1031,7 +1031,7 @@ fieldset {
 .form-radio input:active,
 .form-radio input:focus {
     outline: none;
-    border-color: #95A4B4
+    border-color: #94a3b8
 }
 
 .form-input[disabled],
@@ -1061,7 +1061,7 @@ fieldset {
 .form-select.form-success,
 .form-checkbox input.form-success,
 .form-radio input.form-success {
-    border-color: #2BBF96
+    border-color: #9D1B32
 }
 
 .form-input,
@@ -1080,27 +1080,27 @@ fieldset {
 }
 
 .form-input::-webkit-input-placeholder {
-    color: #95A4B4
+    color: #94a3b8
 }
 
 .form-input::-moz-placeholder {
-    color: #95A4B4
+    color: #94a3b8
 }
 
 .form-input:-ms-input-placeholder {
-    color: #95A4B4
+    color: #94a3b8
 }
 
 .form-input::-ms-input-placeholder {
-    color: #95A4B4
+    color: #94a3b8
 }
 
 .form-input::placeholder {
-    color: #95A4B4
+    color: #94a3b8
 }
 
 .form-input::-ms-input-placeholder {
-    color: #95A4B4
+    color: #94a3b8
 }
 
 textarea.form-input {
@@ -1190,7 +1190,7 @@ textarea.form-input {
 
 .form-checkbox,
 .form-radio {
-    color: #95A4B4
+    color: #94a3b8
 }
 
 .form-checkbox,
@@ -2192,9 +2192,9 @@ textarea.form-input {
 
     .split-wrap .split-item .split-item-content {
         flex-shrink: 0;
-        width: 396px;
+        width: 420px;
         margin-bottom: 0;
-        margin-right: 64px
+        margin-right: 72px
     }
 
     .split-wrap .split-item .split-item-image {
@@ -2654,22 +2654,22 @@ textarea.form-input {
 
 .section-inner {
     position: relative;
-    padding-top: 48px;
-    padding-bottom: 48px
+    padding-top: 56px;
+    padding-bottom: 56px
 }
 
 .section-header {
-    padding-bottom: 48px
+    padding-bottom: 56px
 }
 
 @media (min-width: 641px) {
     .section-inner {
-        padding-top: 80px;
-        padding-bottom: 80px
+        padding-top: 96px;
+        padding-bottom: 96px
     }
 
     .section-header {
-        padding-bottom: 80px
+        padding-bottom: 72px
     }
 }
 
