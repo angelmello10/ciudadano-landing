@@ -23,8 +23,9 @@
             <nav id="header-nav" class="header-nav">
                 <div class="header-nav-inner">
                     <div class="nav-links">
-                        <a class="header-link smooth-scroll" href="#mapa">Mapa en vivo</a>
-                        <a class="header-link" href="#incidencias">Incidencias</a>
+                        <a class="header-link smooth-scroll" href="#mapa-controles">Mapa en vivo</a>
+                        <a class="header-link smooth-scroll" href="#como-funciona">Cómo funciona</a>
+                        <a class="header-link smooth-scroll" href="#incidencias">Fotos / Reportes</a>
                     </div>
                     <!-- <div class="nav-actions">
                         <a class="header-link header-ghost modal-trigger" aria-controls="modal-consult" href="#0">

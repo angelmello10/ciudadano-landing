@@ -135,14 +135,19 @@
 
     <div class="mob-menu-label">Navegar</div>
 
-    <a href="#mapa" class="mob-menu-link mob-nav-link smooth-scroll">
+    <a href="#mapa-controles" class="mob-menu-link mob-nav-link smooth-scroll">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
         Mapa en vivo
     </a>
 
+    <a href="#como-funciona" class="mob-menu-link mob-nav-link smooth-scroll">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 8 12 12 14 14"></polyline></svg>
+        Cómo funciona
+    </a>
+
     <a href="#incidencias" class="mob-menu-link mob-nav-link smooth-scroll">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-        Incidencias
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+        Fotos / Reportes
     </a>
 
     <div class="mob-menu-divider"></div>

@@ -1,106 +1,121 @@
-<section id="mapa" class="dashboard section has-top-divider">
-    <div class="container">
-        <div class="section-inner" style="padding-bottom:0">
+﻿<section id="mapa" class="mps-section">
+    <div class="mps-container">
 
-            <!-- Header -->
-            <div class="section-header center-content">
-                <div class="container-xs">
-                    <span class="section-label">Mapa en vivo</span>
-                    <h2 class="mt-0 mb-16">Monitoreo de incidencias en tiempo real</h2>
-                    <p class="m-0">Monitorea el estado de tu comunidad. Mira los reportes activos y las estadísticas de resolución en tu zona.</p>
+        <!-- Header -->
+        <div class="mps-header">
+            <div>
+                <div class="mps-eyebrow">
+                    <span class="mps-eyebrow-dot"></span>
+                    Monitoreo en tiempo real
                 </div>
+                <h2 class="mps-title">Centro de <span>monitoreo</span> ciudadano</h2>
+                <p class="mps-sub">Visualiza incidencias activas, estadísticas de resolución y reportes de tu comunidad.</p>
             </div>
-
-            <!-- Stats row -->
-            <div class="map-stats-row reveal-from-bottom">
-                <div class="map-stat-card map-stat--total">
-                    <div class="map-stat-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-                    </div>
-                    <div class="map-stat-body">
-                        <span id="stat-total" class="map-stat-num">—</span>
-                        <span class="map-stat-label">Total Reportes</span>
-                    </div>
-                </div>
-                <div class="map-stat-card map-stat--resolved">
-                    <div class="map-stat-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    </div>
-                    <div class="map-stat-body">
-                        <span id="stat-resolved" class="map-stat-num">—</span>
-                        <span class="map-stat-label">Resueltos</span>
-                    </div>
-                </div>
-                <div class="map-stat-card map-stat--inprogress">
-                    <div class="map-stat-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-                    </div>
-                    <div class="map-stat-body">
-                        <span id="stat-inprogress" class="map-stat-num">—</span>
-                        <span class="map-stat-label">En Proceso</span>
-                    </div>
-                </div>
-                <div class="map-stat-card map-stat--pending">
-                    <div class="map-stat-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                    </div>
-                    <div class="map-stat-body">
-                        <span id="stat-pending" class="map-stat-num">—</span>
-                        <span class="map-stat-label">Pendientes</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Map frame -->
-            <div class="map-frame reveal-from-bottom" data-reveal-delay="80">
-
-                <!-- Controls bar (floats above the map) -->
-                <div class="map-controls-bar">
-                    <div class="map-legend">
-                        <span class="map-legend-item"><span class="map-legend-dot" style="background:#f59e0b"></span>Pendiente</span>
-                        <span class="map-legend-item"><span class="map-legend-dot" style="background:#ef4444"></span>Rechazado</span>
-                        <span class="map-legend-item"><span class="map-legend-dot" style="background:#3b82f6"></span>En Proceso</span>
-                        <span class="map-legend-item"><span class="map-legend-dot" style="background:#10b981"></span>Resuelto</span>
-                        <span class="map-live-badge" id="map-live-badge">
-                            <span class="map-live-dot"></span>
-                            <span id="map-live-text">En vivo</span>
-                        </span>
-                    </div>
-                    <div class="map-controls-right">
-                        <!-- Folio quick-search -->
-                        <div class="map-folio-wrap">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            </svg>
-                            <input id="map-folio-input" type="text" placeholder="N&uacute;m. seguimiento&hellip;"
-                                maxlength="20" autocomplete="off" spellcheck="false">
-                            <button type="button" id="map-folio-btn">Buscar</button>
-                        </div>
-                        <button type="button" class="map-loc-btn" onclick="verMiUbicacion()">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><line x1="12" y1="0" x2="12" y2="5"></line><line x1="12" y1="19" x2="12" y2="24"></line><line x1="0" y1="12" x2="5" y2="12"></line><line x1="19" y1="12" x2="24" y2="12"></line></svg>
-                            Ver mi ubicaci&oacute;n
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Google Map -->
-                <div id="map" class="map-mockup"></div>
-
-                <!-- Pin details tooltip -->
-                <div id="pin-details" class="pin-details-card">
-                    <button class="pin-details-close" onclick="document.getElementById('pin-details').classList.remove('is-active')" aria-label="Cerrar">&times;</button>
-                    <h6 id="pin-title" class="m-0"></h6>
-                    <p id="pin-meta" class="pin-meta"></p>
-                    <span id="pin-status" class="status-pill"></span>
-                </div>
-            </div><!-- /map-frame -->
-
         </div>
+
+        <!-- Stats -->
+        <div class="mps-stats">
+            <div class="mps-stat mps-stat--total">
+                <div class="mps-stat-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div class="mps-stat-body">
+                    <span id="stat-total" class="mps-stat-num">--</span>
+                    <span class="mps-stat-lbl">Total Reportes</span>
+                </div>
+            </div>
+            <div class="mps-stat mps-stat--resolved">
+                <div class="mps-stat-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div class="mps-stat-body">
+                    <span id="stat-resolved" class="mps-stat-num">--</span>
+                    <span class="mps-stat-lbl">Resueltos</span>
+                </div>
+            </div>
+            <div class="mps-stat mps-stat--inprogress">
+                <div class="mps-stat-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <div class="mps-stat-body">
+                    <span id="stat-inprogress" class="mps-stat-num">--</span>
+                    <span class="mps-stat-lbl">En Proceso</span>
+                </div>
+            </div>
+            <div class="mps-stat mps-stat--pending">
+                <div class="mps-stat-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <div class="mps-stat-body">
+                    <span id="stat-pending" class="mps-stat-num">--</span>
+                    <span class="mps-stat-lbl">Pendientes</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls bar (outside the map) -->
+        <div class="mps-controls-bar" id="mapa-controles">
+            <div class="mps-legend">
+                <span class="mps-legend-item">
+                    <span class="mps-legend-icon mps-legend-icon--pending">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    </span>
+                    Pendiente
+                </span>
+                <span class="mps-legend-item">
+                    <span class="mps-legend-icon mps-legend-icon--rejected">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                    </span>
+                    Rechazado
+                </span>
+                <span class="mps-legend-item">
+                    <span class="mps-legend-icon mps-legend-icon--inprogress">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </span>
+                    En Proceso
+                </span>
+                <span class="mps-legend-item">
+                    <span class="mps-legend-icon mps-legend-icon--resolved">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </span>
+                    Resuelto
+                </span>
+            </div>
+            <div class="mps-toolbar">
+                <span class="map-live-badge" id="map-live-badge">
+                    <span class="map-live-dot"></span>
+                    <span id="map-live-text">En vivo</span>
+                </span>
+                <div class="mps-folio">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input id="map-folio-input" type="text" placeholder="N&uacute;m. seguimiento&hellip;" maxlength="20" autocomplete="off" spellcheck="false">
+                    <button type="button" id="map-folio-btn">Buscar</button>
+                </div>
+                <button type="button" class="mps-loc-btn" onclick="verMiUbicacion()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="12" y1="0" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="24"/><line x1="0" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="24" y2="12"/></svg>
+                    Mi ubicaci&oacute;n
+                </button>
+            </div>
+        </div>
+
+        <!-- Map frame -->
+        <div class="mps-frame">
+
+            <!-- Google Map canvas -->
+            <div id="map" class="map-mockup"></div>
+
+            <!-- Pin details tooltip -->
+            <div id="pin-details" class="pin-details-card">
+                <button class="pin-details-close" onclick="document.getElementById('pin-details').classList.remove('is-active')" aria-label="Cerrar">&times;</button>
+                <h6 id="pin-title" class="m-0"></h6>
+                <p id="pin-meta" class="pin-meta"></p>
+                <span id="pin-status" class="status-pill"></span>
+            </div>
+
+        </div><!-- /mps-frame -->
+
     </div>
 </section>
-
 <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCchiqlRlOnv6C4pXxh59tYDMRiK501Tmc&libraries=visualization&callback=initMap"
     async defer></script>
@@ -138,6 +153,30 @@
         return classes[type] || 'pill-pendiente';
     }
 
+    /* Icon-box SVG markers — same rounded-rect style as legend cards */
+    function buildMarkerIcon(type) {
+        const cfgs = {
+            pending:    { bg: '#f59e0b', border: '#b45309',
+                          path: '<circle cx="12" cy="12" r="9.5"/><line x1="12" y1="8" x2="12" y2="12.5"/><circle cx="12" cy="16.5" r="1" fill="white" stroke="none"/>' },
+            rejected:   { bg: '#ef4444', border: '#b91c1c',
+                          path: '<circle cx="12" cy="12" r="9.5"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/>' },
+            inprogress: { bg: '#3b82f6', border: '#1d4ed8',
+                          path: '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>' },
+            resolved:   { bg: '#10b981', border: '#047857',
+                          path: '<polyline points="20 6 9 17 4 12"/>' }
+        };
+        const c = cfgs[type] || cfgs.pending;
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38">
+  <filter id="ds"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="rgba(0,0,0,0.35)"/></filter>
+  <rect x="1" y="1" width="36" height="36" rx="10" fill="${c.bg}" stroke="${c.border}" stroke-width="1.8" filter="url(#ds)"/>
+  <rect x="1" y="1" width="36" height="18" rx="10" fill="rgba(255,255,255,0.15)"/>
+  <g transform="translate(7,7)" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    ${c.path}
+  </g>
+</svg>`;
+        return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+    }
+
     function buildMarker(map, inc) {
         const type = statusType(inc.estatus);
         const color = statusColor(type);
@@ -146,12 +185,9 @@
             map: map,
             title: inc.tipo_incidencia || 'Incidencia',
             icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                fillOpacity: 1,
-                fillColor: color,
-                strokeColor: '#fff',
-                strokeWeight: 2,
-                scale: 8
+                url: buildMarkerIcon(type),
+                scaledSize: new google.maps.Size(38, 38),
+                anchor: new google.maps.Point(19, 19)
             }
         });
 
@@ -302,7 +338,7 @@
             }
         }
 
-        const center = { lat: 19.4326, lng: -99.1332 };
+        const center = { lat: 19.4014, lng: -99.0150 }; // Nezahualcóyotl, Edo. Méx.
         gMap = new google.maps.Map(document.getElementById('map'), {
             zoom: 13,
             center: center,

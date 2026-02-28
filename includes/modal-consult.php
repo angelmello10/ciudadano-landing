@@ -49,6 +49,12 @@
                         <p id="status-date" class="status-meta-row"></p>
                     </div>
                     <div class="status-result-divider"></div>
+                    <!-- Photo -->
+                    <div id="status-photo-wrap" style="display:none; margin-bottom:14px;">
+                        <img id="status-photo" src="" alt="Foto del reporte"
+                            style="width:100%; border-radius:10px; object-fit:cover; max-height:220px;
+                                   border:1px solid rgba(0,0,0,0.09); box-shadow:0 4px 18px rgba(0,0,0,0.1);">
+                    </div>
                     <p id="status-reporter" class="status-result-update"></p>
                     <p id="status-desc" class="status-result-update" style="margin-top:8px"></p>
                     <button id="btn-ver-en-mapa" class="btn-submit-modal btn-map-action" type="button" style="display:none;">
@@ -111,6 +117,17 @@
                 document.getElementById('status-desc').innerHTML = inc.descripcion
                     ? '<span style="color:#0f172a;font-weight:800">Descripción:</span> ' + inc.descripcion
                     : '<em style="color:#94a3b8">Sin descripción adicional.</em>';
+
+                // Photo
+                const photoWrap = document.getElementById('status-photo-wrap');
+                const photoEl   = document.getElementById('status-photo');
+                if (inc.foto) {
+                    photoEl.src = '/uploads/' + inc.foto;
+                    photoWrap.style.display = 'block';
+                } else {
+                    photoWrap.style.display = 'none';
+                    photoEl.src = '';
+                }
 
                 const btnVerMapa = document.getElementById('btn-ver-en-mapa');
                 if (inc.latitud && inc.longitud) {
