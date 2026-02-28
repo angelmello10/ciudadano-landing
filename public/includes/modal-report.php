@@ -57,10 +57,10 @@
                 <div class="modal-form-group">
                     <label class="form-label-custom" for="location">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                        Ubicación o Dirección
+                        Ubicación o Dirección <span style="color:var(--primary);font-size:0.7rem;">(requiere GPS)</span>
                     </label>
                     <div class="input-with-btn">
-                        <input id="location" class="form-input-custom" type="text" placeholder="Calle, número, colonia..." required>
+                        <input id="location" class="form-input-custom" type="text" placeholder="Presiona GPS para autocompletar..." readonly>
                         <button type="button" id="get-location" class="btn-geo" title="Usar mi ubicación actual">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="12" y1="0" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="24"/><line x1="0" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="24" y2="12"/></svg>
                             <span class="btn-geo-label">GPS</span>
@@ -222,6 +222,13 @@
                         document.getElementById('lat').value = lat;
                         document.getElementById('lng').value = lng;
                     }
+                }
+
+                if (!lat || !lng) {
+                    alert('Por favor usa el botón GPS para obtener tu ubicación antes de enviar.');
+                    btn.disabled = false;
+                    btn.textContent = 'Enviar Reporte';
+                    return;
                 }
 
                 const fotoData = await readFileAsDataURL(photoFile);
