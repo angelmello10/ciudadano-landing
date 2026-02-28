@@ -7,7 +7,7 @@
         <div class="ftrs-header reveal-from-bottom">
             <div class="ftrs-eyebrow">
                 <span class="ftrs-pulse" aria-hidden="true"></span>
-                ¿Cómo funcionaa?
+                ¿Cómo funcionAAAaa?
             </div>
             <h2 class="ftrs-title">
                 Tres pasos,
