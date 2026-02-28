@@ -3,7 +3,7 @@
         <div class="site-footer-inner">
             <div class="footer-top space-between text-xxs">
                 <div class="brand">
-                    <a href="index.php"><img src="images/logo.svg" alt="Reporte Ciudadano" width="32" height="32"></a>
+                    <a href="/index.php"><img src="/public/images/logo.svg" alt="Reporte Ciudadano" width="32" height="32"></a>
                 </div>
                 <div class="footer-social">
                     <ul class="list-reset">

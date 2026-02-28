@@ -219,7 +219,7 @@
     /* ── LIVE STATS + MAP COUNT ── */
     (async () => {
         try {
-            const r = await fetch('/api/stats.php');
+            const r = await fetch('/public/api/stats.php');
             const d = await r.json();
             if (!d.ok) return;
             const s = d.stats || {};

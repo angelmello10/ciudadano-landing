@@ -394,7 +394,7 @@ html.dark .cfl-progress-label { color: #475569; }
 (function () {
     'use strict';
 
-    const UPLOADS = '/uploads/';
+    const UPLOADS = '/public/uploads/';
     const AUTO_MS = 4500;
 
     let items   = [];
@@ -583,7 +583,7 @@ html.dark .cfl-progress-label { color: #475569; }
     stageWrap.addEventListener('mouseenter', () => { paused = true; });
     stageWrap.addEventListener('mouseleave', () => { paused = false; if (!autoTimer) resetAutoplay(); });
 
-    fetch('/api/incidencias.php?limit=20')
+    fetch('/public/api/incidencias.php?limit=20')
         .then(r => r.json())
         .then(d => render(d?.ok ? (d.rows || []) : []))
         .catch(() => { stage.innerHTML = '<p style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#ef4444">Error al cargar</p>'; });

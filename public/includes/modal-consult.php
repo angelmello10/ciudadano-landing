@@ -83,7 +83,7 @@
             btnConsult.textContent = 'Consultando...';
             btnConsult.disabled = true;
             try {
-                const resp = await fetch('/api/incidencia.php?id=' + id);
+                const resp = await fetch('/public/api/incidencia.php?id=' + id);
                 const data = await resp.json();
                 if (!data.ok) { alert(data.error || 'Incidencia no encontrada. Verifica el ID.'); return; }
 
@@ -122,7 +122,7 @@
                 const photoWrap = document.getElementById('status-photo-wrap');
                 const photoEl   = document.getElementById('status-photo');
                 if (inc.foto) {
-                    photoEl.src = '/uploads/' + inc.foto;
+                    photoEl.src = '/public/uploads/' + inc.foto;
                     photoWrap.style.display = 'block';
                 } else {
                     photoWrap.style.display = 'none';

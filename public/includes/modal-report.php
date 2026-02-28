@@ -237,7 +237,7 @@
                     foto:    fotoData   || null
                 };
 
-                const resp = await fetch('/api/incidencias.php', {
+                const resp = await fetch('/public/api/incidencias.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)

@@ -264,8 +264,7 @@
     }
 </style>
 
-<script src="js/main.min.js"></script>
-<script src="js/main.min.js"></script>
+<script src="/public/js/main.min.js"></script>
 <script>
     // ── Lógica compartida: abrir modales, cerrar y click en fondo ──
     document.addEventListener('DOMContentLoaded', () => {

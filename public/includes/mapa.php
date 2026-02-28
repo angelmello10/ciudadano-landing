@@ -372,7 +372,7 @@
         }
 
         function cargarIncidencias() {
-            fetch('/api/incidencias.php?limit=300')
+            fetch('/public/api/incidencias.php?limit=300')
                 .then(r => r.json())
                 .then(data => {
                     if (!data.ok) return;
