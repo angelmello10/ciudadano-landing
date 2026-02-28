@@ -7,15 +7,9 @@
 
             <!-- Brand -->
             <div class="brand">
-                <a href="/index.php" class="brand-link">
-                    <div class="brand-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            <line x1="12" y1="8" x2="12" y2="12"></line>
-                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg>
-                    </div>
-                    <!-- <span class="brand-name">Reporte<strong>Ciudadano</strong></span> -->
+                <a href="/index.php" class="brand-link" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+                    <img src="/public/images/JORDAN.png" alt="Logo" style="height:70px;width:auto;display:block;">
+                    <span class="brand-sigiu-name">SIGIU</span>
                 </a>
             </div>
 
@@ -59,6 +53,19 @@
         </div>
     </div>
 </header>
+
+<style>
+    .brand-sigiu-name {
+        font-size: 1.5rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+        color: var(--primary, #9D1B32); /* modo luz: rojo */
+        transition: color .2s;
+    }
+    html.dark .brand-sigiu-name {
+        color: #ffffff; /* modo oscuro: blanco */
+    }
+</style>
 
 <script>
     /* Scroll progress + header shrink */

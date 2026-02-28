@@ -4,6 +4,11 @@
 <!-- ===== ESTILOS Y JS COMPARTIDOS DE MODALES ===== -->
 <style>
     /* ── MODAL SHELL ── */
+    .modal-custom {
+        position: fixed;
+        inset: 0;
+        z-index: 999999;
+    }
     .modal-custom-inner {
         background: #fff;
         border-radius: 24px;
@@ -280,7 +285,6 @@
                     document.querySelector('.mob-menu')?.classList.remove('is-open');
                     document.querySelector('.mob-fab')?.style.setProperty('display','none');
                     document.getElementById('site-header')?.style.setProperty('display','none');
-                    document.getElementById('mapa-controles')?.style.setProperty('visibility','hidden');
                     // Auto-solicitar GPS al abrir el formulario de reporte
                     if (modal.id === 'modal-report') {
                         setTimeout(() => document.getElementById('get-location')?.click(), 300);
@@ -297,7 +301,6 @@
                 document.body.classList.remove('modal-is-active');
                 document.querySelector('.mob-fab')?.style.setProperty('display','');
                 document.getElementById('site-header')?.style.setProperty('display','');
-                document.getElementById('mapa-controles')?.style.setProperty('visibility','');
                 setTimeout(() => {
                     document.getElementById('form-report').style.display    = 'block';
                     document.getElementById('report-success').style.display  = 'none';
@@ -315,7 +318,6 @@
                     document.body.classList.remove('modal-is-active');
                     document.querySelector('.mob-fab')?.style.setProperty('display','');
                     document.getElementById('site-header')?.style.setProperty('display','');
-                    document.getElementById('mapa-controles')?.style.setProperty('visibility','');
                 }
             });
         });
