@@ -122,7 +122,8 @@
 <script>
     // Global references so the table can interact with the map
     let gMap = null;
-    const gMarkers = {}; // keyed by incident id
+    const gMarkers = {};       // keyed by incident id
+    const gMarkerStatus = {};  // keyed by incident id → estatus actual
 
     function statusType(estatus) {
         if (!estatus) return 'pending';
@@ -405,13 +406,36 @@
                     if (elInprogress) elInprogress.textContent = enProceso;
                     if (elPending)    elPending.textContent    = pendientes;
 
-                    /* ─ markers: solo agrega los nuevos ─ */
+                    /* ─ markers: agrega nuevos y ELIMINA los que ya no existen ─ */
                     const withLocation = data.rows.filter(r => r.latitud && r.longitud);
+                    const incomingIds  = new Set(withLocation.map(r => String(r.id)));
                     let hayNuevos = false;
 
+                    // Eliminar marcadores que ya no están en la API
+                    let hayEliminados = false;
+                    Object.keys(gMarkers).forEach(id => {
+                        if (!incomingIds.has(id)) {
+                            gMarkers[id].setMap(null);
+                            delete gMarkers[id];
+                            delete gMarkerStatus[id];
+                            hayEliminados = true;
+                        }
+                    });
+
                     withLocation.forEach(inc => {
-                        if (gMarkers[inc.id]) return; // ya existe
-                        gMarkers[inc.id] = buildMarker(gMap, inc);
+                        const prevStatus = gMarkerStatus[inc.id];
+                        const currStatus = inc.estatus ? inc.estatus.toLowerCase() : '';
+
+                        // Si cambió de estatus → eliminar el marcador viejo y recrearlo
+                        if (gMarkers[inc.id] && prevStatus !== currStatus) {
+                            gMarkers[inc.id].setMap(null);
+                            delete gMarkers[inc.id];
+                            hayEliminados = true;
+                        }
+
+                        if (gMarkers[inc.id]) return; // ya existe y no cambió
+                        gMarkers[inc.id]      = buildMarker(gMap, inc);
+                        gMarkerStatus[inc.id] = currStatus;
                         const pulse = new PulseOverlay(
                             new google.maps.LatLng(parseFloat(inc.latitud), parseFloat(inc.longitud)),
                             statusColor(statusType(inc.estatus))
@@ -420,8 +444,8 @@
                         hayNuevos = true;
                     });
 
-                    /* ─ heatmap: solo reconstruye si hay datos nuevos o primer load ─ */
-                    if (isFirstLoad || hayNuevos) {
+                    /* ─ heatmap: reconstruye si hay cambios o primer load ─ */
+                    if (isFirstLoad || hayNuevos || hayEliminados) {
                         if (heatmapLayer) heatmapLayer.setMap(null);
                         heatmapLayer = new google.maps.visualization.HeatmapLayer({
                             data: withLocation.map(r => new google.maps.LatLng(parseFloat(r.latitud), parseFloat(r.longitud))),

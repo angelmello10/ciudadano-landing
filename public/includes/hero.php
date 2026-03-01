@@ -217,7 +217,7 @@
     })();
 
     /* ── LIVE STATS + MAP COUNT ── */
-    (async () => {
+    async function refreshHeroStats() {
         try {
             const r = await fetch('/public/api/stats.php');
             const d = await r.json();
@@ -238,12 +238,30 @@
                 requestAnimationFrame(step);
             }
 
+            function set(id, val) {
+                const el = document.getElementById(id);
+                if (el) el.textContent = val;
+            }
+
             const active = (parseInt(s.en_proceso) || 0) + (parseInt(s.pendientes) || 0);
-            countUp('hs-total',     s.total      || 0, 1400);
-            countUp('hs-resueltos', s.resueltos  || 0, 1600);
-            countUp('en',           s.en_proceso || 0, 1500);
-            countUp('hs-pending',   s.pendientes || 0, 1700);
-            countUp('hm-active',    active       || 0, 1500);
+
+            // Primera carga: animación countUp; recargas: valor directo
+            if (!refreshHeroStats._loaded) {
+                countUp('hs-total',     s.total      || 0, 1400);
+                countUp('hs-resueltos', s.resueltos  || 0, 1600);
+                countUp('en',           s.en_proceso || 0, 1500);
+                countUp('hs-pending',   s.pendientes || 0, 1700);
+                countUp('hm-active',    active       || 0, 1500);
+                refreshHeroStats._loaded = true;
+            } else {
+                set('hs-total',     s.total      || 0);
+                set('hs-resueltos', s.resueltos  || 0);
+                set('en',           s.en_proceso || 0);
+                set('hs-pending',   s.pendientes || 0);
+                set('hm-active',    active       || 0);
+            }
         } catch (_) { /* silently ignore */ }
-    })();
+    }
+    refreshHeroStats();
+    setInterval(refreshHeroStats, 30000); // refresca cada 30s
 </script>
