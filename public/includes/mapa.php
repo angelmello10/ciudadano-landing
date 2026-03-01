@@ -117,7 +117,7 @@
     </div>
 </section>
 <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCchiqlRlOnv6C4pXxh59tYDMRiK501Tmc&libraries=visualization&callback=initMap"
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCchiqlRlOnv6C4pXxh59tYDMRiK501Tmc&libraries=visualization,places&callback=initMap"
     async defer></script>
 <script>
     // Global references so the table can interact with the map
@@ -469,5 +469,8 @@
         cargarIncidencias(); // carga inicial
         setInterval(cargarIncidencias, 30000); // polling cada 30 s
         setInterval(actualizarBadge, 10000);   // actualiza el texto del badge
+
+        // Notifica a otros componentes que el API de Maps ya está lista
+        document.dispatchEvent(new Event('googleMapsReady'));
     }
 </script>

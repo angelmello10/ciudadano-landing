@@ -4122,3 +4122,23 @@ ul.pricing-item-features-list li.is-checked::after {
         justify-content: center
     }
 }
+
+/* ── Google Places Autocomplete dropdown ── */
+.pac-container {
+    z-index: 9999999 !important;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.18);
+    font-family: inherit;
+}
+.pac-item {
+    padding: 8px 12px;
+    font-size: .9rem;
+    cursor: pointer;
+}
+.pac-item:hover,
+.pac-item-selected {
+    background: rgba(157,27,50,.08);
+}
+.pac-item-query {
+    font-size: .9rem;
+}

@@ -60,7 +60,7 @@
                         Ubicación o Dirección <span style="color:var(--primary);font-size:0.7rem;">(requiere GPS)</span>
                     </label>
                     <div class="input-with-btn">
-                        <input id="location" class="form-input-custom" type="text" placeholder="Presiona GPS para autocompletar..." readonly>
+                        <input id="location" class="form-input-custom" type="text" placeholder="Escribe una dirección o usa GPS..." autocomplete="off">
                         <button type="button" id="get-location" class="btn-geo" title="Usar mi ubicación actual">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="12" y1="0" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="24"/><line x1="0" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="24" y2="12"/></svg>
                             <span class="btn-geo-label">GPS</span>
@@ -123,6 +123,37 @@
         const btnGetLocation = document.getElementById('get-location');
         const inputLocation  = document.getElementById('location');
         const statusLocation = document.getElementById('location-status');
+
+        // Google Places Autocomplete
+        function initPlacesAutocomplete() {
+            if (typeof google === 'undefined' || !google.maps || !google.maps.places) return;
+            const ac = new google.maps.places.Autocomplete(inputLocation, {
+                types: ['geocode', 'establishment'],
+                fields: ['formatted_address', 'geometry']
+            });
+            ac.addListener('place_changed', () => {
+                const place = ac.getPlace();
+                if (place.geometry && place.geometry.location) {
+                    document.getElementById('lat').value = place.geometry.location.lat();
+                    document.getElementById('lng').value  = place.geometry.location.lng();
+                    inputLocation.value = place.formatted_address || inputLocation.value;
+                    statusLocation.textContent = 'Dirección seleccionada.';
+                    statusLocation.style.color = 'green';
+                } else {
+                    statusLocation.textContent = 'Selecciona una sugerencia de la lista.';
+                    statusLocation.style.color = '';
+                }
+            });
+        }
+        // Espera a que Google Maps esté listo
+        if (typeof google !== 'undefined' && google.maps && google.maps.places) {
+            initPlacesAutocomplete();
+        } else {
+            document.addEventListener('googleMapsReady', initPlacesAutocomplete);
+            window.addEventListener('load', () => {
+                setTimeout(initPlacesAutocomplete, 800);
+            });
+        }
 
         // Photo name preview
         const photoInput = document.getElementById('photo');
