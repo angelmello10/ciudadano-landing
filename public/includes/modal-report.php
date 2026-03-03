@@ -66,7 +66,15 @@
                             <span class="btn-geo-label">GPS</span>
                         </button>
                     </div>
-                    <small id="location-status" class="field-hint"></small>
+                    <div style="display:flex;align-items:center;gap:5px;margin-top:6px;margin-bottom:6px;padding:6px 10px;background:#fff8e1;border:1px solid #ffe082;border-radius:7px;font-size:0.73rem;color:#7a5c00;">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e6a817" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="12" y1="0" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="24"/><line x1="0" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="24" y2="12"/></svg>
+                        Para una ubicación más precisa, activa el GPS de tu dispositivo y pulsa el botón GPS.
+                    </div>
+                    <div id="report-map-container" style="height:230px;border-radius:10px;overflow:hidden;border:1.5px solid #e0e0e0;position:relative;">
+                        <div id="report-map" style="width:100%;height:100%;"></div>
+                        <div style="position:absolute;bottom:7px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.55);color:#fff;font-size:0.7rem;padding:3px 10px;border-radius:20px;pointer-events:none;white-space:nowrap;">Toca el mapa o arrastra el pin para precisar</div>
+                    </div>
+                    <small id="location-status" class="field-hint" style="margin-top:4px;"></small>
                     <input type="hidden" id="lat">
                     <input type="hidden" id="lng">
                 </div>
@@ -110,7 +118,7 @@
                 </div>
                 <h4 class="modal-success-title">¡Reporte enviado!</h4>
                 <p class="modal-success-text">Tu folio de seguimiento:</p>
-                <div class="modal-folio-badge"><span id="report-id">#INC-0000</span></div>
+                <div class="modal-folio-badge"><span id="report-id">#0000</span></div>
                 <p class="modal-success-hint">Guarda este número para consultar el avance de tu incidencia en cualquier momento.</p>
                 <button class="modal-success-btn modal-close-trigger" type="button">Entendido</button>
             </div>
@@ -134,11 +142,14 @@
             ac.addListener('place_changed', () => {
                 const place = ac.getPlace();
                 if (place.geometry && place.geometry.location) {
-                    document.getElementById('lat').value = place.geometry.location.lat();
-                    document.getElementById('lng').value  = place.geometry.location.lng();
+                    const lat = place.geometry.location.lat();
+                    const lng = place.geometry.location.lng();
+                    document.getElementById('lat').value = lat;
+                    document.getElementById('lng').value  = lng;
                     inputLocation.value = place.formatted_address || inputLocation.value;
                     statusLocation.textContent = 'Dirección seleccionada.';
                     statusLocation.style.color = 'green';
+                    syncPickerMap(lat, lng);
                 } else {
                     statusLocation.textContent = 'Selecciona una sugerencia de la lista.';
                     statusLocation.style.color = '';
@@ -189,19 +200,22 @@
                                 document.getElementById('lat').value = loc.lat();
                                 document.getElementById('lng').value = loc.lng();
                                 statusLocation.textContent = 'Dirección obtenida.';
+                                syncPickerMap(loc.lat(), loc.lng());
                             } else {
                                 document.getElementById('lat').value = latitude;
                                 document.getElementById('lng').value = longitude;
                                 statusLocation.textContent = 'Coordenadas obtenidas.';
+                                syncPickerMap(latitude, longitude);
                             }
                         } else {
                             statusLocation.textContent = 'Error de dirección: ' + status;
                         }
                     });
                 },
-                () => {
-                    statusLocation.textContent = 'No se pudo obtener la ubicación.';
+                (err) => {
                     btnGetLocation.classList.remove('is-loading');
+                    statusLocation.textContent = 'Es necesario activar la ubicación en tu dispositivo.';
+                    statusLocation.style.color = '#c0392b';
                 }
             );
         });
@@ -229,6 +243,125 @@
                 });
             });
         }
+
+        // ── MAP PICKER ────────────────────────────────────────────────
+        let pickerMap    = null;
+        let pickerMarker = null;
+
+        function initPickerMap() {
+            if (pickerMap) return;
+            const defaultCenter = { lat: 20.9674, lng: -89.6235 }; // Mérida, ajusta si quieres
+            pickerMap = new google.maps.Map(document.getElementById('report-map'), {
+                center: defaultCenter,
+                zoom: 13,
+                mapTypeControl: false,
+                streetViewControl: false,
+                fullscreenControl: false
+            });
+            pickerMarker = new google.maps.Marker({
+                map: pickerMap,
+                draggable: true,
+                visible: false,
+                animation: google.maps.Animation.DROP
+            });
+            pickerMap.addListener('click', (e) => {
+                placeAndGeocode(e.latLng.lat(), e.latLng.lng());
+            });
+            pickerMarker.addListener('dragend', () => {
+                const pos = pickerMarker.getPosition();
+                placeAndGeocode(pos.lat(), pos.lng());
+            });
+        }
+
+        function placeAndGeocode(lat, lng) {
+            const latLng = new google.maps.LatLng(lat, lng);
+            pickerMarker.setPosition(latLng);
+            pickerMarker.setVisible(true);
+            pickerMap.panTo(latLng);
+            document.getElementById('lat').value = lat;
+            document.getElementById('lng').value = lng;
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+                if (status === 'OK' && results[0]) {
+                    inputLocation.value = results[0].formatted_address;
+                    statusLocation.textContent = 'Ubicación seleccionada en el mapa.';
+                    statusLocation.style.color = 'green';
+                } else {
+                    inputLocation.value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                    statusLocation.textContent = 'Coordenadas seleccionadas.';
+                }
+            });
+        }
+
+        function syncPickerMap(lat, lng) {
+            if (!pickerMap) return;
+            const latLng = new google.maps.LatLng(lat, lng);
+            pickerMarker.setPosition(latLng);
+            pickerMarker.setVisible(true);
+            pickerMap.panTo(latLng);
+            pickerMap.setZoom(16);
+        }
+
+        // ── Auto-init map when modal opens ────────────────────────────
+        function tryAutoGPS() {
+            if (!navigator.geolocation) return;
+            if (document.getElementById('lat').value) return; // already have coords
+            statusLocation.textContent = 'Detectando tu ubicación...';
+            btnGetLocation.classList.add('is-loading');
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    const latlng = { lat: latitude, lng: longitude };
+                    inputLocation.value = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+                    statusLocation.textContent = 'Buscando dirección...';
+                    const geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({ location: latlng }, (results, status) => {
+                        btnGetLocation.classList.remove('is-loading');
+                        if (status === 'OK' && results[0]) {
+                            inputLocation.value = results[0].formatted_address;
+                            const loc = results[0].geometry && results[0].geometry.location ? results[0].geometry.location : latlng;
+                            document.getElementById('lat').value = loc.lat();
+                            document.getElementById('lng').value = loc.lng();
+                            statusLocation.textContent = '📍 Ubícate en el mapa y ajusta el pin si hace falta.';
+                            statusLocation.style.color = 'green';
+                            syncPickerMap(loc.lat(), loc.lng());
+                        } else {
+                            document.getElementById('lat').value = latitude;
+                            document.getElementById('lng').value = longitude;
+                            statusLocation.textContent = '📍 Ajusta el pin en el mapa para precisar.';
+                            syncPickerMap(latitude, longitude);
+                        }
+                    });
+                },
+                () => { btnGetLocation.classList.remove('is-loading'); },
+                { timeout: 8000, maximumAge: 30000 }
+            );
+        }
+
+        function startPickerMap() {
+            if (typeof google === 'undefined' || !google.maps) return;
+            initPickerMap();
+            setTimeout(() => {
+                google.maps.event.trigger(pickerMap, 'resize');
+                const lat = parseFloat(document.getElementById('lat').value);
+                const lng = parseFloat(document.getElementById('lng').value);
+                if (lat && lng) syncPickerMap(lat, lng);
+                else tryAutoGPS();
+            }, 80);
+        }
+
+        // Observe when the modal becomes visible
+        const modalReportEl = document.getElementById('modal-report');
+        if (modalReportEl) {
+            new MutationObserver(() => {
+                if (modalReportEl.classList.contains('is-open') || modalReportEl.style.display === 'flex' || modalReportEl.style.display === 'block') {
+                    startPickerMap();
+                }
+            }).observe(modalReportEl, { attributes: true, attributeFilter: ['class', 'style'] });
+        }
+        // Also init on DOMContentLoaded if modal is already open
+        startPickerMap();
+        // ── END MAP PICKER ────────────────────────────────────────────
 
         const formReport = document.getElementById('form-report');
         formReport.addEventListener('submit', async (e) => {
@@ -283,7 +416,7 @@
                 const data = await resp.json();
                 if (!data.ok) { alert(data.error || 'No se pudo enviar el reporte.'); return; }
 
-                document.getElementById('report-id').textContent = data.id ? '#INC-' + data.id : '#INC-0000';
+                document.getElementById('report-id').textContent = data.id ? '' + data.id : '#0000';
                 formReport.style.display = 'none';
                 document.getElementById('report-success').style.display = 'block';
 

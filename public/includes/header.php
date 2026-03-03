@@ -9,7 +9,9 @@
             <div class="brand">
                 <a href="/index.php" class="brand-link" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
                     <img src="/public/images/logo.png" alt="Logo" style="height:70px;width:auto;display:block;">
-                    <span class="brand-sigiu-name">Reporta Tu Ciudad</span>
+                    <span class="brand-sigiu-name">
+                        <span class="brand-word-reporta">Reporta</span><span class="brand-word-ciudad"> Tu Ciudad</span>
+                    </span>
                 </a>
             </div>
 
@@ -56,15 +58,29 @@
 
 <style>
     .brand-sigiu-name {
-        font-size: 1.5rem;
-        font-weight: 800;
-        letter-spacing: 1px;
-        color: var(--primary, #9D1B32); /* modo luz: rojo */
+        display: flex;
+        flex-direction: column;
+        line-height: 1.1;
+        gap: 1px;
+    }
+    .brand-word-reporta {
+        font-size: 1.25rem;
+        font-weight: 900;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--primary, #9D1B32);
         transition: color .2s;
     }
-    html.dark .brand-sigiu-name {
-        color: #ffffff; /* modo oscuro: blanco */
+    .brand-word-ciudad {
+        font-size: 0.72rem;
+        font-weight: 500;
+        letter-spacing: 3.5px;
+        text-transform: uppercase;
+        color: #888;
+        transition: color .2s;
     }
+    html.dark .brand-word-reporta { color: var(--primary, #9D1B32); }
+    html.dark .brand-word-ciudad  { color: #aaa; }
 </style>
 
 <script>
