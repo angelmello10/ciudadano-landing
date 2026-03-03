@@ -892,7 +892,9 @@
 
         /* Map frame */
         .mps-frame {
-            position: relative; border-radius: 20px; overflow: hidden;
+            position: relative; border-radius: 20px;
+            /* overflow:hidden lives on .map-mockup so it clips only the map canvas,
+               not the pin-details-card that sits absolute inside this frame */
             box-shadow: 0 16px 60px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.07);
         }
 
@@ -985,7 +987,7 @@
         .mps-loc-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(157,27,50,0.45); }
 
         /* Map canvas */
-        .map-mockup { width: 100%; height: 540px; position: relative; display: block; }
+        .map-mockup { width: 100%; height: 540px; position: relative; display: block; border-radius: 20px; overflow: hidden; }
 
         /* ── Marker pulse — center dot + 2 expanding rings ── */
         .map-pulse {
@@ -1040,15 +1042,14 @@
             100% { transform: scale(3.2); opacity: 0; }
         }
 
-        /* Pin details card — always dark (overlay on map) */
-        /* ── Pin details card (click on marker) ── */
+        /* ── Pin details card (click on marker) — light mode base ── */
         .pin-details-card {
             position: absolute; bottom: 20px; left: 20px;
             width: min(340px, calc(100% - 40px));
-            background: rgba(10, 12, 22, 0.94);
+            background: rgba(255,255,255,0.97);
             backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
             border-radius: 18px; overflow: hidden;
-            box-shadow: 0 24px 64px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.07);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.07);
             opacity: 0; transform: translateY(14px) scale(.97); pointer-events: none;
             transition: opacity .25s ease, transform .28s cubic-bezier(.34,1.56,.64,1); z-index: 20;
         }
@@ -1071,15 +1072,15 @@
             font-size: 0.68rem; font-weight: 600; letter-spacing: 0.04em;
             color: #64748b; text-transform: uppercase;
         }
-        .pd-folio-badge strong { color: #94a3b8; font-weight: 700; }
+        .pd-folio-badge strong { color: #1e293b; font-weight: 700; }
         .pin-details-close {
             display: flex; align-items: center; justify-content: center;
             width: 26px; height: 26px; border-radius: 50%;
-            background: rgba(255,255,255,0.06); border: none;
-            cursor: pointer; color: #64748b;
+            background: rgba(0,0,0,0.05); border: none;
+            cursor: pointer; color: #94a3b8;
             transition: background .15s, color .15s;
         }
-        .pin-details-close:hover { background: rgba(255,255,255,0.12); color: #f8fafc; }
+        .pin-details-close:hover { background: rgba(0,0,0,0.10); color: #0f172a; }
 
         /* Title row */
         .pd-title-row {
@@ -1087,7 +1088,7 @@
             padding: 8px 14px 0;
         }
         .pd-title {
-            font-size: 0.92rem; font-weight: 800; color: #f1f5f9;
+            font-size: 0.92rem; font-weight: 800; color: #0f172a;
             line-height: 1.3; flex: 1; margin: 0;
         }
         .pd-status-pill { flex-shrink: 0; font-size: 0.62rem !important; padding: 3px 8px !important; }
@@ -1095,10 +1096,10 @@
         /* Info rows */
         .pd-row {
             display: flex; align-items: flex-start; gap: 7px;
-            padding: 6px 14px 0; color: #94a3b8; font-size: 0.75rem; line-height: 1.45;
+            padding: 6px 14px 0; color: #475569; font-size: 0.75rem; line-height: 1.45;
         }
         .pd-row-icon {
-            flex-shrink: 0; margin-top: 1px; color: #475569;
+            flex-shrink: 0; margin-top: 1px; color: #94a3b8;
         }
         .pd-row-text { flex: 1; }
         .pd-desc-text { color: #64748b; font-style: italic; }
@@ -1108,23 +1109,23 @@
         .pd-photo-img {
             width: 100%; height: 110px; object-fit: cover;
             border-radius: 10px; display: block;
-            border: 1px solid rgba(255,255,255,0.07);
+            border: 1px solid rgba(0,0,0,0.08);
         }
 
         /* Footer */
         .pd-footer {
             display: flex; align-items: center; justify-content: space-between; gap: 8px;
             padding: 10px 14px 14px; margin-top: 6px;
-            border-top: 1px solid rgba(255,255,255,0.06);
+            border-top: 1px solid rgba(0,0,0,0.07);
         }
         .pd-footer-meta {
             display: flex; flex-direction: column; gap: 3px;
         }
         .pd-footer-item {
             display: flex; align-items: center; gap: 5px;
-            font-size: 0.68rem; color: #475569;
+            font-size: 0.68rem; color: #64748b;
         }
-        .pd-footer-item svg { color: #334155; }
+        .pd-footer-item svg { color: #94a3b8; }
 
         /* Directions button */
         .pd-directions-btn {
@@ -1140,13 +1141,15 @@
         .pin-meta { display: none; }
 
         /* ── Pin details — responsive small phones ── */
-        @media (max-width: 480px) {
+        @media (max-width: 640px) {
             .pin-details-card {
-                /* stretch edge-to-edge with 10px gap on both sides */
                 left: 10px; right: 10px; bottom: 10px;
                 width: auto;
+                /* internal scroll so card never grows taller than 65% of the map */
+                max-height: 65%;
+                overflow-y: auto;
             }
-            .pd-photo-img { height: 90px; }
+            .pd-photo-img { height: 85px; }
         }
         @media (max-width: 380px) {
             .pd-title { font-size: 0.82rem; }
@@ -1156,7 +1159,7 @@
                 gap: 8px;
             }
             .pd-directions-btn { width: 100%; justify-content: center; }
-            .pd-photo-img { height: 75px; }
+            .pd-photo-img { height: 70px; }
         }
 
         /* old stat-card (used elsewhere) */
@@ -1678,7 +1681,23 @@
         html.dark .incidents-table-wrap::-webkit-scrollbar-thumb { background: #3a4455; }
         html.dark .incidents-table-wrap::-webkit-scrollbar-track { background: #1e2532; }
 
-        /* map — .mps-frame/.pin-details-card already dark; only override stats-grid cards */
+        /* map — pin-details-card dark mode */
+        html.dark .pin-details-card {
+            background: rgba(10,12,22,0.94);
+            box-shadow: 0 24px 64px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.07);
+        }
+        html.dark .pd-folio-badge        { color: #64748b; }
+        html.dark .pd-folio-badge strong { color: #94a3b8; }
+        html.dark .pin-details-close     { background: rgba(255,255,255,0.06); color: #64748b; }
+        html.dark .pin-details-close:hover { background: rgba(255,255,255,0.12); color: #f8fafc; }
+        html.dark .pd-title              { color: #f1f5f9; }
+        html.dark .pd-row                { color: #94a3b8; }
+        html.dark .pd-row-icon           { color: #475569; }
+        html.dark .pd-desc-text          { color: #64748b; }
+        html.dark .pd-photo-img          { border-color: rgba(255,255,255,0.07); }
+        html.dark .pd-footer             { border-top-color: rgba(255,255,255,0.06); }
+        html.dark .pd-footer-item        { color: #475569; }
+        html.dark .pd-footer-item svg    { color: #334155; }
         html.dark .stats-grid .stat-card { background: #1e2532; border-color: rgba(255,255,255,0.07); }
 
         /* status pills */
