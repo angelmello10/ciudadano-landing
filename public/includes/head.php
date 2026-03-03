@@ -987,41 +987,177 @@
         /* Map canvas */
         .map-mockup { width: 100%; height: 540px; position: relative; display: block; }
 
-        /* Marker pulse ring */
+        /* ── Marker pulse — center dot + 2 expanding rings ── */
         .map-pulse {
-            position: absolute; width: 16px; height: 16px;
-            border-radius: 50%; pointer-events: none; transform: translate(-50%,-50%);
+            position: absolute;
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            /* Center glowing dot */
+            background: var(--pulse-color, #f59e0b);
+            box-shadow:
+                0 0 0 3px rgba(255,255,255,0.65),
+                0 0 10px 2px var(--pulse-color, #f59e0b);
+            animation: mp-dot-glow 2s ease-in-out infinite var(--pulse-delay, 0s);
         }
+        /* Ring 1 — fast */
+        .map-pulse::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            border: 2px solid var(--pulse-color, #f59e0b);
+            opacity: 0;
+            animation: mp-ring 2.2s ease-out infinite var(--pulse-delay, 0s);
+        }
+        /* Ring 2 — delayed 1.1s after ring 1 */
         .map-pulse::after {
-            content: ''; position: absolute; inset: -4px; border-radius: 50%;
-            border: 1.5px solid var(--pulse-color, #f59e0b); opacity: 0;
-            animation: mp-ring 3s ease-out infinite;
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            border: 2px solid var(--pulse-color, #f59e0b);
+            opacity: 0;
+            animation: mp-ring 2.2s ease-out infinite calc(var(--pulse-delay, 0s) + 1.1s);
         }
+        /* Dot glow breathe */
+        @keyframes mp-dot-glow {
+            0%, 100% {
+                box-shadow:
+                    0 0 0 3px rgba(255,255,255,0.65),
+                    0 0 8px 2px var(--pulse-color, #f59e0b);
+            }
+            50% {
+                box-shadow:
+                    0 0 0 4px rgba(255,255,255,0.85),
+                    0 0 22px 6px var(--pulse-color, #f59e0b);
+            }
+        }
+        /* Expanding ring */
         @keyframes mp-ring {
-            0%   { transform: scale(0.6); opacity: 0.55; }
-            100% { transform: scale(2.4); opacity: 0; }
+            0%   { transform: scale(0.7); opacity: 0.8; }
+            100% { transform: scale(3.2); opacity: 0; }
         }
 
         /* Pin details card — always dark (overlay on map) */
+        /* ── Pin details card (click on marker) ── */
         .pin-details-card {
             position: absolute; bottom: 20px; left: 20px;
-            width: min(360px, calc(100% - 40px));
-            background: rgba(6,8,16,0.90);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            padding: 18px 20px 20px; border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
-            opacity: 0; transform: translateY(12px) scale(.98); pointer-events: none;
-            transition: opacity .25s ease, transform .25s ease; z-index: 20;
+            width: min(340px, calc(100% - 40px));
+            background: rgba(10, 12, 22, 0.94);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-radius: 18px; overflow: hidden;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.07);
+            opacity: 0; transform: translateY(14px) scale(.97); pointer-events: none;
+            transition: opacity .25s ease, transform .28s cubic-bezier(.34,1.56,.64,1); z-index: 20;
         }
         .pin-details-card.is-active { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
-        .pin-details-close {
-            position: absolute; top: 12px; right: 14px; background: none; border: none;
-            cursor: pointer; font-size: 1.1rem; color: #475569; line-height: 1; padding: 2px 4px;
-            transition: color .15s;
+
+        /* Accent bar */
+        .pd-accent-bar {
+            height: 3px; width: 100%;
+            background: var(--primary);
+            transition: background .2s;
         }
-        .pin-details-close:hover { color: #f8fafc; }
-        .pin-details-card h6 { font-size: 0.9rem; font-weight: 800; color: #f8fafc; margin-bottom: 4px; padding-right: 24px; }
-        .pin-meta { font-size: 0.75rem; color: #64748b; margin: 4px 0 12px; }
+
+        /* Header row */
+        .pd-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 11px 14px 0;
+        }
+        .pd-folio-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 0.68rem; font-weight: 600; letter-spacing: 0.04em;
+            color: #64748b; text-transform: uppercase;
+        }
+        .pd-folio-badge strong { color: #94a3b8; font-weight: 700; }
+        .pin-details-close {
+            display: flex; align-items: center; justify-content: center;
+            width: 26px; height: 26px; border-radius: 50%;
+            background: rgba(255,255,255,0.06); border: none;
+            cursor: pointer; color: #64748b;
+            transition: background .15s, color .15s;
+        }
+        .pin-details-close:hover { background: rgba(255,255,255,0.12); color: #f8fafc; }
+
+        /* Title row */
+        .pd-title-row {
+            display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+            padding: 8px 14px 0;
+        }
+        .pd-title {
+            font-size: 0.92rem; font-weight: 800; color: #f1f5f9;
+            line-height: 1.3; flex: 1; margin: 0;
+        }
+        .pd-status-pill { flex-shrink: 0; font-size: 0.62rem !important; padding: 3px 8px !important; }
+
+        /* Info rows */
+        .pd-row {
+            display: flex; align-items: flex-start; gap: 7px;
+            padding: 6px 14px 0; color: #94a3b8; font-size: 0.75rem; line-height: 1.45;
+        }
+        .pd-row-icon {
+            flex-shrink: 0; margin-top: 1px; color: #475569;
+        }
+        .pd-row-text { flex: 1; }
+        .pd-desc-text { color: #64748b; font-style: italic; }
+
+        /* Photo */
+        .pd-photo-row { padding: 10px 14px 0; display: none; }
+        .pd-photo-img {
+            width: 100%; height: 110px; object-fit: cover;
+            border-radius: 10px; display: block;
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+
+        /* Footer */
+        .pd-footer {
+            display: flex; align-items: center; justify-content: space-between; gap: 8px;
+            padding: 10px 14px 14px; margin-top: 6px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .pd-footer-meta {
+            display: flex; flex-direction: column; gap: 3px;
+        }
+        .pd-footer-item {
+            display: flex; align-items: center; gap: 5px;
+            font-size: 0.68rem; color: #475569;
+        }
+        .pd-footer-item svg { color: #334155; }
+
+        /* Directions button */
+        .pd-directions-btn {
+            display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0;
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.03em;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: #fff; border-radius: 20px; padding: 6px 12px;
+            text-decoration: none; transition: opacity .15s, transform .15s;
+            white-space: nowrap;
+        }
+        .pd-directions-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+        /* Keep old pin-meta hidden (no longer used) */
+        .pin-meta { display: none; }
+
+        /* ── Pin details — responsive small phones ── */
+        @media (max-width: 480px) {
+            .pin-details-card {
+                /* stretch edge-to-edge with 10px gap on both sides */
+                left: 10px; right: 10px; bottom: 10px;
+                width: auto;
+            }
+            .pd-photo-img { height: 90px; }
+        }
+        @media (max-width: 380px) {
+            .pd-title { font-size: 0.82rem; }
+            .pd-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .pd-directions-btn { width: 100%; justify-content: center; }
+            .pd-photo-img { height: 75px; }
+        }
 
         /* old stat-card (used elsewhere) */
         .stats-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
@@ -1468,7 +1604,7 @@
         }
         html.dark .hero-map-notif-title { color: #fff; }
         html.dark .hero-map-wrap { box-shadow: var(--shadow-xl), 0 0 0 1px rgba(255,255,255,0.09); }
-        html.dark .hero-map-iframe { filter: saturate(0.8) brightness(0.92); }
+        html.dark .hero-map-iframe { filter: brightness(0.45) saturate(0.45) contrast(1.1); }
         html.dark .hero-map-tint {
             background: linear-gradient(
                 to bottom, rgba(6,8,12,0.22) 0%, transparent 35%,
@@ -1580,5 +1716,86 @@
         html.dark .modal-success-btn    { background: #2a3547; color: #a0b0c0; }
         html.dark .modal-success-btn:hover { background: #334155; color: var(--text); }
         html.dark .consult-back-btn     { color: #7a8aa0; }
+
+        /* ── FOCUS-VISIBLE (accesibilidad teclado) ── */
+        :focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+        .button:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 3px;
+            box-shadow: 0 0 0 4px var(--primary-glow-soft);
+        }
+        .header-link:focus-visible,
+        .dark-toggle:focus-visible,
+        .mob-fab:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+        a:focus:not(:focus-visible),
+        button:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        /* ── BACK TO TOP BUTTON ── */
+        .back-to-top {
+            position: fixed;
+            bottom: 28px; right: 28px;
+            z-index: 9990;
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 6px 24px var(--primary-glow), 0 2px 8px rgba(0,0,0,0.12);
+            opacity: 0;
+            transform: translateY(12px) scale(0.85);
+            pointer-events: none;
+            transition: opacity .3s ease, transform .3s var(--ease-out), background .2s;
+        }
+        .back-to-top.is-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+        .back-to-top:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px) scale(1.08);
+        }
+        html.dark .back-to-top {
+            box-shadow: 0 6px 24px rgba(157,27,50,0.45), 0 2px 8px rgba(0,0,0,0.3);
+        }
+        @media (max-width: 640px) {
+            .back-to-top { bottom: 20px; right: 20px; width: 40px; height: 40px; }
+        }
+
+        /* ── SKELETON LOADING ── */
+        @keyframes skeleton-pulse {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .skeleton-row td {
+            padding: 16px 22px !important;
+        }
+        .skeleton-bar {
+            display: inline-block;
+            height: 14px;
+            border-radius: 6px;
+            background: linear-gradient(90deg, #e8ecf3 25%, #f3f6fa 50%, #e8ecf3 75%);
+            background-size: 200% 100%;
+            animation: skeleton-pulse 1.8s ease-in-out infinite;
+        }
+        html.dark .skeleton-bar {
+            background: linear-gradient(90deg, #1e2532 25%, #2a3547 50%, #1e2532 75%);
+            background-size: 200% 100%;
+        }
+
+        /* ── DARK MODE: modal map container ── */
+        html.dark #report-map-container {
+            border-color: rgba(255,255,255,0.1) !important;
+        }
     </style>
 </head>

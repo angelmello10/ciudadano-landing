@@ -22,12 +22,12 @@
                         </tr>
                     </thead>
                     <tbody id="incidents-tbody">
-                        <tr>
-                            <td colspan="7" style="text-align:center;padding:40px 24px;color:#94a3b8;font-size:0.9rem;">
-                                <svg style="display:block;margin:0 auto 12px;opacity:.4" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-                                Cargando incidencias...
-                            </td>
-                        </tr>
+                        <!-- Skeleton loading rows -->
+                        <tr class="skeleton-row"><td><span class="skeleton-bar" style="width:28px"></span></td><td><span class="skeleton-bar" style="width:90px"></span></td><td><span class="skeleton-bar" style="width:150px"></span></td><td><span class="skeleton-bar" style="width:100px"></span></td><td><span class="skeleton-bar" style="width:78px"></span></td><td><span class="skeleton-bar" style="width:80px"></span></td><td><span class="skeleton-bar" style="width:70px"></span></td></tr>
+                        <tr class="skeleton-row"><td><span class="skeleton-bar" style="width:28px"></span></td><td><span class="skeleton-bar" style="width:75px"></span></td><td><span class="skeleton-bar" style="width:130px"></span></td><td><span class="skeleton-bar" style="width:110px"></span></td><td><span class="skeleton-bar" style="width:85px"></span></td><td><span class="skeleton-bar" style="width:80px"></span></td><td><span class="skeleton-bar" style="width:70px"></span></td></tr>
+                        <tr class="skeleton-row"><td><span class="skeleton-bar" style="width:28px"></span></td><td><span class="skeleton-bar" style="width:100px"></span></td><td><span class="skeleton-bar" style="width:140px"></span></td><td><span class="skeleton-bar" style="width:95px"></span></td><td><span class="skeleton-bar" style="width:78px"></span></td><td><span class="skeleton-bar" style="width:80px"></span></td><td><span class="skeleton-bar" style="width:70px"></span></td></tr>
+                        <tr class="skeleton-row"><td><span class="skeleton-bar" style="width:28px"></span></td><td><span class="skeleton-bar" style="width:85px"></span></td><td><span class="skeleton-bar" style="width:160px"></span></td><td><span class="skeleton-bar" style="width:105px"></span></td><td><span class="skeleton-bar" style="width:82px"></span></td><td><span class="skeleton-bar" style="width:80px"></span></td><td><span class="skeleton-bar" style="width:70px"></span></td></tr>
+                        <tr class="skeleton-row"><td><span class="skeleton-bar" style="width:28px"></span></td><td><span class="skeleton-bar" style="width:95px"></span></td><td><span class="skeleton-bar" style="width:135px"></span></td><td><span class="skeleton-bar" style="width:100px"></span></td><td><span class="skeleton-bar" style="width:78px"></span></td><td><span class="skeleton-bar" style="width:80px"></span></td><td><span class="skeleton-bar" style="width:70px"></span></td></tr>
                     </tbody>
                 </table>
             </div>

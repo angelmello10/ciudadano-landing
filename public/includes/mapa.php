@@ -104,12 +104,60 @@
             <!-- Google Map canvas -->
             <div id="map" class="map-mockup"></div>
 
-            <!-- Pin details tooltip -->
+            <!-- Pin details card -->
             <div id="pin-details" class="pin-details-card">
-                <button class="pin-details-close" onclick="document.getElementById('pin-details').classList.remove('is-active')" aria-label="Cerrar">&times;</button>
-                <h6 id="pin-title" class="m-0"></h6>
-                <p id="pin-meta" class="pin-meta"></p>
-                <span id="pin-status" class="status-pill"></span>
+                <!-- Top accent bar (colored per status) -->
+                <div id="pd-accent" class="pd-accent-bar"></div>
+
+                <!-- Header: folio + close -->
+                <div class="pd-header">
+                    <span class="pd-folio-badge">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        Folio&nbsp;<strong id="pd-folio">#--</strong>
+                    </span>
+                    <button class="pin-details-close" onclick="document.getElementById('pin-details').classList.remove('is-active')" aria-label="Cerrar">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+
+                <!-- Status pill + incident type -->
+                <div class="pd-title-row">
+                    <h6 id="pin-title" class="pd-title"></h6>
+                    <span id="pin-status" class="status-pill pd-status-pill"></span>
+                </div>
+
+                <!-- Address -->
+                <div class="pd-row" id="pd-address-row">
+                    <svg class="pd-row-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span id="pd-address" class="pd-row-text"></span>
+                </div>
+
+                <!-- Description -->
+                <div class="pd-row pd-desc-row" id="pd-desc-row">
+                    <svg class="pd-row-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                    <span id="pd-desc" class="pd-row-text pd-desc-text"></span>
+                </div>
+
+                <!-- Photo -->
+                <div id="pd-photo-row" class="pd-photo-row">
+                    <img id="pd-photo" src="" alt="Foto de la incidencia" class="pd-photo-img">
+                </div>
+
+                <!-- Footer: reporter + date -->
+                <div class="pd-footer">
+                    <div class="pd-footer-meta">
+                        <span class="pd-footer-item">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            <span id="pd-reporter"></span>
+                        </span>
+                        <span class="pd-footer-item">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <span id="pd-date"></span>
+                        </span>
+                    </div>
+                    <a id="pd-directions-btn" href="#" target="_blank" rel="noopener" >
+                    </a>
+                </div>
             </div>
 
         </div><!-- /mps-frame -->
@@ -192,16 +240,65 @@
             }
         });
 
-        const details = document.getElementById('pin-details');
-        const pinTitle = document.getElementById('pin-title');
-        const pinMeta = document.getElementById('pin-meta');
+        const details   = document.getElementById('pin-details');
+        const pinTitle  = document.getElementById('pin-title');
         const pinStatus = document.getElementById('pin-status');
 
         marker.addListener('click', () => {
-            pinTitle.textContent = (inc.tipo_incidencia || 'Incidencia') + (inc.direccion ? ' — ' + inc.direccion : '');
-            pinMeta.textContent = 'Reportado por: ' + (inc.nombre_ciudadano || 'Anónimo') + ' | ' + (inc.created_at ? new Date(inc.created_at).toLocaleDateString('es-MX') : '');
+            // Folio
+            document.getElementById('pd-folio').textContent = '#' + inc.id;
+
+            // Title
+            pinTitle.textContent = inc.tipo_incidencia || 'Incidencia';
+
+            // Status pill
             pinStatus.textContent = inc.estatus || 'pendiente';
             pinStatus.style.background = color;
+
+            // Accent bar
+            document.getElementById('pd-accent').style.background = color;
+
+            // Address
+            const addrRow  = document.getElementById('pd-address-row');
+            const addrSpan = document.getElementById('pd-address');
+            if (inc.direccion) {
+                addrSpan.textContent = inc.direccion;
+                addrRow.style.display = 'flex';
+            } else {
+                addrRow.style.display = 'none';
+            }
+
+            // Description
+            const descRow  = document.getElementById('pd-desc-row');
+            const descSpan = document.getElementById('pd-desc');
+            if (inc.descripcion) {
+                const txt = inc.descripcion.trim();
+                descSpan.textContent = txt.length > 100 ? txt.slice(0, 100) + '…' : txt;
+                descRow.style.display = 'flex';
+            } else {
+                descRow.style.display = 'none';
+            }
+
+            // Photo
+            const photoRow = document.getElementById('pd-photo-row');
+            const photoImg = document.getElementById('pd-photo');
+            if (inc.foto) {
+                photoImg.src = 'public/uploads/' + inc.foto;
+                photoRow.style.display = 'block';
+            } else {
+                photoRow.style.display = 'none';
+            }
+
+            // Reporter + date
+            document.getElementById('pd-reporter').textContent = inc.nombre_ciudadano || 'Anónimo';
+            document.getElementById('pd-date').textContent = inc.created_at
+                ? new Date(inc.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })
+                : '';
+
+            // Directions link
+            document.getElementById('pd-directions-btn').href =
+                `https://www.google.com/maps/dir/?api=1&destination=${inc.latitud},${inc.longitud}`;
+
             details.classList.add('is-active');
         });
 
@@ -325,7 +422,11 @@
                 this._div = document.createElement('div');
                 this._div.className = 'map-pulse';
                 this._div.style.setProperty('--pulse-color', this._color);
-                this.getPanes().overlayMouseTarget.appendChild(this._div);
+                /* Stagger aleatorio para que no todos pulsen sincronizados */
+                const d = (Math.random() * 2.2).toFixed(2);
+                this._div.style.setProperty('--pulse-delay', `-${d}s`);
+                /* Bajo los markers (overlayLayer), no encima */
+                this.getPanes().overlayLayer.appendChild(this._div);
             }
             draw() {
                 const p = this.getProjection().fromLatLngToDivPixel(this._pos);
@@ -340,18 +441,48 @@
         }
 
         const center = { lat: 19.4014, lng: -99.0150 }; // Nezahualcóyotl, Edo. Méx.
+
+        /* ── Map styles: light & dark ── */
+        const mapStyleLight = [
+            { elementType: 'geometry', stylers: [{ color: '#f5f5f5' }] },
+            { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
+            { elementType: 'labels.text.fill', stylers: [{ color: '#616161' }] },
+            { elementType: 'labels.text.stroke', stylers: [{ color: '#f5f5f5' }] },
+            { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
+            { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#e9e9e9' }] }
+        ];
+        const mapStyleDark = [
+            { elementType: 'geometry', stylers: [{ color: '#1a1a2e' }] },
+            { elementType: 'labels.text.fill', stylers: [{ color: '#8a8a9a' }] },
+            { elementType: 'labels.text.stroke', stylers: [{ color: '#1a1a2e' }] },
+            { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
+            { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#2a2a3e' }] },
+            { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#1a1a2e' }] },
+            { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#3a2a3e' }] },
+            { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0e0e1a' }] },
+            { featureType: 'poi', elementType: 'geometry', stylers: [{ color: '#1e1e32' }] },
+            { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#1a2e1a' }] },
+            { featureType: 'transit', elementType: 'geometry', stylers: [{ color: '#1e1e30' }] },
+            { featureType: 'administrative', elementType: 'geometry.stroke', stylers: [{ color: '#2a2a40' }] }
+        ];
+
+        const isDark = document.documentElement.classList.contains('dark');
         gMap = new google.maps.Map(document.getElementById('map'), {
             zoom: 13,
             center: center,
-            styles: [
-                { elementType: 'geometry', stylers: [{ color: '#f5f5f5' }] },
-                { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
-                { elementType: 'labels.text.fill', stylers: [{ color: '#616161' }] },
-                { elementType: 'labels.text.stroke', stylers: [{ color: '#f5f5f5' }] },
-                { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
-                { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#e9e9e9' }] }
-            ]
+            styles: isDark ? mapStyleDark : mapStyleLight
         });
+
+        /* ── Sync map style when dark mode toggles ── */
+        const darkToggle = document.getElementById('dark-toggle');
+        if (darkToggle) {
+            darkToggle.addEventListener('click', function() {
+                setTimeout(function() {
+                    const nowDark = document.documentElement.classList.contains('dark');
+                    gMap.setOptions({ styles: nowDark ? mapStyleDark : mapStyleLight });
+                }, 50);
+            });
+        }
 
         gMap.addListener('click', () => {
             document.getElementById('pin-details').classList.remove('is-active');

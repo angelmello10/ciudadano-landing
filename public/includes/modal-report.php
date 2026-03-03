@@ -251,13 +251,51 @@
         function initPickerMap() {
             if (pickerMap) return;
             const defaultCenter = { lat: 20.9674, lng: -89.6235 }; // Mérida, ajusta si quieres
+
+            const pickerStyleLight = [
+                { elementType: 'geometry', stylers: [{ color: '#f5f5f5' }] },
+                { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
+                { elementType: 'labels.text.fill', stylers: [{ color: '#616161' }] },
+                { elementType: 'labels.text.stroke', stylers: [{ color: '#f5f5f5' }] },
+                { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
+                { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#e9e9e9' }] }
+            ];
+            const pickerStyleDark = [
+                { elementType: 'geometry', stylers: [{ color: '#1a1a2e' }] },
+                { elementType: 'labels.text.fill', stylers: [{ color: '#8a8a9a' }] },
+                { elementType: 'labels.text.stroke', stylers: [{ color: '#1a1a2e' }] },
+                { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
+                { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#2a2a3e' }] },
+                { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#1a1a2e' }] },
+                { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#3a2a3e' }] },
+                { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0e0e1a' }] },
+                { featureType: 'poi', elementType: 'geometry', stylers: [{ color: '#1e1e32' }] },
+                { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#1a2e1a' }] },
+                { featureType: 'transit', elementType: 'geometry', stylers: [{ color: '#1e1e30' }] },
+                { featureType: 'administrative', elementType: 'geometry.stroke', stylers: [{ color: '#2a2a40' }] }
+            ];
+
+            const isDark = document.documentElement.classList.contains('dark');
             pickerMap = new google.maps.Map(document.getElementById('report-map'), {
                 center: defaultCenter,
                 zoom: 13,
                 mapTypeControl: false,
                 streetViewControl: false,
-                fullscreenControl: false
+                fullscreenControl: false,
+                styles: isDark ? pickerStyleDark : pickerStyleLight
             });
+
+            /* Sync picker map when dark mode toggles */
+            const dToggle = document.getElementById('dark-toggle');
+            if (dToggle) {
+                dToggle.addEventListener('click', function() {
+                    setTimeout(function() {
+                        if (!pickerMap) return;
+                        const nowDark = document.documentElement.classList.contains('dark');
+                        pickerMap.setOptions({ styles: nowDark ? pickerStyleDark : pickerStyleLight });
+                    }, 50);
+                });
+            }
             pickerMarker = new google.maps.Marker({
                 map: pickerMap,
                 draggable: true,
