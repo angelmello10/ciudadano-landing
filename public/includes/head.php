@@ -1044,15 +1044,23 @@
 
         /* ── Pin details card (click on marker) — light mode base ── */
         .pin-details-card {
-            position: absolute; bottom: 20px; left: 20px;
-            width: min(340px, calc(100% - 40px));
+            position: absolute; bottom: 16px; left: 16px;
+            width: min(320px, calc(100% - 32px));
             background: rgba(255,255,255,0.97);
             backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border-radius: 18px; overflow: hidden;
+            border-radius: 18px;
+            overflow-y: auto; overflow-x: hidden;
+            max-height: calc(100% - 32px);
             box-shadow: 0 12px 40px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.07);
-            opacity: 0; transform: translateY(14px) scale(.97); pointer-events: none;
+            opacity: 0; transform: translateY(10px) scale(.97); pointer-events: none;
             transition: opacity .25s ease, transform .28s cubic-bezier(.34,1.56,.64,1); z-index: 20;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0,0,0,0.15) transparent;
         }
+        .pin-details-card::-webkit-scrollbar { width: 4px; }
+        .pin-details-card::-webkit-scrollbar-track { background: transparent; }
+        .pin-details-card::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 2px; }
+        html.dark .pin-details-card::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); }
         .pin-details-card.is-active { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
 
         /* Accent bar */
@@ -1104,6 +1112,9 @@
         .pd-row-text { flex: 1; }
         .pd-desc-text { color: #64748b; font-style: italic; }
 
+        /* pd-body: no longer needs to scroll on its own */
+        .pd-body { padding-bottom: 4px; }
+
         /* Photo */
         .pd-photo-row { padding: 10px 14px 0; display: none; }
         .pd-photo-img {
@@ -1140,14 +1151,11 @@
         /* Keep old pin-meta hidden (no longer used) */
         .pin-meta { display: none; }
 
-        /* ── Pin details — responsive small phones ── */
+        /* ── Pin details — mobile: full map overlay ── */
         @media (max-width: 640px) {
             .pin-details-card {
-                left: 10px; right: 10px; bottom: 10px;
-                width: auto;
-                /* internal scroll so card never grows taller than 65% of the map */
-                max-height: 65%;
-                overflow-y: auto;
+                top: 8px; left: 8px; right: 8px; bottom: 8px;
+                width: auto; max-height: none;
             }
             .pd-photo-img { height: 85px; }
         }

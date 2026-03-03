@@ -126,6 +126,9 @@
                     <span id="pin-status" class="status-pill pd-status-pill"></span>
                 </div>
 
+                <!-- Scrollable body -->
+                <div class="pd-body">
+
                 <!-- Address -->
                 <div class="pd-row" id="pd-address-row">
                     <svg class="pd-row-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -142,6 +145,8 @@
                 <div id="pd-photo-row" class="pd-photo-row">
                     <img id="pd-photo" src="" alt="Foto de la incidencia" class="pd-photo-img">
                 </div>
+
+                </div><!-- /pd-body -->
 
                 <!-- Footer: reporter + date -->
                 <div class="pd-footer">
@@ -473,16 +478,11 @@
             styles: isDark ? mapStyleDark : mapStyleLight
         });
 
-        /* ── Sync map style when dark mode toggles ── */
-        const darkToggle = document.getElementById('dark-toggle');
-        if (darkToggle) {
-            darkToggle.addEventListener('click', function() {
-                setTimeout(function() {
-                    const nowDark = document.documentElement.classList.contains('dark');
-                    gMap.setOptions({ styles: nowDark ? mapStyleDark : mapStyleLight });
-                }, 50);
-            });
-        }
+        /* ── Sync map style whenever html.dark class changes ── */
+        new MutationObserver(function() {
+            const nowDark = document.documentElement.classList.contains('dark');
+            gMap.setOptions({ styles: nowDark ? mapStyleDark : mapStyleLight });
+        }).observe(document.documentElement, { attributeFilter: ['class'] });
 
         gMap.addListener('click', () => {
             document.getElementById('pin-details').classList.remove('is-active');

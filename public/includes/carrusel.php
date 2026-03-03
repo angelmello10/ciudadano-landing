@@ -196,20 +196,33 @@ html.dark .cfl-card {
 .cfl-img {
     width: 100%; height: 100%;
     object-fit: cover; display: block;
-    transition: transform 0.65s ease;
+    transition: transform 0.55s ease;
 }
-.cfl-card-active:hover .cfl-img { transform: scale(1.05); }
+.cfl-card-active.cfl-expanded .cfl-img { transform: scale(1.06); }
 
+/* Gradiente base: só franja inferior */
 .cfl-grad {
     position: absolute; inset: 0;
     background: linear-gradient(
         to top,
-        rgba(0,0,0,0.98) 0%,
-        rgba(0,0,0,0.65) 38%,
-        rgba(0,0,0,0.15) 68%,
-        transparent 100%
+        rgba(0,0,0,0.92) 0%,
+        rgba(0,0,0,0.50) 20%,
+        rgba(0,0,0,0.08) 38%,
+        transparent 52%
     );
     pointer-events: none;
+    transition: background 0.40s ease;
+}
+/* Solo al expandir se oscurece */
+.cfl-card-active.cfl-expanded .cfl-grad {
+    background: linear-gradient(
+        to top,
+        rgba(0,0,0,0.97) 0%,
+        rgba(0,0,0,0.90) 35%,
+        rgba(0,0,0,0.65) 58%,
+        rgba(0,0,0,0.22) 80%,
+        transparent 100%
+    );
 }
 
 /* Reflexion espejo */
@@ -240,25 +253,93 @@ html.dark .cfl-card {
     z-index: 4;
 }
 
+/* Info base: siempre visible, compacta */
 .cfl-info {
-    position: absolute; bottom:0; left:0; right:0;
-    padding: 28px 18px 20px; z-index: 4; color: #fff;
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 16px 16px 52px; z-index: 4; color: #fff;
+    /* 52px deja espacio al botón tap-hint */
 }
 .cfl-tipo {
-    font-size: 0.7rem; font-weight: 700;
+    font-size: 0.68rem; font-weight: 700;
     letter-spacing: 0.08em; text-transform: uppercase;
-    color: rgba(255,255,255,0.55); margin-bottom: 5px;
+    color: rgba(255,255,255,0.55); margin-bottom: 3px;
 }
 .cfl-nombre {
-    font-size: 1.05rem; font-weight: 800;
-    margin: 0 0 14px; white-space: nowrap;
+    font-size: 1rem; font-weight: 800;
+    margin: 0 0 8px; white-space: nowrap;
     overflow: hidden; text-overflow: ellipsis;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    text-shadow: 0 2px 8px rgba(0,0,0,0.6);
 }
 .cfl-row {
     display: flex; align-items: center;
-    justify-content: space-between; gap: 8px;
+    justify-content: flex-start; gap: 8px;
 }
+
+/* Panel de detalles: oculto por defecto */
+.cfl-details {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.42s cubic-bezier(0.4,0,0.2,1),
+                opacity    0.30s ease;
+}
+.cfl-card-active.cfl-expanded .cfl-details {
+    max-height: 200px;
+    opacity: 1;
+}
+.cfl-details-inner {
+    padding-top: 12px;
+}
+.cfl-details-addr {
+    font-size: 0.67rem; font-weight: 500;
+    color: rgba(255,255,255,0.65);
+    display: flex; align-items: flex-start; gap: 5px;
+    margin-bottom: 7px; line-height: 1.45;
+}
+.cfl-details-addr svg {
+    flex-shrink: 0; width: 11px; height: 11px; margin-top: 2px;
+    stroke: #fb7185; fill: rgba(251,113,133,0.18);
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+.cfl-details-desc {
+    font-size: 0.67rem; color: rgba(255,255,255,0.52);
+    line-height: 1.5; margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Botón flotante inferior — siempre visible en carta activa */
+.cfl-toggle-btn {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    z-index: 7; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    height: 44px; gap: 5px;
+    background: rgba(0,0,0,0.0);
+    border: none; color: rgba(255,255,255,0.55);
+    font-family: inherit; font-size: 0.62rem; font-weight: 700;
+    letter-spacing: 0.07em; text-transform: uppercase;
+    transition: color 0.2s, background 0.2s;
+    border-radius: 0 0 20px 20px;
+    padding: 0;
+    opacity: 0; pointer-events: none;
+}
+.cfl-card-active .cfl-toggle-btn {
+    opacity: 1; pointer-events: auto;
+}
+.cfl-toggle-btn:hover { color: rgba(255,255,255,0.85); background: rgba(0,0,0,0.18); }
+.cfl-toggle-btn svg {
+    width: 13px; height: 13px;
+    stroke: currentColor; fill: none;
+    stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+    transition: transform 0.35s ease;
+}
+.cfl-card-active.cfl-expanded .cfl-toggle-btn svg { transform: rotate(180deg); }
+.cfl-toggle-btn .t-open  { display: inline; }
+.cfl-toggle-btn .t-close { display: none; }
+.cfl-card-active.cfl-expanded .cfl-toggle-btn .t-open  { display: none; }
+.cfl-card-active.cfl-expanded .cfl-toggle-btn .t-close { display: inline; }
 
 .cfl-pill {
     font-size: 0.64rem; font-weight: 800;
@@ -275,10 +356,11 @@ html.dark .cfl-card {
 
 .cfl-mapbtn {
     font-size: 0.7rem; font-weight: 800;
-    padding: 5px 14px; border-radius: 999px;
+    padding: 6px 14px; border-radius: 999px;
     background: var(--primary, #9d1b32); color: #fff;
     border: none; cursor: pointer; font-family: inherit;
     letter-spacing: 0.02em; white-space: nowrap;
+    display: block; width: 100%; text-align: center;
     transition: filter 0.18s, transform 0.15s;
 }
 .cfl-mapbtn:hover { filter: brightness(1.12); transform: translateY(-1px); }
@@ -433,8 +515,10 @@ html.dark .cfl-progress-label { color: #475569; }
         const stRaw   = inc.estatus || 'pendiente';
         const stLabel = esc(stRaw.charAt(0).toUpperCase() + stRaw.slice(1));
         const imgSrc  = inc.foto ? `${UPLOADS}${esc(inc.foto)}` : '';
+        const addr    = esc(inc.direccion || '');
+        const desc    = esc(inc.descripcion || '');
         const mapBtn  = (inc.latitud && inc.longitud)
-            ? `<button class="cfl-mapbtn" onclick="typeof verEnMapa==='function'&&verEnMapa(${inc.id});event.stopPropagation()">Ver mapa</button>`
+            ? `<button class="cfl-mapbtn" onclick="typeof verEnMapa==='function'&&verEnMapa(${inc.id});event.stopPropagation()">Ver en mapa</button>`
             : '';
 
         const card = document.createElement('div');
@@ -449,9 +533,20 @@ html.dark .cfl-progress-label { color: #475569; }
                 <p class="cfl-nombre">${name}</p>
                 <div class="cfl-row">
                     <span class="cfl-pill ${stClass}">${stLabel}</span>
-                    ${mapBtn}
+                </div>
+                <div class="cfl-details">
+                    <div class="cfl-details-inner">
+                        ${addr ? `<p class="cfl-details-addr"><svg viewBox="0 0 24 24"><path d="M12 21s-8-7.5-8-12a8 8 0 1 1 16 0c0 4.5-8 12-8 12z"/><circle cx="12" cy="9" r="2.5"/></svg>${addr}</p>` : ''}
+                        ${desc ? `<p class="cfl-details-desc">${desc}</p>` : ''}
+                        ${mapBtn}
+                    </div>
                 </div>
             </div>
+            <button class="cfl-toggle-btn" type="button">
+                <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+                <span class="t-open">Ver info</span>
+                <span class="t-close">Cerrar</span>
+            </button>
             ${imgSrc ? `<div class="cfl-reflection"><img src="${imgSrc}" alt="" aria-hidden="true" loading="lazy" onerror="this.parentElement.style.display='none'"></div>` : ''}
             <div class="cfl-hint">
                 <span class="cfl-hint-icon">
@@ -462,10 +557,22 @@ html.dark .cfl-progress-label { color: #475569; }
                 <svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="12.5"/></svg>
             </div>`;
 
-        card.addEventListener('click', function () {
+        card.addEventListener('click', function (e) {
             const i = parseInt(this.dataset.idx);
-            if (i !== current) goTo(i, true);
+            if (i !== current) {
+                // Carta lateral: navegar a ella
+                goTo(i, true);
+            } else {
+                // Carta activa: toggle info (el botón también dispara esto)
+                this.classList.toggle('cfl-expanded');
+            }
         });
+        // Evitar que el botón burbujee doble al card
+        const toggleBtn = card.querySelector('.cfl-toggle-btn');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', e => e.stopPropagation());
+            toggleBtn.addEventListener('click', () => card.classList.toggle('cfl-expanded'));
+        }
         return card;
     }
 
@@ -482,6 +589,7 @@ html.dark .cfl-progress-label { color: #475569; }
             const i      = parseInt(card.dataset.idx);
             const offset = i - current;
             const abs    = Math.abs(offset);
+            if (abs !== 0) card.classList.remove('cfl-expanded');
             const t      = getTransform(offset);
             card.style.transform    = `translateX(${t.tx}px) rotateY(${t.ry}deg) scale(${t.scl}) translateZ(${t.tz}px)`;
             card.style.opacity      = t.op;

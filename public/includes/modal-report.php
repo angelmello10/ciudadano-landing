@@ -285,17 +285,12 @@
                 styles: isDark ? pickerStyleDark : pickerStyleLight
             });
 
-            /* Sync picker map when dark mode toggles */
-            const dToggle = document.getElementById('dark-toggle');
-            if (dToggle) {
-                dToggle.addEventListener('click', function() {
-                    setTimeout(function() {
-                        if (!pickerMap) return;
-                        const nowDark = document.documentElement.classList.contains('dark');
-                        pickerMap.setOptions({ styles: nowDark ? pickerStyleDark : pickerStyleLight });
-                    }, 50);
-                });
-            }
+            /* Sync picker map whenever html.dark class changes */
+            new MutationObserver(function() {
+                if (!pickerMap) return;
+                const nowDark = document.documentElement.classList.contains('dark');
+                pickerMap.setOptions({ styles: nowDark ? pickerStyleDark : pickerStyleLight });
+            }).observe(document.documentElement, { attributeFilter: ['class'] });
             pickerMarker = new google.maps.Marker({
                 map: pickerMap,
                 draggable: true,
