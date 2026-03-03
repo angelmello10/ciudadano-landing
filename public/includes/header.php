@@ -8,7 +8,7 @@
             <!-- Brand -->
             <div class="brand">
                 <a href="/index.php" class="brand-link" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
-                    <img src="/public/images/JORDAN.png" alt="Logo" style="height:70px;width:auto;display:block;">
+                    <img src="/public/images/logo.png" alt="Logo" style="height:70px;width:auto;display:block;">
                     <span class="brand-sigiu-name">SIGIU</span>
                 </a>
             </div>
