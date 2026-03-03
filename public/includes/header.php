@@ -9,7 +9,7 @@
             <div class="brand">
                 <a href="/index.php" class="brand-link" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
                     <img src="/public/images/logo.png" alt="Logo" style="height:70px;width:auto;display:block;">
-                    <span class="brand-sigiu-name">SIGIU</span>
+                    <span class="brand-sigiu-name">Reporta Tu Ciudad</span>
                 </a>
             </div>
 

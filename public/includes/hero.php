@@ -25,7 +25,7 @@
                                 Crear reporte ahora
                             </a>
                             <a class="button button-dark button-wide-mobile modal-trigger"
-                                aria-controls="modal-consult" href="#0">Consultar mi folio</a>
+                                aria-controls="modal-consult" href="#0">Ver estatus de mi reporte</a>
                         </div>
                         
                     </div>
