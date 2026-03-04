@@ -196,34 +196,46 @@ html.dark .cfl-card {
 .cfl-img {
     width: 100%; height: 100%;
     object-fit: cover; display: block;
-    transition: transform 0.55s ease;
+    transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
+    will-change: transform;
 }
-.cfl-card-active.cfl-expanded .cfl-img { transform: scale(1.06); }
+.cfl-card-active.cfl-expanded .cfl-img { transform: scale(1.07); }
 
-/* Gradiente base: só franja inferior */
+/* Gradiente base via pseudo-element para animar con opacity */
 .cfl-grad {
     position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 2;
+}
+.cfl-grad::before,
+.cfl-grad::after {
+    content: '';
+    position: absolute; inset: 0;
+    transition: opacity 0.45s ease;
+}
+/* base: ligero */
+.cfl-grad::before {
     background: linear-gradient(
         to top,
-        rgba(0,0,0,0.92) 0%,
-        rgba(0,0,0,0.50) 20%,
-        rgba(0,0,0,0.08) 38%,
-        transparent 52%
+        rgba(0,0,0,0.90) 0%,
+        rgba(0,0,0,0.45) 22%,
+        transparent 50%
     );
-    pointer-events: none;
-    transition: background 0.40s ease;
+    opacity: 1;
 }
-/* Solo al expandir se oscurece */
-.cfl-card-active.cfl-expanded .cfl-grad {
+/* expandido: oscuro — se desvanece encima */
+.cfl-grad::after {
     background: linear-gradient(
         to top,
         rgba(0,0,0,0.97) 0%,
-        rgba(0,0,0,0.90) 35%,
-        rgba(0,0,0,0.65) 58%,
-        rgba(0,0,0,0.22) 80%,
+        rgba(0,0,0,0.88) 32%,
+        rgba(0,0,0,0.62) 56%,
+        rgba(0,0,0,0.20) 80%,
         transparent 100%
     );
+    opacity: 0;
 }
+.cfl-card-active.cfl-expanded .cfl-grad::after { opacity: 1; }
 
 /* Reflexion espejo */
 .cfl-reflection {
@@ -257,7 +269,9 @@ html.dark .cfl-card {
 .cfl-info {
     position: absolute; bottom: 0; left: 0; right: 0;
     padding: 16px 16px 52px; z-index: 4; color: #fff;
-    /* 52px deja espacio al botón tap-hint */
+    transform: translateY(0);
+    transition: transform 0.42s cubic-bezier(0.4,0,0.2,1);
+    will-change: transform;
 }
 .cfl-tipo {
     font-size: 0.68rem; font-weight: 700;
@@ -275,20 +289,28 @@ html.dark .cfl-card {
     justify-content: flex-start; gap: 8px;
 }
 
-/* Panel de detalles: oculto por defecto */
+/* Panel expandible — grid-template-rows es mucho más fluido que max-height */
 .cfl-details {
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition: max-height 0.42s cubic-bezier(0.4,0,0.2,1),
-                opacity    0.30s ease;
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.45s cubic-bezier(0.4,0,0.2,1);
 }
 .cfl-card-active.cfl-expanded .cfl-details {
-    max-height: 200px;
-    opacity: 1;
+    grid-template-rows: 1fr;
 }
 .cfl-details-inner {
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.32s ease 0.10s,
+                transform 0.38s cubic-bezier(0.4,0,0.2,1) 0.08s;
+    will-change: opacity, transform;
+    /* padding interno para que las primeras letras no se corten */
     padding-top: 12px;
+}
+.cfl-card-active.cfl-expanded .cfl-details-inner {
+    opacity: 1;
+    transform: translateY(0);
 }
 .cfl-details-addr {
     font-size: 0.67rem; font-weight: 500;
