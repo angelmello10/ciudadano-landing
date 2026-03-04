@@ -332,7 +332,7 @@ html.dark .cfl-card {
     overflow: hidden;
 }
 
-/* Botón flotante inferior — siempre visible en carta activa */
+/* touch-action: manipulation elimina el retraso de 300ms en iOS */
 .cfl-toggle-btn {
     position: absolute; bottom: 0; left: 0; right: 0;
     z-index: 7; cursor: pointer;
@@ -346,6 +346,9 @@ html.dark .cfl-card {
     border-radius: 0 0 20px 20px;
     padding: 0;
     opacity: 0; pointer-events: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none; user-select: none;
 }
 .cfl-card-active .cfl-toggle-btn {
     opacity: 1; pointer-events: auto;
@@ -384,6 +387,9 @@ html.dark .cfl-card {
     letter-spacing: 0.02em; white-space: nowrap;
     display: block; width: 100%; text-align: center;
     transition: filter 0.18s, transform 0.15s;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none; user-select: none;
 }
 .cfl-mapbtn:hover { filter: brightness(1.12); transform: translateY(-1px); }
 
@@ -540,7 +546,7 @@ html.dark .cfl-progress-label { color: #475569; }
         const addr    = esc(inc.direccion || '');
         const desc    = esc(inc.descripcion || '');
         const mapBtn  = (inc.latitud && inc.longitud)
-            ? `<button class="cfl-mapbtn" onclick="typeof verEnMapa==='function'&&verEnMapa(${inc.id});event.stopPropagation()">Ver en mapa</button>`
+            ? `<button class="cfl-mapbtn" data-id="${inc.id}">Ver en mapa</button>`
             : '';
 
         const card = document.createElement('div');
@@ -579,21 +585,40 @@ html.dark .cfl-progress-label { color: #475569; }
                 <svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="12.5"/></svg>
             </div>`;
 
-        card.addEventListener('click', function (e) {
+        // Clic en carta lateral → navega; clic en carta activa → toggle info
+        card.addEventListener('click', function () {
             const i = parseInt(this.dataset.idx);
-            if (i !== current) {
-                // Carta lateral: navegar a ella
-                goTo(i, true);
-            } else {
-                // Carta activa: toggle info (el botón también dispara esto)
-                this.classList.toggle('cfl-expanded');
-            }
+            if (i !== current) goTo(i, true);
+            else this.classList.toggle('cfl-expanded');
         });
-        // Evitar que el botón burbujee doble al card
+
+        // Toggle expandir — touchend ADICIONAL para iOS Safari (preserve-3d bug)
+        function toggleExpand(e) {
+            e.stopPropagation();
+            card.classList.toggle('cfl-expanded');
+        }
         const toggleBtn = card.querySelector('.cfl-toggle-btn');
         if (toggleBtn) {
-            toggleBtn.addEventListener('click', e => e.stopPropagation());
-            toggleBtn.addEventListener('click', () => card.classList.toggle('cfl-expanded'));
+            toggleBtn.addEventListener('click',    toggleExpand);
+            // iOS: touchend + preventDefault evita que después dispare el click (toggle doble)
+            toggleBtn.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                toggleExpand(e);
+            }, { passive: false });
+        }
+        // Boton Ver en mapa — mismo fix iOS
+        const mapBtnEl = card.querySelector('.cfl-mapbtn');
+        if (mapBtnEl) {
+            function openMap(e) {
+                e.stopPropagation();
+                const id = parseInt(mapBtnEl.dataset.id);
+                if (typeof verEnMapa === 'function') verEnMapa(id);
+            }
+            mapBtnEl.addEventListener('click',    openMap);
+            mapBtnEl.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                openMap(e);
+            }, { passive: false });
         }
         return card;
     }

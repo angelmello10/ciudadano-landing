@@ -374,13 +374,37 @@
         function startPickerMap() {
             if (typeof google === 'undefined' || !google.maps) return;
             initPickerMap();
-            setTimeout(() => {
+
+            const mapContainer = document.getElementById('report-map-container');
+
+            function doResize() {
                 google.maps.event.trigger(pickerMap, 'resize');
                 const lat = parseFloat(document.getElementById('lat').value);
                 const lng = parseFloat(document.getElementById('lng').value);
                 if (lat && lng) syncPickerMap(lat, lng);
                 else tryAutoGPS();
-            }, 80);
+            }
+
+            // ResizeObserver: se dispara exactamente cuando el contenedor
+            // tiene dimensiones reales — funciona en iOS, Android y desktop.
+            if (window.ResizeObserver && mapContainer) {
+                const ro = new ResizeObserver((entries) => {
+                    for (const entry of entries) {
+                        const h = entry.contentRect.height;
+                        if (h > 10) {
+                            ro.disconnect(); // solo necesitamos el primer resize útil
+                            doResize();
+                        }
+                    }
+                });
+                ro.observe(mapContainer);
+                // Fallback: si ya tiene altura (modal ya estaba abierto), disparar ya
+                if (mapContainer.offsetHeight > 10) doResize();
+            } else {
+                // Fallback para browsers muy viejos sin ResizeObserver
+                setTimeout(doResize, 150);
+                setTimeout(doResize, 600);
+            }
         }
 
         // Observe when the modal becomes visible
