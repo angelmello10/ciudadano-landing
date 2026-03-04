@@ -727,14 +727,7 @@ html.dark .cfl-progress-label { color: #475569; }
         if (e.key === 'ArrowRight') goTo(current+1, true);
     });
 
-    let touchX0 = 0;
     const stageWrap = stage.parentElement;
-    stageWrap.addEventListener('touchstart', e => { touchX0 = e.touches[0].clientX; }, { passive:true });
-    stageWrap.addEventListener('touchend',   e => {
-        const diff = touchX0 - e.changedTouches[0].clientX;
-        if (Math.abs(diff) > 60) goTo(current + (diff > 0 ? 1 : -1), true);
-    }, { passive:true });
-
     stageWrap.addEventListener('mouseenter', () => { paused = true; });
     stageWrap.addEventListener('mouseleave', () => { paused = false; if (!autoTimer) resetAutoplay(); });
 
