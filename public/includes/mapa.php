@@ -712,7 +712,9 @@
             if (!marker || !gMap) return;
             gMap.panTo(marker.getPosition());
             gMap.setZoom(16);
-            google.maps.event.trigger(marker, 'click');
+            // Bounce the marker briefly so the user sees which one it is
+            marker.setAnimation(google.maps.Animation.BOUNCE);
+            setTimeout(() => marker.setAnimation(null), 1400);
             updateControls();
         }
 
