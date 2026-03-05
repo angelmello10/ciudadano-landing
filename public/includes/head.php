@@ -1014,15 +1014,14 @@
         /* ── Marker pulse — center dot + 2 expanding rings ── */
         .map-pulse {
             position: absolute;
-            width: 14px; height: 14px;
+            width: 16px; height: 16px;
             border-radius: 50%;
             pointer-events: none;
             transform: translate(-50%, -50%);
-            /* Center glowing dot */
             background: var(--pulse-color, #f59e0b);
             box-shadow:
-                0 0 0 3px rgba(255,255,255,0.65),
-                0 0 10px 2px var(--pulse-color, #f59e0b);
+                0 0 0 3px rgba(255,255,255,0.7),
+                0 0 12px 3px var(--pulse-color, #f59e0b);
             animation: mp-dot-glow 2s ease-in-out infinite var(--pulse-delay, 0s);
         }
         /* Ring 1 — fast */
@@ -1049,19 +1048,19 @@
         @keyframes mp-dot-glow {
             0%, 100% {
                 box-shadow:
-                    0 0 0 3px rgba(255,255,255,0.65),
-                    0 0 8px 2px var(--pulse-color, #f59e0b);
+                    0 0 0 3px rgba(255,255,255,0.7),
+                    0 0 10px 3px var(--pulse-color, #f59e0b);
             }
             50% {
                 box-shadow:
-                    0 0 0 4px rgba(255,255,255,0.85),
-                    0 0 22px 6px var(--pulse-color, #f59e0b);
+                    0 0 0 5px rgba(255,255,255,0.85),
+                    0 0 26px 7px var(--pulse-color, #f59e0b);
             }
         }
         /* Expanding ring */
         @keyframes mp-ring {
-            0%   { transform: scale(0.7); opacity: 0.8; }
-            100% { transform: scale(3.2); opacity: 0; }
+            0%   { transform: scale(0.7); opacity: 0.85; }
+            100% { transform: scale(3.6); opacity: 0; }
         }
 
         /* ── Pin details card (click on marker) — light mode base ── */

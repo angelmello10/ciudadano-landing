@@ -86,6 +86,19 @@
                     <span class="map-live-dot"></span>
                     <span id="map-live-text">En vivo</span>
                 </span>
+                <div class="mps-filter" style="display:flex;align-items:center;gap:8px;margin-right:8px;">
+                    <label for="map-status-filter" style="font-size:0.85rem;color:#374151;margin-right:6px;">Estado</label>
+                    <select id="map-status-filter" class="map-status-filter" aria-label="Filtro de estado">
+                        <option value="all">Todos</option>
+                        <option value="pending">Pendientes</option>
+                        <option value="inprogress">En Proceso</option>
+                        <option value="resolved">Resueltos</option>
+                        <option value="rejected">Rechazados</option>
+                    </select>
+                    <button type="button" id="map-filter-prev" class="map-filter-btn" title="Anterior" style="display:none;">◀</button>
+                    <button type="button" id="map-filter-next" class="map-filter-btn" title="Siguiente" style="display:none;">▶</button>
+                </div>
+
                 <div class="mps-folio">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                     <input id="map-folio-input" type="text" placeholder="N&uacute;m. seguimiento&hellip;" maxlength="20" autocomplete="off" spellcheck="false">
@@ -463,35 +476,43 @@
         const center = { lat: 19.4014, lng: -99.0150 }; // Nezahualcóyotl, Edo. Méx.
 
         /* ── Map styles: light & dark ── */
-        const mapStyleLight = [
-            { elementType: 'geometry', stylers: [{ color: '#f5f5f5' }] },
-            { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
-            { elementType: 'labels.text.fill', stylers: [{ color: '#616161' }] },
-            { elementType: 'labels.text.stroke', stylers: [{ color: '#f5f5f5' }] },
-            { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
-            { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#e9e9e9' }] }
-        ];
+        /* Light: estilo por defecto de Google Maps (todos los iconos, restaurantes, etc.) */
+        const mapStyleLight = [];
+
+        /* Dark: réplica fiel del modo oscuro de Google Maps — conserva iconos de POI */
         const mapStyleDark = [
-            { elementType: 'geometry', stylers: [{ color: '#1a1a2e' }] },
-            { elementType: 'labels.text.fill', stylers: [{ color: '#8a8a9a' }] },
-            { elementType: 'labels.text.stroke', stylers: [{ color: '#1a1a2e' }] },
-            { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
-            { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#2a2a3e' }] },
-            { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#1a1a2e' }] },
-            { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#3a2a3e' }] },
-            { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0e0e1a' }] },
-            { featureType: 'poi', elementType: 'geometry', stylers: [{ color: '#1e1e32' }] },
-            { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#1a2e1a' }] },
-            { featureType: 'transit', elementType: 'geometry', stylers: [{ color: '#1e1e30' }] },
-            { featureType: 'administrative', elementType: 'geometry.stroke', stylers: [{ color: '#2a2a40' }] }
+            { elementType: 'geometry',            stylers: [{ color: '#242f3e' }] },
+            { elementType: 'labels.text.fill',    stylers: [{ color: '#746855' }] },
+            { elementType: 'labels.text.stroke',  stylers: [{ color: '#242f3e' }] },
+            { featureType: 'administrative.locality', elementType: 'labels.text.fill', stylers: [{ color: '#d59563' }] },
+            { featureType: 'poi',                 elementType: 'labels.text.fill', stylers: [{ color: '#d59563' }] },
+            { featureType: 'poi.park',            elementType: 'geometry',         stylers: [{ color: '#263c3f' }] },
+            { featureType: 'poi.park',            elementType: 'labels.text.fill', stylers: [{ color: '#6b9a76' }] },
+            { featureType: 'road',                elementType: 'geometry',         stylers: [{ color: '#38414e' }] },
+            { featureType: 'road',                elementType: 'geometry.stroke',  stylers: [{ color: '#212a37' }] },
+            { featureType: 'road',                elementType: 'labels.text.fill', stylers: [{ color: '#9ca5b3' }] },
+            { featureType: 'road.highway',        elementType: 'geometry',         stylers: [{ color: '#746855' }] },
+            { featureType: 'road.highway',        elementType: 'geometry.stroke',  stylers: [{ color: '#1f2835' }] },
+            { featureType: 'road.highway',        elementType: 'labels.text.fill', stylers: [{ color: '#f3d19c' }] },
+            { featureType: 'transit',             elementType: 'geometry',         stylers: [{ color: '#2f3948' }] },
+            { featureType: 'transit.station',     elementType: 'labels.text.fill', stylers: [{ color: '#d59563' }] },
+            { featureType: 'water',               elementType: 'geometry',         stylers: [{ color: '#17263c' }] },
+            { featureType: 'water',               elementType: 'labels.text.fill', stylers: [{ color: '#515c6d' }] },
+            { featureType: 'water',               elementType: 'labels.text.stroke', stylers: [{ color: '#17263c' }] }
         ];
 
         const isDark = document.documentElement.classList.contains('dark');
-        gMap = new google.maps.Map(document.getElementById('map'), {
+        // If you have a Google Maps Map ID (vector basemap from Google Cloud),
+        // set it to `window.GOOGLE_MAP_ID = 'your-map-id'` before this script runs.
+        // When present, the Map ID will provide Google's official styles including dark mode.
+        const mapOptions = {
             zoom: 13,
             center: center,
             styles: isDark ? mapStyleDark : mapStyleLight
-        });
+        };
+        const mapId = (typeof window.GOOGLE_MAP_ID !== 'undefined' && window.GOOGLE_MAP_ID) ? window.GOOGLE_MAP_ID : null;
+        if (mapId) mapOptions.mapId = mapId;
+        gMap = new google.maps.Map(document.getElementById('map'), mapOptions);
 
         /* ── Sync map style whenever html.dark class changes ── */
         new MutationObserver(function() {
@@ -619,4 +640,97 @@
         // Notifica a otros componentes que el API de Maps ya está lista
         document.dispatchEvent(new Event('googleMapsReady'));
     }
+</script>
+<style>
+    /* Carousel controls styling */
+    .map-carousel-controls { position:absolute; left:50%; bottom:24px; transform:translateX(-50%); display:flex; gap:10px; align-items:center; z-index:99999; pointer-events:none; }
+    .map-carousel-controls[aria-hidden="false"] { pointer-events:auto; }
+    .map-carousel-controls .mc-btn { width:44px; height:44px; border-radius:999px; border:0; background:#ffffff; color:#0f172a; font-size:22px; line-height:1; box-shadow:0 8px 20px rgba(2,6,23,0.12); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; }
+    .map-carousel-controls .mc-counter { background:rgba(0,0,0,0.6); color:#fff; padding:6px 12px; border-radius:999px; font-weight:600; font-size:0.95rem; }
+    @media (max-width:720px) { .map-carousel-controls { bottom:12px; gap:8px; } .map-carousel-controls .mc-btn { width:40px; height:40px; } }
+
+    /* Filter select and small toolbar buttons styling */
+    .map-status-filter { min-width:150px; padding:6px 8px; border-radius:8px; border:1px solid rgba(15,23,42,0.06); background:#fff; font-size:0.95rem; color:#0f172a; }
+    .map-filter-btn { padding:6px 8px; border-radius:6px; border:0; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,0.06); cursor:pointer; }
+
+    /* Dark mode adjustments for select and buttons */
+    html.dark .map-status-filter { background:#0b1220; color:#e6eef8; border:1px solid rgba(255,255,255,0.06); }
+    html.dark .map-filter-btn, html.dark .map-carousel-controls .mc-btn { background:#0f1724; color:#e6eef8; box-shadow:0 6px 18px rgba(2,6,23,0.4); border:1px solid rgba(255,255,255,0.04); }
+    html.dark .map-carousel-controls .mc-counter { background:rgba(255,255,255,0.08); color:#e6eef8; }
+</style>
+
+<script>
+    (function(){
+        // Filtered navigation for map incidents
+        let filteredIds = [];
+        let index = -1;
+        const sel = document.getElementById('map-status-filter');
+        const btnPrev = document.getElementById('map-filter-prev');
+        const btnNext = document.getElementById('map-filter-next');
+        const carPrev = document.getElementById('map-carousel-prev');
+        const carNext = document.getElementById('map-carousel-next');
+        const carCtr  = document.getElementById('map-carousel-counter');
+        const carWrap = document.getElementById('map-carousel-controls');
+
+        function normalizeTypeFromMarker(id) {
+            if (!gMarkerStatus || !gMarkerStatus[id]) return 'pending';
+            return (function(s){
+                if (!s) return 'pending';
+                const ss = s.toLowerCase();
+                if (ss.indexOf('resuelto') !== -1) return 'resolved';
+                if (ss.indexOf('en proceso') !== -1 || ss.indexOf('activo') !== -1) return 'inprogress';
+                if (ss.indexOf('rechaz') !== -1) return 'rejected';
+                return 'pending';
+            })(gMarkerStatus[id]);
+        }
+
+        function updateFilteredList() {
+            if (!sel) return;
+            const want = sel.value; // all | pending | inprogress | resolved | rejected
+            filteredIds = Object.keys(gMarkers || {}).filter(id => {
+                if (!want || want === 'all') return true;
+                return normalizeTypeFromMarker(id) === want;
+            });
+            index = filteredIds.length ? 0 : -1;
+            updateControls();
+        }
+
+        function updateControls(){
+            const show = filteredIds.length > 0 && sel && sel.value !== 'all';
+            if (btnPrev) btnPrev.style.display = show ? 'inline-block' : 'none';
+            if (btnNext) btnNext.style.display = show ? 'inline-block' : 'none';
+            if (carWrap) { carWrap.style.display = show ? 'flex' : 'none'; carWrap.setAttribute('aria-hidden', show ? 'false' : 'true'); }
+            if (carCtr) carCtr.textContent = `${index >= 0 ? (index + 1) : 0}/${filteredIds.length || 0}`;
+        }
+
+        function focusAt(i) {
+            if (!filteredIds.length) return;
+            if (i < 0) i = 0; if (i >= filteredIds.length) i = filteredIds.length - 1;
+            index = i;
+            const id = filteredIds[index];
+            const marker = gMarkers[id];
+            if (!marker || !gMap) return;
+            gMap.panTo(marker.getPosition());
+            gMap.setZoom(16);
+            google.maps.event.trigger(marker, 'click');
+            updateControls();
+        }
+
+        function next() { if (!filteredIds.length) return; focusAt((index + 1) % filteredIds.length); }
+        function prev() { if (!filteredIds.length) return; focusAt((index - 1 + filteredIds.length) % filteredIds.length); }
+
+        if (sel) sel.addEventListener('change', () => { updateFilteredList(); if (index >= 0) focusAt(index); });
+        if (btnNext) btnNext.addEventListener('click', next);
+        if (btnPrev) btnPrev.addEventListener('click', prev);
+        if (carNext) carNext.addEventListener('click', next);
+        if (carPrev) carPrev.addEventListener('click', prev);
+
+        // Periodically refresh filtered list to stay in sync with markers
+        setInterval(() => { try { updateFilteredList(); } catch(e){} }, 4000);
+
+        // Expose for debugging
+        window.mapFilterUpdate = updateFilteredList;
+        window.mapFilterNext = next;
+        window.mapFilterPrev = prev;
+    })();
 </script>

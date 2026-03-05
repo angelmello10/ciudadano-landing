@@ -51,6 +51,7 @@
                         <option value="camaras">Cámara de seguridad</option>
                         <option value="semaforos">Semáforo</option>
                         <option value="coladeras">Coladera</option>
+                        <option value="otro">Otro</option>
                     </select>
                 </div>
 
@@ -101,7 +102,7 @@
                     <small id="photo-name" class="field-hint"></small>
                     <div id="photo-preview-wrap" style="display:none;margin-top:12px;position:relative;">
                         <img id="photo-preview" src="" alt="Vista previa" style="width:100%;height:200px;border-radius:12px;object-fit:cover;border:1px solid rgba(0,0,0,0.08);box-shadow:0 4px 18px rgba(0,0,0,0.06);cursor:zoom-in;">
-                        <button id="photo-preview-btn" style="position:absolute;right:12px;top:12px;background:rgba(0,0,0,0.6);color:#fff;border:0;padding:8px 10px;border-radius:8px;cursor:pointer;display:none;">Ver foto</button>
+                        <button id="photo-preview-btn" type="button" style="position:absolute;right:12px;top:12px;background:rgba(0,0,0,0.6);color:#fff;border:0;padding:8px 10px;border-radius:8px;cursor:pointer;display:none;">Ver foto</button>
                     </div>
                 </div>
 
@@ -461,11 +462,16 @@
             try {
                 const nombre    = document.getElementById('reporter-name').value.trim();
                 const email     = document.getElementById('reporter-email').value.trim();
-                const tipo      = document.getElementById('failure-type').value;
+                let tipo        = document.getElementById('failure-type').value;
                 const direccion = document.getElementById('location').value.trim();
                 let lat         = document.getElementById('lat').value;
                 let lng         = document.getElementById('lng').value;
                 const descripcion = document.getElementById('description').value.trim();
+                // If user selected "Otro", use the custom text field value
+                if (tipo === 'otro') {
+                    const other = document.getElementById('failure-type-other') && document.getElementById('failure-type-other').value.trim();
+                    if (other) tipo = other;
+                }
                 const photoFile   = document.getElementById('photo').files[0];
 
                 if ((!lat || !lng) && direccion) {
