@@ -143,7 +143,10 @@
 
                 <!-- Photo -->
                 <div id="pd-photo-row" class="pd-photo-row">
-                    <img id="pd-photo" src="" alt="Foto de la incidencia" class="pd-photo-img">
+                    <div class="pd-photo-wrap" style="position:relative;">
+                        <img id="pd-photo" src="" alt="Foto de la incidencia" class="pd-photo-img" style="display:block;">
+                        <button id="pd-photo-btn" class="pd-photo-btn" style="position:absolute;right:10px;top:10px;background:rgba(0,0,0,0.6);color:#fff;border:0;padding:8px 10px;border-radius:8px;cursor:pointer;display:none;">Ver foto</button>
+                    </div>
                 </div>
 
                 </div><!-- /pd-body -->
@@ -287,11 +290,23 @@
             // Photo
             const photoRow = document.getElementById('pd-photo-row');
             const photoImg = document.getElementById('pd-photo');
+            const photoBtn = document.getElementById('pd-photo-btn');
             if (inc.foto) {
-                photoImg.src = 'public/uploads/' + inc.foto;
+                const src = 'public/uploads/' + inc.foto;
+                photoImg.src = src;
                 photoRow.style.display = 'block';
+                if (photoBtn) {
+                    photoBtn.style.display = 'inline-block';
+                    photoBtn.onclick = () => { if (typeof window.openImageLightbox === 'function') window.openImageLightbox(src, 'Foto del reporte #' + inc.id); };
+                }
+                photoImg.style.cursor = 'zoom-in';
+                photoImg.onclick = () => { if (typeof window.openImageLightbox === 'function') window.openImageLightbox(src, 'Foto del reporte #' + inc.id); };
             } else {
                 photoRow.style.display = 'none';
+                if (photoBtn) photoBtn.style.display = 'none';
+                photoImg.src = '';
+                photoImg.onclick = null;
+                photoImg.style.cursor = '';
             }
 
             // Reporter + date

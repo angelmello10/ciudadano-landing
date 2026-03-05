@@ -99,6 +99,10 @@
                         <input id="photo" type="file" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;">
                     </label>
                     <small id="photo-name" class="field-hint"></small>
+                    <div id="photo-preview-wrap" style="display:none;margin-top:12px;position:relative;">
+                        <img id="photo-preview" src="" alt="Vista previa" style="width:100%;height:200px;border-radius:12px;object-fit:cover;border:1px solid rgba(0,0,0,0.08);box-shadow:0 4px 18px rgba(0,0,0,0.06);cursor:zoom-in;">
+                        <button id="photo-preview-btn" style="position:absolute;right:12px;top:12px;background:rgba(0,0,0,0.6);color:#fff;border:0;padding:8px 10px;border-radius:8px;cursor:pointer;display:none;">Ver foto</button>
+                    </div>
                 </div>
 
                 <div class="modal-form-group">
@@ -128,7 +132,10 @@
                 <p class="modal-success-text">Tu folio de seguimiento:</p>
                 <div class="modal-folio-badge"><span id="report-id">#0000</span></div>
                 <p class="modal-success-hint">Guarda este número para consultar el avance de tu incidencia en cualquier momento.</p>
-                <button class="modal-success-btn modal-close-trigger" type="button">Entendido</button>
+                <div style="display:flex;gap:8px;justify-content:center;margin-top:12px;">
+                    <button id="report-view-link" type="button" class="btn-submit-modal" style="display:none;">Consultar folio</button>
+                    <button class="modal-success-btn modal-close-trigger" type="button">Entendido</button>
+                </div>
             </div>
         </div>
     </div>
@@ -174,13 +181,30 @@
             });
         }
 
-        // Photo name preview
+        // Photo name preview + inline preview + lightbox trigger (scoped)
         const photoInput = document.getElementById('photo');
         const photoName  = document.getElementById('photo-name');
+        const photoPreviewWrap = document.getElementById('photo-preview-wrap');
+        const photoPreview = document.getElementById('photo-preview');
         if (photoInput && photoName) {
-            photoInput.addEventListener('change', () => {
+            photoInput.addEventListener('change', async () => {
                 const f = photoInput.files && photoInput.files[0];
                 photoName.textContent = f ? '\u2714 ' + f.name : '';
+                if (f) {
+                    try {
+                        const data = await readFileAsDataURL(f);
+                        photoPreview.src = data || '';
+                        photoPreviewWrap.style.display = data ? 'block' : 'none';
+                        const previewBtn = document.getElementById('photo-preview-btn');
+                        if (previewBtn) { previewBtn.style.display = data ? 'inline-block' : 'none'; previewBtn.onclick = () => { if (typeof openImageLightbox === 'function') openImageLightbox(photoPreview.src, f.name || 'Foto'); } }
+                        photoPreview.onclick = () => { if (typeof openImageLightbox === 'function') openImageLightbox(photoPreview.src, f.name || 'Foto'); };
+                    } catch(e) {
+                        photoPreviewWrap.style.display = 'none';
+                    }
+                } else {
+                    photoPreviewWrap.style.display = 'none';
+                    photoPreview.src = '';
+                }
             });
         }
 
@@ -482,6 +506,26 @@
                 if (!data.ok) { alert(data.error || 'No se pudo enviar el reporte.'); return; }
 
                 document.getElementById('report-id').textContent = data.id ? '' + data.id : '#0000';
+                // show quick consult button and wire it to open modal-consult prefilled
+                try {
+                    const viewBtn = document.getElementById('report-view-link');
+                    if (viewBtn && data.id) {
+                        viewBtn.style.display = 'inline-block';
+                        viewBtn.onclick = () => {
+                            try {
+                                const consultModal = document.getElementById('modal-consult');
+                                const input = document.getElementById('report-number');
+                                const form = document.getElementById('form-consult');
+                                if (consultModal) { consultModal.classList.add('is-active'); document.body.classList.add('modal-is-active'); }
+                                if (input) { input.value = data.id; input.focus(); }
+                                if (form) {
+                                    // trigger the consult form submit programmatically
+                                    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+                                }
+                            } catch (e) { console.warn('No se pudo abrir el modal de consulta', e); }
+                        };
+                    }
+                } catch(e) { console.warn(e); }
                 formReport.style.display = 'none';
                 document.getElementById('report-success').style.display = 'block';
 
@@ -497,4 +541,35 @@
             }
         });
     });
+</script>
+
+<!-- Lightbox (scoped to report modal) -->
+<style>
+    #lb-report { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); z-index: 100000; }
+    #lb-report.active { display: flex; }
+    #lb-report .inner { max-width: 95vw; max-height: 95vh; position: relative; }
+    #lb-report img { display:block; max-width:95vw; max-height:95vh; object-fit:contain; border-radius:10px; box-shadow:0 12px 36px rgba(0,0,0,0.6);} 
+    #lb-report .close { position:absolute; right:-8px; top:-8px; width:36px; height:36px; border-radius:999px; background:rgba(0,0,0,0.5); color:#fff; border:0; cursor:pointer; }
+    #lb-report .caption { margin-top:8px; text-align:center; color:#e6eef8; }
+</style>
+
+<div id="lb-report" aria-hidden="true">
+    <div class="inner">
+        <button class="close" aria-label="Cerrar">×</button>
+        <img id="lb-report-img" src="" alt="">
+        <div class="caption" id="lb-report-caption"></div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const lb = document.getElementById('lb-report');
+        const img = document.getElementById('lb-report-img');
+        const cap = document.getElementById('lb-report-caption');
+        const btn = lb.querySelector('.close');
+        window.openReportLightbox = function(src, caption){ if(!src) return; img.src = src; cap.textContent = caption || ''; lb.classList.add('active'); lb.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; };
+        window.closeReportLightbox = function(){ lb.classList.remove('active'); lb.setAttribute('aria-hidden','true'); img.src=''; cap.textContent=''; document.body.style.overflow=''; };
+        lb.addEventListener('click',(e)=>{ if (e.target === lb || e.target === btn) closeReportLightbox(); });
+        document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeReportLightbox(); });
+    })();
 </script>

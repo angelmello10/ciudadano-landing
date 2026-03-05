@@ -144,22 +144,22 @@
             return {
                 x:  Math.random() * W,
                 y:  Math.random() * H,
-                r:  Math.random() * 1.5 + 0.4,
-                vx: (Math.random() - 0.5) * 0.35,
-                vy: (Math.random() - 0.5) * 0.35,
-                a:  Math.random() * 0.4 + 0.08
+                r:  Math.random() * 1.8 + 0.6,
+                vx: (Math.random() - 0.5) * 0.45,
+                vy: (Math.random() - 0.5) * 0.45,
+                a:  Math.random() * 0.6 + 0.18
             };
         }
 
-        function init() { resize(); particles = Array.from({ length: 70 }, mkParticle); }
+        function init() { resize(); particles = Array.from({ length: 140 }, mkParticle); }
 
         function draw() {
             ctx.clearRect(0, 0, W, H);
             const dark      = document.documentElement.classList.contains('dark');
-            const dotRGB   = dark ? '255,255,255' : '157,27,50';
-            const lineRGB  = dark ? '255,255,255' : '157,27,50';
-            const lineMul  = dark ? 0.055 : 0.18;
-            const alphaFac = dark ? 1 : 2.8;
+            const dotRGB   = '157,27,50';
+            const lineRGB  = '157,27,50';
+            const lineMul  = dark ? 0.12 : 0.36;
+            const alphaFac = dark ? 1.4 : 4.0;
             for (let i = 0; i < particles.length; i++) {
                 const p = particles[i];
                 p.x += p.vx; p.y += p.vy;
@@ -173,11 +173,11 @@
                     const q = particles[j];
                     const dx = p.x - q.x, dy = p.y - q.y;
                     const d  = Math.sqrt(dx * dx + dy * dy);
-                    if (d < 110) {
+                    if (d < 140) {
                         ctx.beginPath();
                         ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
-                        ctx.strokeStyle = 'rgba(' + lineRGB + ',' + (lineMul * (1 - d / 110)) + ')';
-                        ctx.lineWidth = 0.6; ctx.stroke();
+                        ctx.strokeStyle = 'rgba(' + lineRGB + ',' + (lineMul * (1 - d / 140)) + ')';
+                        ctx.lineWidth = 0.7; ctx.stroke();
                     }
                 }
             }

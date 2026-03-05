@@ -92,6 +92,7 @@
         background: linear-gradient(170deg, #07090f 0%, #0d0f18 60%, #100a10 100%);
         border-top: 1px solid rgba(157,27,50,0.22);
         position: relative;
+        margin-top: auto;
     }
     .ft-accent-line {
         height: 2px;

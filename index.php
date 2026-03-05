@@ -49,3 +49,38 @@
 
 </body>
 </html>
+
+<!-- Global lightbox placed at end of body to avoid stacking-context issues -->
+<style>
+    #global-lightbox{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);z-index:2147483647}
+    #global-lightbox.active{display:flex}
+    #global-lightbox .inner{max-width:95vw;max-height:95vh;position:relative}
+    #global-lightbox img{display:block;max-width:95vw;max-height:95vh;object-fit:contain;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.7)}
+    #global-lightbox .close{position:absolute;right:-10px;top:-10px;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:0;cursor:pointer}
+    #global-lightbox .caption{margin-top:8px;text-align:center;color:#e6eef8}
+</style>
+<div id="global-lightbox" aria-hidden="true">
+    <div class="inner">
+        <button class="close" aria-label="Cerrar">×</button>
+        <img id="global-lightbox-img" src="" alt="">
+        <div class="caption" id="global-lightbox-caption"></div>
+    </div>
+</div>
+<script>
+    (function(){
+        const lb = document.getElementById('global-lightbox');
+        const img = document.getElementById('global-lightbox-img');
+        const cap = document.getElementById('global-lightbox-caption');
+        const btn = lb.querySelector('.close');
+        function openGlobal(src, caption){ if(!src) return; img.src=src; cap.textContent=caption||''; lb.classList.add('active'); lb.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+        function closeGlobal(){ lb.classList.remove('active'); lb.setAttribute('aria-hidden','true'); img.src=''; cap.textContent=''; document.body.style.overflow=''; }
+        // expose helper names used by modals
+        window.openConsultLightbox = openGlobal;
+        window.openReportLightbox = openGlobal;
+        window.openImageLightbox = openGlobal;
+        window.closeImageLightbox = closeGlobal;
+        btn.addEventListener('click', closeGlobal);
+        lb.addEventListener('click', (e)=>{ if(e.target===lb) closeGlobal(); });
+        document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeGlobal(); });
+    })();
+</script>

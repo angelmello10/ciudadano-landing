@@ -80,9 +80,10 @@
                 </div>
 
                 <!-- Photo -->
-                <div id="status-photo-wrap" style="display:none;margin-top:12px;">
+                <div id="status-photo-wrap" style="display:none;margin-top:12px;position:relative;">
                     <img id="status-photo" src="" alt="Foto del reporte"
-                        style="width:100%;border-radius:12px;object-fit:cover;max-height:200px;border:1px solid rgba(0,0,0,0.08);box-shadow:0 4px 18px rgba(0,0,0,0.1);">
+                        style="width:100%;height:200px;border-radius:12px;object-fit:cover;border:1px solid rgba(0,0,0,0.08);box-shadow:0 4px 18px rgba(0,0,0,0.1);">
+                    <button id="status-photo-btn" style="position:absolute;right:12px;top:12px;background:rgba(0,0,0,0.6);color:#fff;border:0;padding:8px 10px;border-radius:8px;cursor:pointer;display:none;">Ver foto</button>
                 </div>
 
                 <!-- Actions -->
@@ -209,12 +210,20 @@
                 // Photo
                 const photoWrap = document.getElementById('status-photo-wrap');
                 const photoEl   = document.getElementById('status-photo');
+                const photoBtn  = document.getElementById('status-photo-btn');
                 if (inc.foto) {
-                    photoEl.src = '/public/uploads/' + inc.foto;
+                    const src = '/public/uploads/' + inc.foto;
+                    photoEl.src = src;
                     photoWrap.style.display = 'block';
+                    if (photoBtn) { photoBtn.style.display = 'inline-block'; photoBtn.onclick = () => { if (typeof window.openImageLightbox === 'function') window.openImageLightbox(src, 'Foto del reporte #' + inc.id); } }
+                    photoEl.style.cursor = 'zoom-in';
+                    photoEl.onclick = () => { if (typeof window.openImageLightbox === 'function') window.openImageLightbox(src, 'Foto del reporte #' + inc.id); };
                 } else {
                     photoWrap.style.display = 'none';
                     photoEl.src = '';
+                    if (photoBtn) photoBtn.style.display = 'none';
+                    photoEl.onclick = null;
+                    photoEl.style.cursor = '';
                 }
 
                 // Map button
@@ -243,6 +252,14 @@
 
                 formConsult.style.display = 'none';
                 document.getElementById('status-result').style.display = 'block';
+
+                // click handler: abrir lightbox definido en este archivo
+                try {
+                    const pEl = document.getElementById('status-photo');
+                    if (pEl && pEl.src) {
+                        pEl.onclick = () => { if (typeof openConsultLightbox === 'function') openConsultLightbox(pEl.src, 'Foto del reporte #' + inc.id); };
+                    }
+                } catch(e) {}
             } catch (err) {
                 alert('Error al conectar con el servidor.');
             } finally {
@@ -251,4 +268,35 @@
             }
         });
     });
+</script>
+
+<!-- Lightbox (scoped to consult modal) -->
+<style>
+    #lb-consult { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); z-index: 100000; }
+    #lb-consult.active { display: flex; }
+    #lb-consult .inner { max-width: 95vw; max-height: 95vh; position: relative; }
+    #lb-consult img { display:block; max-width:95vw; max-height:95vh; object-fit:contain; border-radius:10px; box-shadow:0 12px 36px rgba(0,0,0,0.6);} 
+    #lb-consult .close { position:absolute; right:-8px; top:-8px; width:36px; height:36px; border-radius:999px; background:rgba(0,0,0,0.5); color:#fff; border:0; cursor:pointer; }
+    #lb-consult .caption { margin-top:8px; text-align:center; color:#e6eef8; }
+</style>
+
+<div id="lb-consult" aria-hidden="true">
+    <div class="inner">
+        <button class="close" aria-label="Cerrar">×</button>
+        <img id="lb-consult-img" src="" alt="">
+        <div class="caption" id="lb-consult-caption"></div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const lb = document.getElementById('lb-consult');
+        const img = document.getElementById('lb-consult-img');
+        const cap = document.getElementById('lb-consult-caption');
+        const btn = lb.querySelector('.close');
+        window.openConsultLightbox = function(src, caption){ if(!src) return; img.src = src; cap.textContent = caption || ''; lb.classList.add('active'); lb.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; };
+        window.closeConsultLightbox = function(){ lb.classList.remove('active'); lb.setAttribute('aria-hidden','true'); img.src=''; cap.textContent=''; document.body.style.overflow=''; };
+        lb.addEventListener('click',(e)=>{ if (e.target === lb || e.target === btn) closeConsultLightbox(); });
+        document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeConsultLightbox(); });
+    })();
 </script>
