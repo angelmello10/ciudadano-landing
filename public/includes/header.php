@@ -7,10 +7,12 @@
 
             <!-- Brand -->
             <div class="brand">
-                <a href="/index.php" class="brand-link" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
-                    <img src="/public/images/logo.png" alt="Logo" style="height:70px;width:auto;display:block;">
-                    <span class="brand-sigiu-name">
-                        <span class="brand-word-reporta">Reporta</span><span class="brand-word-ciudad"> Tu Ciudad</span>
+                <a href="/index.php" class="brand-link" style="display:flex;align-items:center;gap:12px;text-decoration:none;">
+                    <img src="/public/images/logo.png" alt="Logo SIGIU" class="brand-logo-img">
+                    <span class="brand-divider"></span>
+                    <span class="brand-text-wrap">
+                        <span class="brand-sigiu">SIGIU</span>
+                        <span class="brand-tagline">Reporta tu ciudad</span>
                     </span>
                 </a>
             </div>
@@ -57,30 +59,64 @@
 </header>
 
 <style>
-    .brand-sigiu-name {
+    /* ── Logo img ── */
+    .brand-logo-img {
+        height: 52px;
+        width: auto;
+        display: block;
+        transition: transform .3s ease;
+    }
+    .brand-link:hover .brand-logo-img { transform: scale(1.06); }
+
+    /* ── Separador vertical ── */
+    .brand-divider {
+        display: block;
+        width: 1.5px;
+        height: 36px;
+        background: linear-gradient(to bottom, transparent, rgba(157,27,50,.5) 30%, rgba(157,27,50,.5) 70%, transparent);
+        flex-shrink: 0;
+    }
+
+    /* ── Texto ── */
+    .brand-text-wrap {
         display: flex;
         flex-direction: column;
-        line-height: 1.1;
-        gap: 1px;
+        line-height: 1;
+        gap: 4px;
     }
-    .brand-word-reporta {
-        font-size: 1.25rem;
+
+    /* SIGIU — nombre principal */
+    .brand-sigiu {
+        font-size: 1.45rem;
         font-weight: 900;
-        letter-spacing: 2px;
+        letter-spacing: .14em;
         text-transform: uppercase;
-        color: var(--primary, #9D1B32);
+        background: linear-gradient(120deg, var(--primary, #9D1B32) 0%, #e11d48 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        transition: filter .2s;
+    }
+    .brand-link:hover .brand-sigiu { filter: brightness(1.15); }
+
+    /* Reporta tu ciudad — subtítulo */
+    .brand-tagline {
+        font-size: 0.62rem;
+        font-weight: 600;
+        letter-spacing: .22em;
+        text-transform: uppercase;
+        color: #94a3b8;
         transition: color .2s;
     }
-    .brand-word-ciudad {
-        font-size: 0.72rem;
-        font-weight: 500;
-        letter-spacing: 3.5px;
-        text-transform: uppercase;
-        color: #888;
-        transition: color .2s;
+    html.dark .brand-tagline { color: #64748b; }
+
+    /* Responsive: en móvil esconde el tagline para que no apriete */
+    @media (max-width: 480px) {
+        .brand-logo-img { height: 42px; }
+        .brand-sigiu    { font-size: 1.2rem; }
+        .brand-tagline  { display: none; }
+        .brand-divider  { height: 28px; }
     }
-    html.dark .brand-word-reporta { color: var(--primary, #9D1B32); }
-    html.dark .brand-word-ciudad  { color: #aaa; }
 </style>
 
 <script>

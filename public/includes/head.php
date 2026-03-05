@@ -286,9 +286,9 @@
             content: '';
             position: absolute; inset: 0;
             background:
-                radial-gradient(ellipse 70% 60% at 10% 40%, rgba(157,27,50,0.07) 0%, transparent 58%),
-                radial-gradient(ellipse 50% 70% at 85% 10%, rgba(157,27,50,0.05) 0%, transparent 55%),
-                radial-gradient(ellipse 35% 40% at 50% 90%, rgba(157,27,50,0.06) 0%, transparent 60%);
+                radial-gradient(ellipse 70% 60% at 10% 40%, rgba(157,27,50,0.14) 0%, transparent 58%),
+                radial-gradient(ellipse 50% 70% at 85% 10%, rgba(157,27,50,0.10) 0%, transparent 55%),
+                radial-gradient(ellipse 35% 40% at 50% 90%, rgba(157,27,50,0.12) 0%, transparent 60%);
             animation: hero-pulse 10s ease-in-out infinite alternate;
             pointer-events: none; z-index: 0;
         }
@@ -361,10 +361,10 @@
         }
         html.dark .hero.has-bg-color::after {
             background:
-                radial-gradient(ellipse 70% 60% at 10% 40%, rgba(157,27,50,0.22) 0%, transparent 58%),
-                radial-gradient(ellipse 50% 70% at 85% 10%, rgba(120,20,40,0.14) 0%, transparent 55%),
-                radial-gradient(ellipse 35% 40% at 50% 90%, rgba(80,10,25,0.18) 0%, transparent 60%),
-                radial-gradient(ellipse 20% 20% at 65% 55%, rgba(157,27,50,0.10) 0%, transparent 60%);
+                radial-gradient(ellipse 70% 60% at 10% 40%, rgba(157,27,50,0.32) 0%, transparent 58%),
+                radial-gradient(ellipse 50% 70% at 85% 10%, rgba(120,20,40,0.20) 0%, transparent 55%),
+                radial-gradient(ellipse 35% 40% at 50% 90%, rgba(80,10,25,0.26) 0%, transparent 60%),
+                radial-gradient(ellipse 20% 20% at 65% 55%, rgba(157,27,50,0.16) 0%, transparent 60%);
         }
         html.dark .hero-grid-overlay {
             background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
@@ -496,8 +496,8 @@
         .features-tiles {
             background: var(--white);
             background-image:
-                radial-gradient(circle at 0% 100%, rgba(157,27,50,0.05) 0%, transparent 40%),
-                radial-gradient(circle at 100% 0%, rgba(157,27,50,0.04) 0%, transparent 40%);
+                radial-gradient(circle at 0% 100%, rgba(157,27,50,0.10) 0%, transparent 40%),
+                radial-gradient(circle at 100% 0%, rgba(157,27,50,0.08) 0%, transparent 40%);
         }
         .features-tiles .section-header { margin-bottom: 3rem; }
         .features-tiles .tiles-item-inner {
@@ -514,7 +514,7 @@
         }
         .features-tiles .tiles-item-inner::after {
             content: ''; position: absolute; inset: 0; border-radius: inherit;
-            background: radial-gradient(circle at 50% 0%, rgba(157,27,50,0.05) 0%, transparent 70%);
+            background: radial-gradient(circle at 50% 0%, rgba(157,27,50,0.11) 0%, transparent 70%);
             opacity: 0; transition: opacity .3s;
         }
         .features-tiles .tiles-item-inner:hover { transform: translateY(-7px); box-shadow: var(--shadow-lg); border-color: rgba(157,27,50,0.2); }
@@ -551,8 +551,8 @@
             content: '';
             position: absolute; inset: 0; pointer-events: none; z-index: 0;
             background:
-                radial-gradient(ellipse 700px 350px at 20% 50%, rgba(157,27,50,0.06) 0%, transparent 65%),
-                radial-gradient(ellipse 500px 250px at 82% 25%, rgba(157,27,50,0.04) 0%, transparent 60%);
+                radial-gradient(ellipse 700px 350px at 20% 50%, rgba(157,27,50,0.13) 0%, transparent 65%),
+                radial-gradient(ellipse 500px 250px at 82% 25%, rgba(157,27,50,0.09) 0%, transparent 60%);
         }
         .ftrs-section > .container { position: relative; z-index: 1; }
 
@@ -722,8 +722,8 @@
         }
         html.dark .ftrs-section::before {
             background:
-                radial-gradient(ellipse 700px 350px at 20% 50%, rgba(157,27,50,0.18) 0%, transparent 65%),
-                radial-gradient(ellipse 500px 250px at 82% 25%, rgba(157,27,50,0.09) 0%, transparent 60%);
+                radial-gradient(ellipse 700px 350px at 20% 50%, rgba(157,27,50,0.28) 0%, transparent 65%),
+                radial-gradient(ellipse 500px 250px at 82% 25%, rgba(157,27,50,0.15) 0%, transparent 60%);
         }
         html.dark .ftrs-eyebrow { color: rgba(255,255,255,0.5); }
         html.dark .ftrs-title   { color: #fff; }
@@ -780,8 +780,8 @@
             content: '';
             position: absolute; inset: 0; pointer-events: none;
             background:
-                radial-gradient(ellipse 800px 400px at 15% 60%, rgba(157,27,50,0.06) 0%, transparent 65%),
-                radial-gradient(ellipse 600px 300px at 85% 25%, rgba(157,27,50,0.03) 0%, transparent 60%);
+                radial-gradient(ellipse 800px 400px at 15% 60%, rgba(157,27,50,0.12) 0%, transparent 65%),
+                radial-gradient(ellipse 600px 300px at 85% 25%, rgba(157,27,50,0.07) 0%, transparent 60%);
         }
         .mps-section::after {
             content: '';
@@ -1733,6 +1733,7 @@
         html.dark .form-input-custom:focus { background: #2a3547; border-color: var(--primary); }
         html.dark .mf-file-drop       { background: #232b3a; border-color: rgba(255,255,255,0.1); color: #8899b5; }
         html.dark .btn-geo            { background: #2a3547; border-color: rgba(255,255,255,0.1); color: #8899b5; }
+        html.dark .btn-geo.is-loading { background: #1e2d45; border-color: #3b5fa0; color: #60a5fa; }
         html.dark .status-result-card { background: #1e2532; border-color: rgba(255,255,255,0.07); }
         html.dark .modal-folio-badge  { background: #1a2030; border-color: rgba(255,255,255,0.1); color: var(--text); }
         html.dark .form-label-custom  { color: #a0b0c0; }

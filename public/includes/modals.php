@@ -163,10 +163,22 @@
         background: #f1f5f9; border: 1.5px solid #e2e8f0; border-radius: 10px;
         color: #475569; padding: 0 14px; cursor: pointer;
         display: flex; align-items: center; gap: 6px;
-        transition: background .2s, border-color .2s; flex-shrink: 0;
-        font-size: 0.75rem; font-weight: 700;
+        transition: background .2s, border-color .2s, color .2s; flex-shrink: 0;
+        font-size: 0.75rem; font-weight: 700; min-width: 72px; justify-content: center;
     }
     .btn-geo:hover { background: #e2e8f0; border-color: #94a3b8; color: #0f172a; }
+
+    /* Estado cargando: oculta icon/label, muestra spinner */
+    .btn-geo .btn-geo-icon  { display: flex; align-items: center; transition: opacity .2s; }
+    .btn-geo .btn-geo-spin  { display: none; }
+    .btn-geo.is-loading     { cursor: not-allowed; pointer-events: none;
+                              background: #e8f0fe; border-color: #93c5fd; color: #3b82f6; }
+    .btn-geo.is-loading .btn-geo-icon  { display: none; }
+    .btn-geo.is-loading .btn-geo-label { display: none; }
+    .btn-geo.is-loading .btn-geo-spin  { display: flex; }
+
+    @keyframes btn-spin { to { transform: rotate(360deg); } }
+    .btn-geo-spin svg { animation: btn-spin .75s linear infinite; }
     .field-hint { display: block; font-size: 0.72rem; color: #64748b; margin-top: 5px; }
 
     /* Submit button */

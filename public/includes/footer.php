@@ -11,7 +11,12 @@
             <!-- Brand -->
             <div class="ft-col ft-col--brand">
                 <a href="/index.php" class="ft-logo-link">
-                    <img src="/public/images/logo.png" alt="Reporte Ciudadano" class="ft-logo">
+                    <img src="/public/images/logo.png" alt="SIGIU" class="ft-logo">
+                    <span class="ft-brand-divider"></span>
+                    <span class="ft-brand-text">
+                        <span class="ft-brand-sigiu">SIGIU</span>
+                        <span class="ft-brand-tagline">Reporta tu ciudad</span>
+                    </span>
                 </a>
                 <p class="ft-desc">
                     Plataforma ciudadana para reportar y dar seguimiento a incidencias en tu comunidad de forma rápida y transparente.
@@ -106,8 +111,25 @@
         border-bottom: 1px solid rgba(255,255,255,0.06);
     }
     /* Brand */
-    .ft-logo { height: 52px; width: auto; display: block; margin-bottom: 16px; }
-    .ft-logo-link { display: inline-block; }
+    .ft-logo { height: 46px; width: auto; display: block; flex-shrink: 0; }
+    .ft-logo-link {
+        display: inline-flex; align-items: center; gap: 12px;
+        text-decoration: none; margin-bottom: 16px;
+    }
+    .ft-brand-divider {
+        display: block; width: 1.5px; height: 32px; flex-shrink: 0;
+        background: linear-gradient(to bottom, transparent, rgba(157,27,50,.45) 30%, rgba(157,27,50,.45) 70%, transparent);
+    }
+    .ft-brand-text { display: flex; flex-direction: column; gap: 3px; line-height: 1; }
+    .ft-brand-sigiu {
+        font-size: 1.3rem; font-weight: 900; letter-spacing: .14em; text-transform: uppercase;
+        background: linear-gradient(120deg, #9D1B32 0%, #e11d48 100%);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .ft-brand-tagline {
+        font-size: 0.58rem; font-weight: 600; letter-spacing: .22em;
+        text-transform: uppercase; color: #475569;
+    }
     .ft-desc { font-size: 0.82rem; line-height: 1.7; color: #475569; margin: 0 0 20px; max-width: 280px; }
     /* Social */
     .ft-social { display: flex; gap: 8px; }

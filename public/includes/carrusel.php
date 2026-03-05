@@ -17,14 +17,14 @@ html.dark .cfl-section {
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(ellipse 700px 350px at 20% 50%, rgba(157,27,50,0.06) 0%, transparent 70%),
-        radial-gradient(ellipse 500px 250px at 80% 30%, rgba(157,27,50,0.04) 0%, transparent 60%);
+        radial-gradient(ellipse 700px 350px at 20% 50%, rgba(157,27,50,0.13) 0%, transparent 70%),
+        radial-gradient(ellipse 500px 250px at 80% 30%, rgba(157,27,50,0.09) 0%, transparent 60%);
     pointer-events: none;
 }
 html.dark .cfl-section::before {
     background:
-        radial-gradient(ellipse 700px 350px at 20% 50%, rgba(157,27,50,0.22) 0%, transparent 70%),
-        radial-gradient(ellipse 500px 250px at 80% 30%, rgba(157,27,50,0.12) 0%, transparent 60%);
+        radial-gradient(ellipse 700px 350px at 20% 50%, rgba(157,27,50,0.32) 0%, transparent 70%),
+        radial-gradient(ellipse 500px 250px at 80% 30%, rgba(157,27,50,0.18) 0%, transparent 60%);
 }
 
 .cfl-container {

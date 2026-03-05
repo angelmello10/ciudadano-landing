@@ -62,8 +62,16 @@
                     <div class="input-with-btn">
                         <input id="location" class="form-input-custom" type="text" placeholder="Escribe una dirección o usa GPS..." autocomplete="off">
                         <button type="button" id="get-location" class="btn-geo" title="Usar mi ubicación actual">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="12" y1="0" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="24"/><line x1="0" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="24" y2="12"/></svg>
+                            <span class="btn-geo-icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="12" y1="0" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="24"/><line x1="0" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="24" y2="12"/></svg>
+                            </span>
                             <span class="btn-geo-label">GPS</span>
+                            <span class="btn-geo-spin" aria-hidden="true">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                                    <circle cx="12" cy="12" r="9" stroke-opacity="0.25"/>
+                                    <path d="M12 3 A9 9 0 0 1 21 12" />
+                                </svg>
+                            </span>
                         </button>
                     </div>
                     <div style="display:flex;align-items:center;gap:5px;margin-top:6px;margin-bottom:6px;padding:6px 10px;background:#fff8e1;border:1px solid #ffe082;border-radius:7px;font-size:0.73rem;color:#7a5c00;">
