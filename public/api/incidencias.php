@@ -4,6 +4,7 @@
 // GET  /api/incidencias.php?limit=10 → con límite
 // POST /api/incidencias.php          → crear nueva incidencia
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/mail_helper.php';
 
 try {
     $db = getDB();
@@ -75,7 +76,13 @@ try {
         $id = (int)$db->lastInsertId();
         $row = $db->query('SELECT * FROM `' . DB_TABLE . '` WHERE id = ' . $id)->fetch();
 
-        echo json_encode(['ok' => true, 'id' => $id, 'row' => $row]);
+        // Enviar correo de confirmación al ciudadano
+        $mailSent = false;
+        if ($row && !empty($row['email'])) {
+            try { $mailSent = enviarCorreoConfirmacion($row); } catch (Throwable $e) { $mailSent = false; }
+        }
+
+        echo json_encode(['ok' => true, 'id' => $id, 'row' => $row, 'email_sent' => $mailSent]);
         exit;
     }
 
