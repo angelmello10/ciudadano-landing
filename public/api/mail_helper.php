@@ -5,7 +5,7 @@
  */
 
 define('MAIL_FROM_NAME',  'Reportes Ciudadanos');
-define('MAIL_FROM_EMAIL', 'noreply@reportesciudadanos.com'); // El hosting inyecta su dominio real
+define('MAIL_FROM_EMAIL', 'sigiu@reporteurbano.com'); // El hosting inyecta su dominio real
 
 /**
  * Envía email de confirmación cuando se crea un reporte.
