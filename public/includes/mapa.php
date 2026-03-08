@@ -301,20 +301,27 @@
                 descRow.style.display = 'none';
             }
 
-            // Photo
+            // Photo (prefer `foto_despues` when status is 'resuelto')
             const photoRow = document.getElementById('pd-photo-row');
             const photoImg = document.getElementById('pd-photo');
             const photoBtn = document.getElementById('pd-photo-btn');
-            if (inc.foto) {
-                const src = 'public/uploads/' + inc.foto;
-                photoImg.src = src;
+            const estLower = inc.estatus ? inc.estatus.toLowerCase() : '';
+            let photoSrc = '';
+            if (estLower === 'resuelto' && inc.foto_despues) {
+                photoSrc = 'public/uploads/' + inc.foto_despues;
+            } else if (inc.foto) {
+                photoSrc = 'public/uploads/' + inc.foto;
+            }
+
+            if (photoSrc) {
+                photoImg.src = photoSrc;
                 photoRow.style.display = 'block';
                 if (photoBtn) {
                     photoBtn.style.display = 'inline-block';
-                    photoBtn.onclick = () => { if (typeof window.openImageLightbox === 'function') window.openImageLightbox(src, 'Foto del reporte #' + inc.id); };
+                    photoBtn.onclick = () => { if (typeof window.openImageLightbox === 'function') window.openImageLightbox(photoSrc, 'Foto del reporte #' + inc.id); };
                 }
                 photoImg.style.cursor = 'zoom-in';
-                photoImg.onclick = () => { if (typeof window.openImageLightbox === 'function') window.openImageLightbox(src, 'Foto del reporte #' + inc.id); };
+                photoImg.onclick = () => { if (typeof window.openImageLightbox === 'function') window.openImageLightbox(photoSrc, 'Foto del reporte #' + inc.id); };
             } else {
                 photoRow.style.display = 'none';
                 if (photoBtn) photoBtn.style.display = 'none';

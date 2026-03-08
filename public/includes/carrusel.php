@@ -1,6 +1,6 @@
 ﻿<style>
 /* ═══════════════════════════════════
-   COVERFLOW 3D — Carrusel innovador
+   COVERFLOW 3D — Con Comparador Antes/Después
 ═══════════════════════════════════ */
 .cfl-section {
     padding: 110px 0 100px;
@@ -193,49 +193,115 @@ html.dark .cfl-card {
 }
 .cfl-card-active { cursor: default; }
 
-.cfl-img {
-    width: 100%; height: 100%;
-    object-fit: cover; display: block;
-    transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
-    will-change: transform;
+/* ── COMPARADOR ANTES/DESPUÉS ── */
+.cfl-comparer {
+    position: relative;
+    width: 100%;
+    height: 260px;
+    overflow: hidden;
+    background: #000;
+    cursor: col-resize;
+    touch-action: pan-y;
 }
-.cfl-card-active.cfl-expanded .cfl-img { transform: scale(1.07); }
 
-/* Gradiente base via pseudo-element para animar con opacity */
-.cfl-grad {
-    position: absolute; inset: 0;
+.cfl-comparer-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    user-select: none;
     pointer-events: none;
+}
+
+.cfl-comparer-after {
+    clip-path: inset(0 0 0 50%);
     z-index: 2;
 }
-.cfl-grad::before,
-.cfl-grad::after {
-    content: '';
-    position: absolute; inset: 0;
-    transition: opacity 0.45s ease;
+
+.cfl-comparer-before {
+    z-index: 1;
+    filter: brightness(0.9);
 }
-/* base: ligero */
-.cfl-grad::before {
+
+/* Labels Antes/Después */
+.cfl-comparer-label {
+    position: absolute;
+    top: 12px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    z-index: 3;
+    backdrop-filter: blur(10px);
+    background: rgba(0,0,0,0.6);
+    color: rgba(255,255,255,0.9);
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+.cfl-comparer-label.before { left: 12px; }
+.cfl-comparer-label.after { 
+    right: 12px; 
+    background: rgba(157,27,50,0.85);
+    border-color: rgba(157,27,50,0.5);
+}
+
+/* Slider Handle */
+.cfl-slider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background: white;
+    z-index: 4;
+    transform: translateX(-50%);
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.cfl-slider-handle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 36px;
+    height: 36px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    transition: transform 0.2s;
+}
+
+.cfl-slider-handle:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.cfl-slider-handle svg {
+    width: 14px;
+    height: 14px;
+    color: #1e293b;
+}
+
+/* Gradiente base */
+.cfl-grad {
+    position: absolute; 
+    inset: 260px 0 0 0;
+    pointer-events: none;
+    z-index: 2;
     background: linear-gradient(
         to top,
-        rgba(0,0,0,0.90) 0%,
-        rgba(0,0,0,0.45) 22%,
-        transparent 50%
-    );
-    opacity: 1;
-}
-/* expandido: oscuro — se desvanece encima */
-.cfl-grad::after {
-    background: linear-gradient(
-        to top,
-        rgba(0,0,0,0.97) 0%,
-        rgba(0,0,0,0.88) 32%,
-        rgba(0,0,0,0.62) 56%,
-        rgba(0,0,0,0.20) 80%,
+        rgba(0,0,0,0.95) 0%,
+        rgba(0,0,0,0.7) 40%,
+        rgba(0,0,0,0.3) 70%,
         transparent 100%
     );
-    opacity: 0;
 }
-.cfl-card-active.cfl-expanded .cfl-grad::after { opacity: 1; }
 
 /* Reflexion espejo */
 .cfl-reflection {
@@ -257,148 +323,75 @@ html.dark .cfl-card {
 .cfl-folio {
     position: absolute; top: 14px; left: 14px;
     background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10deg);
     color: rgba(255,255,255,0.80);
     font-size: 0.68rem; font-weight: 800; letter-spacing: 0.05em;
     padding: 4px 10px; border-radius: 7px;
     border: 1px solid rgba(255,255,255,0.14);
-    z-index: 4;
+    z-index: 5;
 }
 
-/* Info base: siempre visible, compacta */
+/* Info */
 .cfl-info {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    padding: 16px 16px 52px; z-index: 4; color: #fff;
-    transform: translateY(0);
-    transition: transform 0.42s cubic-bezier(0.4,0,0.2,1);
-    will-change: transform;
+    position: absolute; 
+    bottom: 0; 
+    left: 0; 
+    right: 0;
+    padding: 50px 16px 16px; 
+    z-index: 4; 
+    color: #fff;
 }
+
 .cfl-tipo {
-    font-size: 0.68rem; font-weight: 700;
-    letter-spacing: 0.08em; text-transform: uppercase;
-    color: rgba(255,255,255,0.55); margin-bottom: 3px;
+    font-size: 0.68rem; 
+    font-weight: 700;
+    letter-spacing: 0.08em; 
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55); 
+    margin-bottom: 4px;
 }
+
 .cfl-nombre {
-    font-size: 1rem; font-weight: 800;
-    margin: 0 0 8px; white-space: nowrap;
-    overflow: hidden; text-overflow: ellipsis;
+    font-size: 1rem; 
+    font-weight: 800;
+    margin: 0 0 8px; 
+    white-space: nowrap;
+    overflow: hidden; 
+    text-overflow: ellipsis;
     text-shadow: 0 2px 8px rgba(0,0,0,0.6);
 }
+
 .cfl-row {
-    display: flex; align-items: center;
-    justify-content: flex-start; gap: 8px;
+    display: flex; 
+    align-items: center;
+    justify-content: flex-start; 
+    gap: 8px;
 }
-
-/* Panel expandible — grid-template-rows es mucho más fluido que max-height */
-.cfl-details {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows 0.45s cubic-bezier(0.4,0,0.2,1);
-}
-.cfl-card-active.cfl-expanded .cfl-details {
-    grid-template-rows: 1fr;
-}
-.cfl-details-inner {
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.32s ease 0.10s,
-                transform 0.38s cubic-bezier(0.4,0,0.2,1) 0.08s;
-    will-change: opacity, transform;
-    /* padding interno para que las primeras letras no se corten */
-    padding-top: 12px;
-}
-.cfl-card-active.cfl-expanded .cfl-details-inner {
-    opacity: 1;
-    transform: translateY(0);
-}
-.cfl-details-addr {
-    font-size: 0.67rem; font-weight: 500;
-    color: rgba(255,255,255,0.65);
-    display: flex; align-items: flex-start; gap: 5px;
-    margin-bottom: 7px; line-height: 1.45;
-}
-.cfl-details-addr svg {
-    flex-shrink: 0; width: 11px; height: 11px; margin-top: 2px;
-    stroke: #fb7185; fill: rgba(251,113,133,0.18);
-    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-}
-.cfl-details-desc {
-    font-size: 0.67rem; color: rgba(255,255,255,0.52);
-    line-height: 1.5; margin-bottom: 10px;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-/* touch-action: manipulation elimina el retraso de 300ms en iOS */
-.cfl-toggle-btn {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    z-index: 7; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    height: 44px; gap: 5px;
-    background: rgba(0,0,0,0.0);
-    border: none; color: rgba(255,255,255,0.55);
-    font-family: inherit; font-size: 0.62rem; font-weight: 700;
-    letter-spacing: 0.07em; text-transform: uppercase;
-    transition: color 0.2s, background 0.2s;
-    border-radius: 0 0 20px 20px;
-    padding: 0;
-    opacity: 0; pointer-events: none;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-user-select: none; user-select: none;
-}
-.cfl-card-active .cfl-toggle-btn {
-    opacity: 1; pointer-events: auto;
-}
-.cfl-toggle-btn:hover { color: rgba(255,255,255,0.85); background: rgba(0,0,0,0.18); }
-.cfl-toggle-btn svg {
-    width: 13px; height: 13px;
-    stroke: currentColor; fill: none;
-    stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
-    transition: transform 0.35s ease;
-}
-.cfl-card-active.cfl-expanded .cfl-toggle-btn svg { transform: rotate(180deg); }
-.cfl-toggle-btn .t-open  { display: inline; }
-.cfl-toggle-btn .t-close { display: none; }
-.cfl-card-active.cfl-expanded .cfl-toggle-btn .t-open  { display: none; }
-.cfl-card-active.cfl-expanded .cfl-toggle-btn .t-close { display: inline; }
 
 .cfl-pill {
-    font-size: 0.64rem; font-weight: 800;
-    text-transform: uppercase; letter-spacing: 0.04em;
-    padding: 4px 11px; border-radius: 999px;
+    font-size: 0.64rem; 
+    font-weight: 800;
+    text-transform: uppercase; 
+    letter-spacing: 0.04em;
+    padding: 4px 11px; 
+    border-radius: 999px;
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.14); color: #fff;
+    background: rgba(255,255,255,0.14); 
+    color: #fff;
 }
 .cfl-pill.s-resuelto  { background: rgba(34,197,94,0.28);  border-color: rgba(34,197,94,0.5);   color: #86efac; }
 .cfl-pill.s-pendiente { background: rgba(245,158,11,0.26); border-color: rgba(245,158,11,0.45); color: #fde68a; }
 .cfl-pill.s-rechazado { background: rgba(239,68,68,0.26);  border-color: rgba(239,68,68,0.45);  color: #fca5a5; }
 .cfl-pill.s-proceso   { background: rgba(59,130,246,0.26); border-color: rgba(59,130,246,0.45); color: #93c5fd; }
 
-.cfl-mapbtn {
-    font-size: 0.7rem; font-weight: 800;
-    padding: 6px 14px; border-radius: 999px;
-    background: var(--primary, #9d1b32); color: #fff;
-    border: none; cursor: pointer; font-family: inherit;
-    letter-spacing: 0.02em; white-space: nowrap;
-    display: block; width: 100%; text-align: center;
-    transition: filter 0.18s, transform 0.15s;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-user-select: none; user-select: none;
-}
-.cfl-mapbtn:hover { filter: brightness(1.12); transform: translateY(-1px); }
-
 /* Hint de clic en cartas laterales */
 .cfl-hint {
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    z-index: 5; opacity: 0; transition: opacity 0.2s;
+    z-index: 6; opacity: 0; transition: opacity 0.2s;
     border-radius: 20px; pointer-events: none;
+    background: rgba(0,0,0,0.3);
 }
 .cfl-card:not(.cfl-card-active):hover .cfl-hint { opacity: 1; }
 .cfl-hint-icon {
@@ -412,11 +405,17 @@ html.dark .cfl-card {
 
 /* Barra de progreso */
 .cfl-progress-wrap {
-    margin-top: 36px; display: flex; align-items: center; gap: 16px;
+    margin-top: 36px; 
+    display: flex; 
+    align-items: center; 
+    gap: 16px;
 }
 .cfl-progress-bar {
-    flex: 1; height: 3px;
-    background: rgba(0,0,0,0.10); border-radius: 99px; overflow: hidden;
+    flex: 1; 
+    height: 3px;
+    background: rgba(0,0,0,0.10); 
+    border-radius: 99px; 
+    overflow: hidden;
 }
 html.dark .cfl-progress-bar { background: rgba(255,255,255,0.10); }
 .cfl-progress-fill {
@@ -427,20 +426,31 @@ html.dark .cfl-progress-bar { background: rgba(255,255,255,0.10); }
     box-shadow: 0 0 8px rgba(157,27,50,0.5);
 }
 .cfl-progress-label {
-    font-size: 0.72rem; font-weight: 700; color: #94a3b8;
-    font-variant-numeric: tabular-nums; white-space: nowrap;
+    font-size: 0.72rem; 
+    font-weight: 700; 
+    color: #94a3b8;
+    font-variant-numeric: tabular-nums; 
+    white-space: nowrap;
 }
 html.dark .cfl-progress-label { color: #475569; }
 
 /* Ring de autoplay */
 .cfl-autoplay-ring {
-    position: absolute; top: 14px; right: 14px;
-    width: 30px; height: 30px; z-index: 5;
+    position: absolute; 
+    top: 14px; 
+    right: 14px;
+    width: 30px; 
+    height: 30px; 
+    z-index: 5;
 }
 .cfl-autoplay-ring svg { width:30px; height:30px; transform:rotate(-90deg); }
 .cfl-autoplay-ring circle {
-    fill: none; stroke: rgba(255,255,255,0.85); stroke-width: 2;
-    stroke-linecap: round; stroke-dasharray: 78.5; stroke-dashoffset: 78.5;
+    fill: none; 
+    stroke: rgba(255,255,255,0.85); 
+    stroke-width: 2;
+    stroke-linecap: round; 
+    stroke-dasharray: 78.5; 
+    stroke-dashoffset: 78.5;
     transition: stroke-dashoffset 0.1s linear;
 }
 
@@ -449,6 +459,8 @@ html.dark .cfl-progress-label { color: #475569; }
     .cfl-stage-wrap { height: 390px; }
     .cfl-card { width:255px; height:355px; margin-left:-127px; margin-top:-178px; }
     .cfl-reflection { bottom:-360px; height:355px; }
+    .cfl-comparer { height: 230px; }
+    .cfl-grad { inset: 230px 0 0 0; }
 }
 @media (max-width: 768px) {
     .cfl-container { padding: 0 20px; }
@@ -460,6 +472,8 @@ html.dark .cfl-progress-label { color: #475569; }
     .cfl-section { padding: 80px 0 70px; }
     .cfl-card { width:82vw; margin-left:calc(-41vw); height:340px; margin-top:-170px; }
     .cfl-reflection { bottom:-345px; height:340px; }
+    .cfl-comparer { height: 210px; }
+    .cfl-grad { inset: 210px 0 0 0; }
 }
 </style>
 
@@ -470,10 +484,10 @@ html.dark .cfl-progress-label { color: #475569; }
             <div>
                 <div class="cfl-eyebrow">
                     <span class="cfl-eyebrow-pulse"></span>
-                    Evidencia Ciudadana
+                    Evidencia Fotográfica
                 </div>
-                <h2 class="cfl-title">Fotos de <span>reportes recientes</span></h2>
-                <p class="cfl-sub">Imágenes enviadas por ciudadanos que documentan incidencias activas en la ciudad.</p>
+                <h2 class="cfl-title">Antes y <span>Después</span></h2>
+                <p class="cfl-sub">Desliza la línea en cada imagen para comparar el estado antes y después de nuestra intervención.</p>
             </div>
             <div class="cfl-controls">
                 <span class="cfl-count" id="cfl-count">0 / 0</span>
@@ -505,7 +519,7 @@ html.dark .cfl-progress-label { color: #475569; }
     'use strict';
 
     const UPLOADS = '/public/uploads/';
-    const AUTO_MS = 4500;
+    const AUTO_MS = 5000; // Aumentado un poco para dar tiempo de jugar con el slider
 
     let items   = [];
     let current = 0;
@@ -536,91 +550,130 @@ html.dark .cfl-progress-label { color: #475569; }
     }
 
     function buildCard(inc, idx) {
-        const name    = esc(inc.nombre_ciudadano || 'Anonimo');
         const tipo    = esc(inc.tipo_incidencia  || 'Incidencia');
         const folio   = '#' + inc.id;
         const stClass = pillClass(inc.estatus);
         const stRaw   = inc.estatus || 'pendiente';
         const stLabel = esc(stRaw.charAt(0).toUpperCase() + stRaw.slice(1));
-        const imgSrc  = inc.foto ? `${UPLOADS}${esc(inc.foto)}` : '';
-        const addr    = esc(inc.direccion || '');
-        const desc    = esc(inc.descripcion || '');
-        const mapBtn  = (inc.latitud && inc.longitud)
-            ? `<button class="cfl-mapbtn" data-id="${inc.id}">Ver en mapa</button>`
-            : '';
+        const imgBefore = `${UPLOADS}${esc(inc.foto)}`;
+        const imgAfter  = `${UPLOADS}${esc(inc.foto_despues)}`;
 
         const card = document.createElement('div');
         card.className   = 'cfl-card';
         card.dataset.idx = idx;
         card.innerHTML = `
-            ${imgSrc ? `<img class="cfl-img" src="${imgSrc}" alt="Incidencia ${folio}" loading="lazy" onerror="this.style.display='none'">` : ''}
-            <div class="cfl-grad"></div>
-            <div class="cfl-folio">${folio}</div>
-            <div class="cfl-info">
-                <p class="cfl-tipo">${tipo}</p>
-                <p class="cfl-nombre">${name}</p>
-                <div class="cfl-row">
-                    <span class="cfl-pill ${stClass}">${stLabel}</span>
-                </div>
-                <div class="cfl-details">
-                    <div class="cfl-details-inner">
-                        ${addr ? `<p class="cfl-details-addr"><svg viewBox="0 0 24 24"><path d="M12 21s-8-7.5-8-12a8 8 0 1 1 16 0c0 4.5-8 12-8 12z"/><circle cx="12" cy="9" r="2.5"/></svg>${addr}</p>` : ''}
-                        ${desc ? `<p class="cfl-details-desc">${desc}</p>` : ''}
-                        ${mapBtn}
+            <!-- Comparador Antes/Después -->
+            <div class="cfl-comparer" data-comparer="${idx}">
+                <img src="${imgBefore}" alt="Antes" class="cfl-comparer-img cfl-comparer-before" loading="lazy" onerror="this.style.opacity=0.3">
+                <img src="${imgAfter}" alt="Después" class="cfl-comparer-img cfl-comparer-after" loading="lazy" onerror="this.style.opacity=0.3">
+                
+                <span class="cfl-comparer-label before">Antes</span>
+                <span class="cfl-comparer-label after">Después</span>
+                
+                <div class="cfl-slider" style="left: 50%">
+                    <div class="cfl-slider-handle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
                     </div>
                 </div>
             </div>
-            <button class="cfl-toggle-btn" type="button">
-                <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
-                <span class="t-open">Ver info</span>
-                <span class="t-close">Cerrar</span>
-            </button>
-            ${imgSrc ? `<div class="cfl-reflection"><img src="${imgSrc}" alt="" aria-hidden="true" loading="lazy" onerror="this.parentElement.style.display='none'"></div>` : ''}
+            
+            <div class="cfl-grad"></div>
+            
+            <div class="cfl-folio">${folio}</div>
+            
+            <div class="cfl-info">
+                <p class="cfl-tipo">${tipo}</p>
+                <p class="cfl-nombre">${esc(inc.direccion || 'Sin dirección')}</p>
+                <div class="cfl-row">
+                    <span class="cfl-pill ${stClass}">${stLabel}</span>
+                </div>
+            </div>
+            
             <div class="cfl-hint">
                 <span class="cfl-hint-icon">
                     <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                 </span>
             </div>
+            
             <div class="cfl-autoplay-ring" id="cfl-ring-${idx}">
                 <svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="12.5"/></svg>
             </div>`;
 
-        // Clic en carta lateral → navega; clic en carta activa → toggle info
-        card.addEventListener('click', function () {
+        // Inicializar el comparador en esta tarjeta
+        initComparer(card.querySelector('.cfl-comparer'));
+        
+        // Clic en carta lateral → navega a ella
+        card.addEventListener('click', function (e) {
+            // No navegar si se está arrastrando el slider
+            if (e.target.closest('.cfl-comparer')) return;
+            
             const i = parseInt(this.dataset.idx);
             if (i !== current) goTo(i, true);
-            else this.classList.toggle('cfl-expanded');
+        });
+        
+        return card;
+    }
+
+    // Inicializar el slider del comparador
+    function initComparer(container) {
+        if (!container) return;
+        
+        let isDragging = false;
+        const afterImg = container.querySelector('.cfl-comparer-after');
+        const slider = container.querySelector('.cfl-slider');
+        
+        function updateSlider(x) {
+            const rect = container.getBoundingClientRect();
+            let percentage = ((x - rect.left) / rect.width) * 100;
+            percentage = Math.max(5, Math.min(95, percentage));
+            
+            afterImg.style.clipPath = `inset(0 0 0 ${percentage}%)`;
+            slider.style.left = `${percentage}%`;
+        }
+
+        // Mouse events
+        container.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            updateSlider(e.clientX);
+            container.style.cursor = 'grabbing';
+            e.stopPropagation(); // Evitar que se active el clic de la tarjeta
         });
 
-        // Toggle expandir — touchend ADICIONAL para iOS Safari (preserve-3d bug)
-        function toggleExpand(e) {
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            updateSlider(e.clientX);
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            container.style.cursor = 'col-resize';
+        });
+
+        // Touch events
+        container.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            updateSlider(e.touches[0].clientX);
             e.stopPropagation();
-            card.classList.toggle('cfl-expanded');
-        }
-        const toggleBtn = card.querySelector('.cfl-toggle-btn');
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click',    toggleExpand);
-            // iOS: touchend + preventDefault evita que después dispare el click (toggle doble)
-            toggleBtn.addEventListener('touchend', function(e) {
-                e.preventDefault();
-                toggleExpand(e);
-            }, { passive: false });
-        }
-        // Boton Ver en mapa — mismo fix iOS
-        const mapBtnEl = card.querySelector('.cfl-mapbtn');
-        if (mapBtnEl) {
-            function openMap(e) {
-                e.stopPropagation();
-                const id = parseInt(mapBtnEl.dataset.id);
-                if (typeof verEnMapa === 'function') verEnMapa(id);
-            }
-            mapBtnEl.addEventListener('click',    openMap);
-            mapBtnEl.addEventListener('touchend', function(e) {
-                e.preventDefault();
-                openMap(e);
-            }, { passive: false });
-        }
-        return card;
+        }, { passive: true });
+
+        container.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            updateSlider(e.touches[0].clientX);
+        }, { passive: true });
+
+        container.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        // Click para saltar
+        container.addEventListener('click', (e) => {
+            if (e.target.closest('.cfl-slider-handle')) return;
+            updateSlider(e.clientX);
+            e.stopPropagation();
+        });
     }
 
     function getTransform(offset) {
@@ -636,7 +689,6 @@ html.dark .cfl-progress-label { color: #475569; }
             const i      = parseInt(card.dataset.idx);
             const offset = i - current;
             const abs    = Math.abs(offset);
-            if (abs !== 0) card.classList.remove('cfl-expanded');
             const t      = getTransform(offset);
             card.style.transform    = `translateX(${t.tx}px) rotateY(${t.ry}deg) scale(${t.scl}) translateZ(${t.tz}px)`;
             card.style.opacity      = t.op;
@@ -644,6 +696,7 @@ html.dark .cfl-progress-label { color: #475569; }
             card.style.zIndex       = 20 - abs;
             card.style.pointerEvents = abs <= 2 ? 'auto' : 'none';
             card.classList.toggle('cfl-card-active', abs === 0);
+            
             // update hint arrow direction
             const poly = card.querySelector('.cfl-hint-icon svg polyline');
             if (poly) poly.setAttribute('points', offset < 0 ? '15 18 9 12 15 6' : '9 18 15 12 9 6');
@@ -706,9 +759,9 @@ html.dark .cfl-progress-label { color: #475569; }
 
     function render(rows) {
         stage.innerHTML = '';
-        items = rows.filter(r => r && r.foto).slice(0, 20);
+        items = rows.filter(r => r && r.foto && r.foto_despues).slice(0, 20);
         if (!items.length) {
-            stage.innerHTML = '<p style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#64748b;white-space:nowrap">No hay fotos disponibles.</p>';
+            stage.innerHTML = '<p style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#64748b;white-space:nowrap">No hay reportes con fotos de antes y despu&eacute;s.</p>';
             return;
         }
         items.forEach((inc, i) => stage.appendChild(buildCard(inc, i)));

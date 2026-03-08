@@ -207,12 +207,19 @@
                 descEl.textContent = inc.descripcion || 'Sin descripción adicional.';
                 document.getElementById('cq-desc-row').style.display = 'flex';
 
-                // Photo
+                // Photo (prefer `foto_despues` when status is 'resuelto')
                 const photoWrap = document.getElementById('status-photo-wrap');
                 const photoEl   = document.getElementById('status-photo');
                 const photoBtn  = document.getElementById('status-photo-btn');
-                if (inc.foto) {
-                    const src = '/public/uploads/' + inc.foto;
+                const estLower2 = estatus || '';
+                let src = '';
+                if (estLower2 === 'resuelto' && inc.foto_despues) {
+                    src = '/public/uploads/' + inc.foto_despues;
+                } else if (inc.foto) {
+                    src = '/public/uploads/' + inc.foto;
+                }
+
+                if (src) {
                     photoEl.src = src;
                     photoWrap.style.display = 'block';
                     if (photoBtn) { photoBtn.style.display = 'inline-block'; photoBtn.onclick = () => { if (typeof window.openImageLightbox === 'function') window.openImageLightbox(src, 'Foto del reporte #' + inc.id); } }
