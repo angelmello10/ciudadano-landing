@@ -164,5 +164,20 @@ HTML;
     $headers .= "Reply-To: " . MAIL_FROM_EMAIL . "\r\n";
     $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
 
-    return @mail($to, $subject, $html, $headers);
+    $sent = false;
+    try {
+        $sent = (bool) @mail($to, $subject, $html, $headers);
+    } catch (Throwable $e) {
+        $sent = false;
+    }
+
+    // Logging simple send attempts for debugging (no sensitive data)
+    $logDir = __DIR__ . '/../../logs';
+    if (!is_dir($logDir)) @mkdir($logDir, 0755, true);
+    $logFile = $logDir . '/mail.log';
+    $now = date('Y-m-d H:i:s');
+    $entry = sprintf("%s\tID:%s\tTO:%s\tSUBJECT:%s\tSENT:%s\n", $now, $folio, $to, str_replace("\n", ' ', $subject), $sent ? 'OK' : 'FAIL');
+    @file_put_contents($logFile, $entry, FILE_APPEND | LOCK_EX);
+
+    return $sent;
 }
