@@ -32,7 +32,29 @@ function enviarCorreoConfirmacion(array $inc): bool {
         $statusColor = '#ef4444';
     }
 
-    $subject = "Reporte #{$folio} registrado — Reportes Ciudadanos";
+    // Determina asunto, cabecera y mensaje según estatus
+    $statusLower = strtolower($status);
+    if (stripos($statusLower, 'resuelto') !== false) {
+        $subject = "Reporte #{$folio} — Resuelto";
+        $headerGradient = 'linear-gradient(135deg,#16a34a 0%,#34d399 100%)';
+        $title = 'Reporte Resuelto';
+        $lead  = 'Tu reporte ha sido marcado como resuelto.';
+    } elseif (stripos($statusLower, 'proceso') !== false || stripos($statusLower, 'activo') !== false) {
+        $subject = "Reporte #{$folio} — En proceso";
+        $headerGradient = 'linear-gradient(135deg,#0ea5e9 0%,#60a5fa 100%)';
+        $title = 'En Proceso';
+        $lead  = 'Tu reporte está siendo atendido por el equipo responsable.';
+    } elseif (stripos($statusLower, 'rechaz') !== false) {
+        $subject = "Reporte #{$folio} — Rechazado";
+        $headerGradient = 'linear-gradient(135deg,#ef4444 0%,#f97316 100%)';
+        $title = 'Reporte Rechazado';
+        $lead  = 'Lamentablemente tu reporte fue rechazado. Revisa los detalles.';
+    } else {
+        $subject = "Reporte #{$folio} registrado — Reportes Ciudadanos";
+        $headerGradient = 'linear-gradient(135deg,#9D1B32 0%,#c42845 100%)';
+        $title = 'Reporte Registrado';
+        $lead  = 'Tu incidencia ha sido recibida exitosamente.';
+    }
 
     $html = <<<HTML
 <!DOCTYPE html>
@@ -45,10 +67,10 @@ function enviarCorreoConfirmacion(array $inc): bool {
 
     <!-- Header -->
     <tr>
-        <td style="background:linear-gradient(135deg,#9D1B32 0%,#c42845 100%);padding:28px 32px;text-align:center;">
+        <td style="background:{$headerGradient};padding:28px 32px;text-align:center;">
             <div style="font-size:28px;margin-bottom:6px;">🛡️</div>
-            <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:700;">Reporte Registrado</h1>
-            <p style="margin:6px 0 0;color:rgba(255,255,255,0.8);font-size:13px;">Tu incidencia ha sido recibida exitosamente</p>
+            <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:700;">{$title}</h1>
+            <p style="margin:6px 0 0;color:rgba(255,255,255,0.8);font-size:13px;">{$lead}</p>
         </td>
     </tr>
 
@@ -57,7 +79,7 @@ function enviarCorreoConfirmacion(array $inc): bool {
         <td style="padding:28px 32px;">
             <p style="margin:0 0 18px;color:#334155;font-size:15px;line-height:1.5;">
                 Hola <strong>{$nombre}</strong>,<br>
-                Tu reporte ha sido registrado con el siguiente folio:
+                Aquí están los detalles del reporte:
             </p>
 
             <!-- Folio badge -->
