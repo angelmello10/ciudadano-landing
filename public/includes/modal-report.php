@@ -283,7 +283,7 @@
 
         function initPickerMap() {
             if (pickerMap) return;
-            const defaultCenter = { lat: 20.9674, lng: -89.6235 }; // Mérida, ajusta si quieres
+            const defaultCenter = { lat: 19.4014, lng: -99.0150 }; // Nezahualcóyotl
 
             const pickerStyleLight = [
                 { elementType: 'geometry', stylers: [{ color: '#f5f5f5' }] },
@@ -370,7 +370,10 @@
 
         // ── Auto-init map when modal opens ────────────────────────────
         function tryAutoGPS() {
-            if (!navigator.geolocation) return;
+            if (!navigator.geolocation) {
+                statusLocation.textContent = 'GPS no disponible. Selecciona tu ubicación directo en el mapa.';
+                return;
+            }
             if (document.getElementById('lat').value) return; // already have coords
             statusLocation.textContent = 'Detectando tu ubicación...';
             btnGetLocation.classList.add('is-loading');
@@ -388,18 +391,23 @@
                             const loc = results[0].geometry && results[0].geometry.location ? results[0].geometry.location : latlng;
                             document.getElementById('lat').value = loc.lat();
                             document.getElementById('lng').value = loc.lng();
-                            statusLocation.textContent = '📍 Ubícate en el mapa y ajusta el pin si hace falta.';
+                            statusLocation.textContent = 'Ubícate en el mapa y ajusta el pin si hace falta.';
                             statusLocation.style.color = 'green';
                             syncPickerMap(loc.lat(), loc.lng());
                         } else {
                             document.getElementById('lat').value = latitude;
                             document.getElementById('lng').value = longitude;
-                            statusLocation.textContent = '📍 Ajusta el pin en el mapa para precisar.';
+                            statusLocation.textContent = 'Ajusta el pin en el mapa para precisar.';
                             syncPickerMap(latitude, longitude);
                         }
                     });
                 },
-                () => { btnGetLocation.classList.remove('is-loading'); },
+                () => {
+                    btnGetLocation.classList.remove('is-loading');
+                    statusLocation.textContent = 'Toca el mapa para marcar la ubicación del problema.';
+                    statusLocation.style.color = '';
+                    // Keep map visible at default center — user can tap to place pin
+                },
                 { timeout: 8000, maximumAge: 30000 }
             );
         }
@@ -412,6 +420,8 @@
 
             function doResize() {
                 google.maps.event.trigger(pickerMap, 'resize');
+                // Second resize after animation completes to ensure tiles paint
+                setTimeout(() => google.maps.event.trigger(pickerMap, 'resize'), 350);
                 const lat = parseFloat(document.getElementById('lat').value);
                 const lng = parseFloat(document.getElementById('lng').value);
                 if (lat && lng) syncPickerMap(lat, lng);
@@ -444,12 +454,14 @@
         const modalReportEl = document.getElementById('modal-report');
         if (modalReportEl) {
             new MutationObserver(() => {
-                if (modalReportEl.classList.contains('is-open') || modalReportEl.style.display === 'flex' || modalReportEl.style.display === 'block') {
+                if (modalReportEl.classList.contains('is-active')) {
                     startPickerMap();
                 }
-            }).observe(modalReportEl, { attributes: true, attributeFilter: ['class', 'style'] });
+            }).observe(modalReportEl, { attributes: true, attributeFilter: ['class'] });
         }
-        // Also init on DOMContentLoaded if modal is already open
+        // Init if Maps API loads after DOMContentLoaded
+        document.addEventListener('googleMapsReady', startPickerMap);
+        // Also try immediately in case API is already loaded
         startPickerMap();
         // ── END MAP PICKER ────────────────────────────────────────────
 

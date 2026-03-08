@@ -423,10 +423,9 @@
         /* ── STATS STRIP (hero bottom) ── */
         .hero-stats-strip {
             display: flex; gap: 0; margin-top: 3.5rem; position: relative; z-index: 2;
-            background: rgba(255,255,255,0.7); backdrop-filter: blur(14px);
-            border-radius: var(--r-xl); overflow: hidden;
-            border: 1px solid rgba(0,0,0,0.07);
-            box-shadow: 0 4px 32px rgba(0,0,0,0.06), 0 1px 0 rgba(255,255,255,0.9) inset;
+            background: transparent; backdrop-filter: none;
+            border-radius: 0; overflow: visible;
+            border: none; box-shadow: none;
         }
         .hero-stat {
             flex: 1; text-align: center; padding: 1.5rem 1rem 1.6rem;
@@ -451,9 +450,19 @@
             display: block; margin-top: 7px; font-size: 0.65rem; font-weight: 700;
             text-transform: uppercase; letter-spacing: 0.1em; color: #64748b;
         }
+        .hero-stat-bar {
+            width: 64%; height: 10px; background: rgba(0,0,0,0.06);
+            border-radius: 999px; margin-top: 10px; overflow: hidden;
+            margin-left: auto; margin-right: auto;
+        }
+        .hero-stat-bar-fill {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, rgb(157,27,50) 0%, rgb(196,40,69) 100%);
+            box-shadow: 0 6px 18px rgba(157,27,50,0.12) inset, 0 4px 14px rgba(157,27,50,0.08);
+            border-radius: 999px; transition: width .9s cubic-bezier(.2,.9,.2,1);
+        }
         html.dark .hero-stats-strip {
-            background: rgba(10,14,22,0.75); border-color: rgba(255,255,255,0.08);
-            box-shadow: 0 4px 32px rgba(0,0,0,0.35);
+            background: transparent; border-color: transparent; box-shadow: none;
         }
         html.dark .hero-stat         { border-right-color: rgba(255,255,255,0.07); }
         html.dark .hero-stat-icon    { background: rgba(var(--si), 0.15); border-color: rgba(var(--si), 0.32); }
@@ -461,6 +470,8 @@
             background: linear-gradient(135deg, #fff 0%, #fca5a5 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
+        html.dark .hero-stat-bar { background: rgba(255,255,255,0.06); }
+        html.dark .hero-stat-bar-fill { background: linear-gradient(90deg, rgb(157,27,50) 0%, rgb(196,40,69) 100%); }
         html.dark .hero-stat-label   { color: #64748b; }
 
         /* ── BUTTONS ── */

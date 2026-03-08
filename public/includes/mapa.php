@@ -104,9 +104,10 @@
                     <input id="map-folio-input" type="text" placeholder="N&uacute;m. seguimiento&hellip;" maxlength="20" autocomplete="off" spellcheck="false">
                     <button type="button" id="map-folio-btn">Buscar</button>
                 </div>
-                <button type="button" class="mps-loc-btn" onclick="verMiUbicacion()">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="12" y1="0" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="24"/><line x1="0" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="24" y2="12"/></svg>
-                    Mi ubicaci&oacute;n
+                <button type="button" id="map-loc-btn" class="mps-loc-btn" onclick="verMiUbicacion()">
+                    <svg id="map-loc-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="12" y1="0" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="24"/><line x1="0" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="24" y2="12"/></svg>
+                    <svg id="map-loc-spinner" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none;animation:map-spin 0.8s linear infinite"><path d="M12 2a10 10 0 0 1 10 10"/></svg>
+                    <span id="map-loc-label">Mi ubicaci&oacute;n</span>
                 </button>
             </div>
         </div>
@@ -361,10 +362,34 @@
                 <td>${date}</td>
                 <td>
                     ${hasLocation
-                    ? `<button class="button button-primary button-sm" onclick="verEnMapa(${inc.id})">📍 Ver en mapa</button>`
+                    ? `<button class="button button-primary button-sm" onclick="verEnMapa(${inc.id})">Ver en mapa</button>`
                     : '<span style="color:#aaa;font-size:12px">Sin ubicación</span>'}
                 </td>`;
             tbody.appendChild(tr);
+        });
+    }
+
+    /* ── Smooth fly-to: zoom out → pan → zoom in ── */
+    function smoothNavigateTo(position, targetZoom, onArrival) {
+        if (!gMap) return;
+        const bounds = gMap.getBounds();
+        if (bounds && bounds.contains(position)) {
+            // Already visible — just pan smoothly then adjust zoom
+            gMap.panTo(position);
+            const doZoom = () => { gMap.setZoom(targetZoom); if (onArrival) onArrival(); };
+            if (gMap.getZoom() !== targetZoom) setTimeout(doZoom, 350);
+            else { if (onArrival) onArrival(); }
+            return;
+        }
+        // Out of view — zoom out, fly, zoom back in
+        const outZoom = Math.min(gMap.getZoom(), 12);
+        gMap.setZoom(outZoom);
+        google.maps.event.addListenerOnce(gMap, 'idle', () => {
+            gMap.panTo(position);
+            google.maps.event.addListenerOnce(gMap, 'idle', () => {
+                gMap.setZoom(targetZoom);
+                if (onArrival) google.maps.event.addListenerOnce(gMap, 'idle', onArrival);
+            });
         });
     }
 
@@ -372,9 +397,9 @@
         const marker = gMarkers[id];
         if (!marker || !gMap) return;
         document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        gMap.panTo(marker.getPosition());
-        gMap.setZoom(16);
-        google.maps.event.trigger(marker, 'click');
+        smoothNavigateTo(marker.getPosition(), 16, () => {
+            google.maps.event.trigger(marker, 'click');
+        });
     };
 
     /* ── MAP FOLIO SEARCH ── */
@@ -400,18 +425,40 @@
         input.addEventListener('keydown', e => { if (e.key === 'Enter') buscarFolio(); });
     })();
 
+    let userMarker = null;
+    let userInfoWindow = null;
+
     window.verMiUbicacion = function () {
         if (!navigator.geolocation) {
             alert('Tu navegador no soporta geolocalización.');
             return;
         }
+        // Show loading state on button
+        const btn     = document.getElementById('map-loc-btn');
+        const icon    = document.getElementById('map-loc-icon');
+        const spinner = document.getElementById('map-loc-spinner');
+        const label   = document.getElementById('map-loc-label');
+        if (btn) btn.disabled = true;
+        if (icon) icon.style.display = 'none';
+        if (spinner) spinner.style.display = 'inline-block';
+        if (label) label.textContent = 'Buscando…';
+
+        function restoreBtn() {
+            if (btn) btn.disabled = false;
+            if (icon) icon.style.display = 'inline-block';
+            if (spinner) spinner.style.display = 'none';
+            if (label) label.textContent = 'Mi ubicación';
+        }
+
         navigator.geolocation.getCurrentPosition(
             pos => {
+                restoreBtn();
                 const myPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
                 document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                gMap.panTo(myPos);
-                gMap.setZoom(15);
+
                 if (userMarker) userMarker.setMap(null);
+                if (userInfoWindow) userInfoWindow.close();
+
                 userMarker = new google.maps.Marker({
                     position: myPos,
                     map: gMap,
@@ -424,13 +471,28 @@
                         strokeWeight: 3,
                         scale: 10
                     },
+                    animation: google.maps.Animation.DROP,
                     zIndex: 999
                 });
-                const iw = new google.maps.InfoWindow({ content: '<strong style="color:#9D1B32">Estás aquí</strong>' });
-                iw.open(gMap, userMarker);
-                userMarker.addListener('click', () => iw.open(gMap, userMarker));
+
+                userInfoWindow = new google.maps.InfoWindow({
+                    content: `<div style="font-family:system-ui,sans-serif;padding:2px 4px;">
+                        <div style="display:flex;align-items:center;gap:6px;">
+                            <span style="width:10px;height:10px;border-radius:50%;background:#9D1B32;flex-shrink:0;"></span>
+                            <strong style="color:#9D1B32;font-size:13px;">¡Estás aquí!</strong>
+                        </div>
+                        <p style="margin:4px 0 0;font-size:11px;color:#64748b;">Tu ubicación actual</p>
+                    </div>`
+                });
+
+                smoothNavigateTo(myPos, 15, () => {
+                    userInfoWindow.open(gMap, userMarker);
+                });
+
+                userMarker.addListener('click', () => userInfoWindow.open(gMap, userMarker));
             },
             err => {
+                restoreBtn();
                 const msgs = {
                     1: 'Permiso de ubicación denegado. Actívalo en la configuración de tu navegador.',
                     2: 'No se pudo obtener tu ubicación.',
@@ -649,6 +711,12 @@
     .map-carousel-controls .mc-counter { background:rgba(0,0,0,0.6); color:#fff; padding:6px 12px; border-radius:999px; font-weight:600; font-size:0.95rem; }
     @media (max-width:720px) { .map-carousel-controls { bottom:12px; gap:8px; } .map-carousel-controls .mc-btn { width:40px; height:40px; } }
 
+    /* Spinner keyframe */
+    @keyframes map-spin { to { transform: rotate(360deg); } }
+
+    /* Loc button loading state */
+    .mps-loc-btn:disabled { opacity:0.7; cursor:not-allowed; }
+
     /* Filter select and small toolbar buttons styling */
     .map-status-filter { min-width:150px; padding:6px 8px; border-radius:8px; border:1px solid rgba(15,23,42,0.06); background:#fff; font-size:0.95rem; color:#0f172a; }
     .map-filter-btn { padding:6px 8px; border-radius:6px; border:0; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,0.06); cursor:pointer; }
@@ -684,14 +752,18 @@
             })(gMarkerStatus[id]);
         }
 
-        function updateFilteredList() {
+        function updateFilteredList(resetIndex) {
             if (!sel) return;
             const want = sel.value; // all | pending | inprogress | resolved | rejected
             filteredIds = Object.keys(gMarkers || {}).filter(id => {
                 if (!want || want === 'all') return true;
                 return normalizeTypeFromMarker(id) === want;
-            });
-            index = filteredIds.length ? 0 : -1;
+            }).sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+            // Only reset to 0 when explicitly requested (e.g. filter change)
+            // or when the current index is out of range — NOT on periodic refresh
+            if (resetIndex || index < 0 || index >= filteredIds.length) {
+                index = filteredIds.length ? 0 : -1;
+            }
             updateControls();
         }
 
@@ -710,25 +782,25 @@
             const id = filteredIds[index];
             const marker = gMarkers[id];
             if (!marker || !gMap) return;
-            gMap.panTo(marker.getPosition());
-            gMap.setZoom(16);
-            // Bounce the marker briefly so the user sees which one it is
-            marker.setAnimation(google.maps.Animation.BOUNCE);
-            setTimeout(() => marker.setAnimation(null), 1400);
+            smoothNavigateTo(marker.getPosition(), 16, () => {
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+                setTimeout(() => marker.setAnimation(null), 1400);
+            });
             updateControls();
         }
 
         function next() { if (!filteredIds.length) return; focusAt((index + 1) % filteredIds.length); }
         function prev() { if (!filteredIds.length) return; focusAt((index - 1 + filteredIds.length) % filteredIds.length); }
 
-        if (sel) sel.addEventListener('change', () => { updateFilteredList(); if (index >= 0) focusAt(index); });
+        if (sel) sel.addEventListener('change', () => { updateFilteredList(true); if (index >= 0) focusAt(index); });
         if (btnNext) btnNext.addEventListener('click', next);
         if (btnPrev) btnPrev.addEventListener('click', prev);
         if (carNext) carNext.addEventListener('click', next);
         if (carPrev) carPrev.addEventListener('click', prev);
 
         // Periodically refresh filtered list to stay in sync with markers
-        setInterval(() => { try { updateFilteredList(); } catch(e){} }, 4000);
+        // Pass no argument so the current navigation index is preserved
+        setInterval(() => { try { updateFilteredList(false); } catch(e){} }, 4000);
 
         // Expose for debugging
         window.mapFilterUpdate = updateFilteredList;

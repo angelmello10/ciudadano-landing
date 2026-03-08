@@ -7,7 +7,7 @@
             <div class="split-wrap">
                 <div class="split-item">
                     <div class="hero-content split-item-content center-content-mobile reveal-from-top">
-                        <span class="hero-eyebrow">Plataforma ciudadana 24/7</span>
+                        <!-- <span class="hero-eyebrow">Plataforma ciudadana 24/7</span> -->
                         <h1 class="mt-0 mb-16">Reporta incidencias y mejora tu <span class="hero-accent">ciudad</span> en minutos</h1>
                         <p class="mt-0 mb-32">Conecta con tu municipio de forma rápida, transparente y
                             desde cualquier dispositivo. Tu reporte se registra al instante y puedes darle
@@ -99,6 +99,9 @@
                     </div>
                     <span class="hero-stat-num" id="hs-total">—</span>
                     <span class="hero-stat-label">Total reportes</span>
+                    <div class="hero-stat-bar" aria-hidden="true">
+                        <div class="hero-stat-bar-fill" id="hs-total-bar" style="width:0%"></div>
+                    </div>
                 </div>
                 <div class="hero-stat">
                     <div class="hero-stat-icon" style="--si:5,150,105">
@@ -106,6 +109,9 @@
                     </div>
                     <span class="hero-stat-num" id="hs-resueltos">—</span>
                     <span class="hero-stat-label">Resueltos</span>
+                    <div class="hero-stat-bar" aria-hidden="true">
+                        <div class="hero-stat-bar-fill" id="hs-resueltos-bar" style="width:0%"></div>
+                    </div>
                 </div>
                 <div class="hero-stat">
                     <div class="hero-stat-icon" style="--si:37,99,235">
@@ -113,6 +119,9 @@
                     </div>
                     <span class="hero-stat-num" id="en">—</span>
                     <span class="hero-stat-label">En proceso</span>
+                    <div class="hero-stat-bar" aria-hidden="true">
+                        <div class="hero-stat-bar-fill" id="hs-en-bar" style="width:0%"></div>
+                    </div>
                 </div>
                 <div class="hero-stat">
                     <div class="hero-stat-icon" style="--si:217,119,6">
@@ -120,6 +129,9 @@
                     </div>
                     <span class="hero-stat-num" id="hs-pending">—</span>
                     <span class="hero-stat-label">Pendientes</span>
+                    <div class="hero-stat-bar" aria-hidden="true">
+                        <div class="hero-stat-bar-fill" id="hs-pending-bar" style="width:0%"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -243,7 +255,20 @@
                 if (el) el.textContent = val;
             }
 
+            function setBar(id, pct) {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const target = Math.max(0, Math.min(100, Math.round(pct)));
+                el.style.width = target + '%';
+            }
+
             const active = (parseInt(s.en_proceso) || 0) + (parseInt(s.pendientes) || 0);
+            const totalNum = parseInt(s.total) || 0;
+
+            function pctOf(val) {
+                const n = parseInt(val) || 0;
+                return totalNum ? (n / totalNum) * 100 : 0;
+            }
 
             // Primera carga: animación countUp; recargas: valor directo
             if (!refreshHeroStats._loaded) {
@@ -252,6 +277,13 @@
                 countUp('en',           s.en_proceso || 0, 1500);
                 countUp('hs-pending',   s.pendientes || 0, 1700);
                 countUp('hm-active',    active       || 0, 1500);
+                // animate bars
+                setTimeout(() => {
+                    setBar('hs-total-bar',     pctOf(s.total));
+                    setBar('hs-resueltos-bar', pctOf(s.resueltos));
+                    setBar('hs-en-bar',        pctOf(s.en_proceso));
+                    setBar('hs-pending-bar',   pctOf(s.pendientes));
+                }, 200);
                 refreshHeroStats._loaded = true;
             } else {
                 set('hs-total',     s.total      || 0);
@@ -259,6 +291,11 @@
                 set('en',           s.en_proceso || 0);
                 set('hs-pending',   s.pendientes || 0);
                 set('hm-active',    active       || 0);
+                // update bars on subsequent refreshes
+                setBar('hs-total-bar',     pctOf(s.total));
+                setBar('hs-resueltos-bar', pctOf(s.resueltos));
+                setBar('hs-en-bar',        pctOf(s.en_proceso));
+                setBar('hs-pending-bar',   pctOf(s.pendientes));
             }
         } catch (_) { /* silently ignore */ }
     }
