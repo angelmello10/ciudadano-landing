@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="/public/css/modal-report.css">
+
 <!-- MODAL: Reportar incidencia -->
 <div id="modal-report" class="modal modal-custom">
     <div class="modal-inner modal-custom-inner" style="max-height:92vh;display:flex;flex-direction:column;">
@@ -75,10 +77,7 @@
                             </span>
                         </button>
                     </div>
-                    <div style="display:flex;align-items:center;gap:5px;margin-top:6px;margin-bottom:6px;padding:6px 10px;background:#fff8e1;border:1px solid #ffe082;border-radius:7px;font-size:0.73rem;color:#7a5c00;">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e6a817" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="12" y1="0" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="24"/><line x1="0" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="24" y2="12"/></svg>
-                        Para una ubicación más precisa, activa el GPS de tu dispositivo y pulsa el botón GPS.
-                    </div>
+                    <small style="display:block;margin:4px 0 6px;color:#9ca3af;font-size:0.75rem;">Activa el GPS para mayor precisión o toca el mapa.</small>
                     <div id="report-map-container" style="height:230px;border-radius:10px;overflow:hidden;border:1.5px solid #e0e0e0;position:relative;">
                         <div id="report-map" style="width:100%;height:100%;"></div>
                         <div style="position:absolute;bottom:7px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.55);color:#fff;font-size:0.7rem;padding:3px 10px;border-radius:20px;pointer-events:none;white-space:nowrap;">Toca el mapa o arrastra el pin para precisar</div>
@@ -94,15 +93,38 @@
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                         Evidencia fotográfica <span class="optional-tag">Opcional</span>
                     </label>
-                    <label class="mf-file-drop" for="photo">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9D1B32" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-                        <span>Arrastra o <u>selecciona</u> una imagen</span>
-                        <input id="photo" type="file" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;">
-                    </label>
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;">
+                        <!-- Cámara en vivo -->
+                        <button type="button" id="btn-open-camera" style="padding:10px 8px;border-radius:8px;font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;background:var(--primary,#9D1B32);color:#fff;border:none;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            Tomar foto
+                        </button>
+                        <!-- Subir archivo -->
+                        <label for="photo" style="padding:10px 8px;border-radius:8px;font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;background:#f9fafb;color:#374151;border:1.5px dashed #d1d5db;position:relative;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9D1B32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                            Subir imagen
+                            <input id="photo" type="file" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;">
+                        </label>
+                    </div>
+
                     <small id="photo-name" class="field-hint"></small>
                     <div id="photo-preview-wrap" style="display:none;margin-top:12px;position:relative;">
                         <img id="photo-preview" src="" alt="Vista previa" style="width:100%;height:200px;border-radius:12px;object-fit:cover;border:1px solid rgba(0,0,0,0.08);box-shadow:0 4px 18px rgba(0,0,0,0.06);cursor:zoom-in;">
                         <button id="photo-preview-btn" type="button" style="position:absolute;right:12px;top:12px;background:rgba(0,0,0,0.6);color:#fff;border:0;padding:8px 10px;border-radius:8px;cursor:pointer;display:none;">Ver foto</button>
+                    </div>
+
+                    <!-- Overlay cámara en vivo -->
+                    <div id="camera-overlay" style="display:none;flex-direction:column;gap:0;margin-top:8px;border-radius:10px;overflow:hidden;border:1px solid #e0e0e0;">
+                        <video id="camera-video" autoplay playsinline muted style="width:100%;max-height:240px;object-fit:cover;display:block;background:#000;"></video>
+                        <canvas id="camera-canvas" style="display:none;"></canvas>
+                        <div style="display:flex;gap:6px;padding:8px;background:#000;">
+                            <button type="button" id="btn-snap" style="flex:1;padding:8px;border-radius:6px;background:var(--primary,#9D1B32);color:#fff;border:none;font-size:0.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+                                Capturar
+                            </button>
+                            <button type="button" id="btn-close-camera" style="padding:8px 14px;border-radius:6px;background:#1a1a1a;color:#888;border:none;font-size:0.85rem;cursor:pointer;">Cancelar</button>
+                        </div>
                     </div>
                 </div>
 
@@ -142,435 +164,7 @@
     </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const btnGetLocation = document.getElementById('get-location');
-        const inputLocation  = document.getElementById('location');
-        const statusLocation = document.getElementById('location-status');
-
-        // Google Places Autocomplete
-        function initPlacesAutocomplete() {
-            if (typeof google === 'undefined' || !google.maps || !google.maps.places) return;
-            const ac = new google.maps.places.Autocomplete(inputLocation, {
-                types: ['geocode', 'establishment'],
-                fields: ['formatted_address', 'geometry']
-            });
-            ac.addListener('place_changed', () => {
-                const place = ac.getPlace();
-                if (place.geometry && place.geometry.location) {
-                    const lat = place.geometry.location.lat();
-                    const lng = place.geometry.location.lng();
-                    document.getElementById('lat').value = lat;
-                    document.getElementById('lng').value  = lng;
-                    inputLocation.value = place.formatted_address || inputLocation.value;
-                    statusLocation.textContent = 'Dirección seleccionada.';
-                    statusLocation.style.color = 'green';
-                    syncPickerMap(lat, lng);
-                } else {
-                    statusLocation.textContent = 'Selecciona una sugerencia de la lista.';
-                    statusLocation.style.color = '';
-                }
-            });
-        }
-        // Espera a que Google Maps esté listo
-        if (typeof google !== 'undefined' && google.maps && google.maps.places) {
-            initPlacesAutocomplete();
-        } else {
-            document.addEventListener('googleMapsReady', initPlacesAutocomplete);
-            window.addEventListener('load', () => {
-                setTimeout(initPlacesAutocomplete, 800);
-            });
-        }
-
-        // Photo name preview + inline preview + lightbox trigger (scoped)
-        const photoInput = document.getElementById('photo');
-        const photoName  = document.getElementById('photo-name');
-        const photoPreviewWrap = document.getElementById('photo-preview-wrap');
-        const photoPreview = document.getElementById('photo-preview');
-        if (photoInput && photoName) {
-            photoInput.addEventListener('change', async () => {
-                const f = photoInput.files && photoInput.files[0];
-                photoName.textContent = f ? '\u2714 ' + f.name : '';
-                if (f) {
-                    try {
-                        const data = await readFileAsDataURL(f);
-                        photoPreview.src = data || '';
-                        photoPreviewWrap.style.display = data ? 'block' : 'none';
-                        const previewBtn = document.getElementById('photo-preview-btn');
-                        if (previewBtn) { previewBtn.style.display = data ? 'inline-block' : 'none'; previewBtn.onclick = () => { if (typeof openImageLightbox === 'function') openImageLightbox(photoPreview.src, f.name || 'Foto'); } }
-                        photoPreview.onclick = () => { if (typeof openImageLightbox === 'function') openImageLightbox(photoPreview.src, f.name || 'Foto'); };
-                    } catch(e) {
-                        photoPreviewWrap.style.display = 'none';
-                    }
-                } else {
-                    photoPreviewWrap.style.display = 'none';
-                    photoPreview.src = '';
-                }
-            });
-        }
-
-        btnGetLocation.addEventListener('click', () => {
-            if (!navigator.geolocation) {
-                statusLocation.textContent = 'La geolocalización no es compatible con tu navegador.';
-                return;
-            }
-            statusLocation.textContent = 'Obteniendo ubicación...';
-            btnGetLocation.classList.add('is-loading');
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    const latlng = { lat: latitude, lng: longitude };
-                    inputLocation.value = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
-                    statusLocation.textContent = 'Buscando dirección...';
-                    const geocoder = new google.maps.Geocoder();
-                    geocoder.geocode({ location: latlng }, (results, status) => {
-                        btnGetLocation.classList.remove('is-loading');
-                        if (status === 'OK') {
-                            if (results[0]) {
-                                inputLocation.value = results[0].formatted_address;
-                                const loc = results[0].geometry && results[0].geometry.location
-                                    ? results[0].geometry.location : latlng;
-                                document.getElementById('lat').value = loc.lat();
-                                document.getElementById('lng').value = loc.lng();
-                                statusLocation.textContent = 'Dirección obtenida.';
-                                syncPickerMap(loc.lat(), loc.lng());
-                            } else {
-                                document.getElementById('lat').value = latitude;
-                                document.getElementById('lng').value = longitude;
-                                statusLocation.textContent = 'Coordenadas obtenidas.';
-                                syncPickerMap(latitude, longitude);
-                            }
-                        } else {
-                            statusLocation.textContent = 'Error de dirección: ' + status;
-                        }
-                    });
-                },
-                (err) => {
-                    btnGetLocation.classList.remove('is-loading');
-                    statusLocation.textContent = 'Es necesario activar la ubicación en tu dispositivo.';
-                    statusLocation.style.color = '#c0392b';
-                }
-            );
-        });
-
-        function readFileAsDataURL(file) {
-            return new Promise((resolve, reject) => {
-                if (!file) return resolve(null);
-                const fr = new FileReader();
-                fr.onload  = () => resolve(fr.result);
-                fr.onerror = reject;
-                fr.readAsDataURL(file);
-            });
-        }
-
-        function geocodeAddress(address) {
-            return new Promise((resolve) => {
-                if (!window.google || !google.maps || !google.maps.Geocoder) return resolve(null);
-                const geocoder = new google.maps.Geocoder();
-                geocoder.geocode({ address }, (results, status) => {
-                    if (status === 'OK' && results && results[0]) {
-                        const loc = results[0].geometry.location;
-                        return resolve({ lat: loc.lat(), lng: loc.lng() });
-                    }
-                    return resolve(null);
-                });
-            });
-        }
-
-        // ── MAP PICKER ────────────────────────────────────────────────
-        let pickerMap    = null;
-        let pickerMarker = null;
-
-        function initPickerMap() {
-            if (pickerMap) return;
-            const defaultCenter = { lat: 19.4014, lng: -99.0150 }; // Nezahualcóyotl
-
-            const pickerStyleLight = [
-                { elementType: 'geometry', stylers: [{ color: '#f5f5f5' }] },
-                { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
-                { elementType: 'labels.text.fill', stylers: [{ color: '#616161' }] },
-                { elementType: 'labels.text.stroke', stylers: [{ color: '#f5f5f5' }] },
-                { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
-                { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#e9e9e9' }] }
-            ];
-            const pickerStyleDark = [
-                { elementType: 'geometry', stylers: [{ color: '#1a1a2e' }] },
-                { elementType: 'labels.text.fill', stylers: [{ color: '#8a8a9a' }] },
-                { elementType: 'labels.text.stroke', stylers: [{ color: '#1a1a2e' }] },
-                { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
-                { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#2a2a3e' }] },
-                { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#1a1a2e' }] },
-                { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#3a2a3e' }] },
-                { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0e0e1a' }] },
-                { featureType: 'poi', elementType: 'geometry', stylers: [{ color: '#1e1e32' }] },
-                { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#1a2e1a' }] },
-                { featureType: 'transit', elementType: 'geometry', stylers: [{ color: '#1e1e30' }] },
-                { featureType: 'administrative', elementType: 'geometry.stroke', stylers: [{ color: '#2a2a40' }] }
-            ];
-
-            const isDark = document.documentElement.classList.contains('dark');
-            pickerMap = new google.maps.Map(document.getElementById('report-map'), {
-                center: defaultCenter,
-                zoom: 13,
-                mapTypeControl: false,
-                streetViewControl: false,
-                fullscreenControl: false,
-                styles: isDark ? pickerStyleDark : pickerStyleLight
-            });
-
-            /* Sync picker map whenever html.dark class changes */
-            new MutationObserver(function() {
-                if (!pickerMap) return;
-                const nowDark = document.documentElement.classList.contains('dark');
-                pickerMap.setOptions({ styles: nowDark ? pickerStyleDark : pickerStyleLight });
-            }).observe(document.documentElement, { attributeFilter: ['class'] });
-            pickerMarker = new google.maps.Marker({
-                map: pickerMap,
-                draggable: true,
-                visible: false,
-                animation: google.maps.Animation.DROP
-            });
-            pickerMap.addListener('click', (e) => {
-                placeAndGeocode(e.latLng.lat(), e.latLng.lng());
-            });
-            pickerMarker.addListener('dragend', () => {
-                const pos = pickerMarker.getPosition();
-                placeAndGeocode(pos.lat(), pos.lng());
-            });
-        }
-
-        function placeAndGeocode(lat, lng) {
-            const latLng = new google.maps.LatLng(lat, lng);
-            pickerMarker.setPosition(latLng);
-            pickerMarker.setVisible(true);
-            pickerMap.panTo(latLng);
-            document.getElementById('lat').value = lat;
-            document.getElementById('lng').value = lng;
-            const geocoder = new google.maps.Geocoder();
-            geocoder.geocode({ location: { lat, lng } }, (results, status) => {
-                if (status === 'OK' && results[0]) {
-                    inputLocation.value = results[0].formatted_address;
-                    statusLocation.textContent = 'Ubicación seleccionada en el mapa.';
-                    statusLocation.style.color = 'green';
-                } else {
-                    inputLocation.value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-                    statusLocation.textContent = 'Coordenadas seleccionadas.';
-                }
-            });
-        }
-
-        function syncPickerMap(lat, lng) {
-            if (!pickerMap) return;
-            const latLng = new google.maps.LatLng(lat, lng);
-            pickerMarker.setPosition(latLng);
-            pickerMarker.setVisible(true);
-            pickerMap.panTo(latLng);
-            pickerMap.setZoom(16);
-        }
-
-        // ── Auto-init map when modal opens ────────────────────────────
-        function tryAutoGPS() {
-            if (!navigator.geolocation) {
-                statusLocation.textContent = 'GPS no disponible. Selecciona tu ubicación directo en el mapa.';
-                return;
-            }
-            if (document.getElementById('lat').value) return; // already have coords
-            statusLocation.textContent = 'Detectando tu ubicación...';
-            btnGetLocation.classList.add('is-loading');
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    const latlng = { lat: latitude, lng: longitude };
-                    inputLocation.value = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
-                    statusLocation.textContent = 'Buscando dirección...';
-                    const geocoder = new google.maps.Geocoder();
-                    geocoder.geocode({ location: latlng }, (results, status) => {
-                        btnGetLocation.classList.remove('is-loading');
-                        if (status === 'OK' && results[0]) {
-                            inputLocation.value = results[0].formatted_address;
-                            const loc = results[0].geometry && results[0].geometry.location ? results[0].geometry.location : latlng;
-                            document.getElementById('lat').value = loc.lat();
-                            document.getElementById('lng').value = loc.lng();
-                            statusLocation.textContent = 'Ubícate en el mapa y ajusta el pin si hace falta.';
-                            statusLocation.style.color = 'green';
-                            syncPickerMap(loc.lat(), loc.lng());
-                        } else {
-                            document.getElementById('lat').value = latitude;
-                            document.getElementById('lng').value = longitude;
-                            statusLocation.textContent = 'Ajusta el pin en el mapa para precisar.';
-                            syncPickerMap(latitude, longitude);
-                        }
-                    });
-                },
-                () => {
-                    btnGetLocation.classList.remove('is-loading');
-                    statusLocation.textContent = 'Toca el mapa para marcar la ubicación del problema.';
-                    statusLocation.style.color = '';
-                    // Keep map visible at default center — user can tap to place pin
-                },
-                { timeout: 8000, maximumAge: 30000 }
-            );
-        }
-
-        function startPickerMap() {
-            if (typeof google === 'undefined' || !google.maps) return;
-            initPickerMap();
-
-            const mapContainer = document.getElementById('report-map-container');
-
-            function doResize() {
-                google.maps.event.trigger(pickerMap, 'resize');
-                // Second resize after animation completes to ensure tiles paint
-                setTimeout(() => google.maps.event.trigger(pickerMap, 'resize'), 350);
-                const lat = parseFloat(document.getElementById('lat').value);
-                const lng = parseFloat(document.getElementById('lng').value);
-                if (lat && lng) syncPickerMap(lat, lng);
-                else tryAutoGPS();
-            }
-
-            // ResizeObserver: se dispara exactamente cuando el contenedor
-            // tiene dimensiones reales — funciona en iOS, Android y desktop.
-            if (window.ResizeObserver && mapContainer) {
-                const ro = new ResizeObserver((entries) => {
-                    for (const entry of entries) {
-                        const h = entry.contentRect.height;
-                        if (h > 10) {
-                            ro.disconnect(); // solo necesitamos el primer resize útil
-                            doResize();
-                        }
-                    }
-                });
-                ro.observe(mapContainer);
-                // Fallback: si ya tiene altura (modal ya estaba abierto), disparar ya
-                if (mapContainer.offsetHeight > 10) doResize();
-            } else {
-                // Fallback para browsers muy viejos sin ResizeObserver
-                setTimeout(doResize, 150);
-                setTimeout(doResize, 600);
-            }
-        }
-
-        // Observe when the modal becomes visible
-        const modalReportEl = document.getElementById('modal-report');
-        if (modalReportEl) {
-            new MutationObserver(() => {
-                if (modalReportEl.classList.contains('is-active')) {
-                    startPickerMap();
-                }
-            }).observe(modalReportEl, { attributes: true, attributeFilter: ['class'] });
-        }
-        // Init if Maps API loads after DOMContentLoaded
-        document.addEventListener('googleMapsReady', startPickerMap);
-        // Also try immediately in case API is already loaded
-        startPickerMap();
-        // ── END MAP PICKER ────────────────────────────────────────────
-
-        const formReport = document.getElementById('form-report');
-        formReport.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = formReport.querySelector('button[type="submit"]');
-            btn.disabled = true;
-            btn.textContent = 'Enviando...';
-            try {
-                const nombre    = document.getElementById('reporter-name').value.trim();
-                const email     = document.getElementById('reporter-email').value.trim();
-                let tipo        = document.getElementById('failure-type').value;
-                const direccion = document.getElementById('location').value.trim();
-                let lat         = document.getElementById('lat').value;
-                let lng         = document.getElementById('lng').value;
-                const descripcion = document.getElementById('description').value.trim();
-                // If user selected "Otro", use the custom text field value
-                if (tipo === 'otro') {
-                    const other = document.getElementById('failure-type-other') && document.getElementById('failure-type-other').value.trim();
-                    if (other) tipo = other;
-                }
-                const photoFile   = document.getElementById('photo').files[0];
-
-                if ((!lat || !lng) && direccion) {
-                    const geo = await geocodeAddress(direccion);
-                    if (geo) {
-                        lat = geo.lat; lng = geo.lng;
-                        document.getElementById('lat').value = lat;
-                        document.getElementById('lng').value = lng;
-                    }
-                }
-
-                if (!lat || !lng) {
-                    alert('Por favor usa el botón GPS para obtener tu ubicación antes de enviar.');
-                    btn.disabled = false;
-                    btn.textContent = 'Enviar Reporte';
-                    return;
-                }
-
-                const fotoData = await readFileAsDataURL(photoFile);
-                const payload  = {
-                    nombre_ciudadano: nombre     || null,
-                    email:            email      || null,
-                    direccion:        direccion  || null,
-                    latitud:          lat        || null,
-                    longitud:         lng        || null,
-                    tipo_incidencia:  tipo       || null,
-                    descripcion:      descripcion || null,
-                    estatus: 'pendiente',
-                    foto:    fotoData   || null
-                };
-
-                const resp = await fetch('/public/api/incidencias.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await resp.json();
-                if (!data.ok) { alert(data.error || 'No se pudo enviar el reporte.'); return; }
-
-                document.getElementById('report-id').textContent = data.id ? '' + data.id : '#0000';
-                // show quick consult button and wire it to open modal-consult prefilled
-                try {
-                    const viewBtn = document.getElementById('report-view-link');
-                    if (viewBtn && data.id) {
-                        viewBtn.style.display = 'inline-block';
-                        viewBtn.onclick = () => {
-                            try {
-                                const consultModal = document.getElementById('modal-consult');
-                                const input = document.getElementById('report-number');
-                                const form = document.getElementById('form-consult');
-                                if (consultModal) { consultModal.classList.add('is-active'); document.body.classList.add('modal-is-active'); }
-                                if (input) { input.value = data.id; input.focus(); }
-                                if (form) {
-                                    // trigger the consult form submit programmatically
-                                    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
-                                }
-                            } catch (e) { console.warn('No se pudo abrir el modal de consulta', e); }
-                        };
-                    }
-                } catch(e) { console.warn(e); }
-                formReport.style.display = 'none';
-                document.getElementById('report-success').style.display = 'block';
-
-                if (gMap && data.row && data.row.latitud && data.row.longitud) {
-                    gMarkers[data.row.id] = buildMarker(gMap, data.row);
-                }
-            } catch (err) {
-                console.error('Error enviando reporte:', err);
-                alert('Error al enviar el reporte. Revisa la consola.');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Enviar Reporte';
-            }
-        });
-    });
-</script>
-
 <!-- Lightbox (scoped to report modal) -->
-<style>
-    #lb-report { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); z-index: 100000; }
-    #lb-report.active { display: flex; }
-    #lb-report .inner { max-width: 95vw; max-height: 95vh; position: relative; }
-    #lb-report img { display:block; max-width:95vw; max-height:95vh; object-fit:contain; border-radius:10px; box-shadow:0 12px 36px rgba(0,0,0,0.6);} 
-    #lb-report .close { position:absolute; right:-8px; top:-8px; width:36px; height:36px; border-radius:999px; background:rgba(0,0,0,0.5); color:#fff; border:0; cursor:pointer; }
-    #lb-report .caption { margin-top:8px; text-align:center; color:#e6eef8; }
-</style>
-
 <div id="lb-report" aria-hidden="true">
     <div class="inner">
         <button class="close" aria-label="Cerrar">×</button>
@@ -579,15 +173,4 @@
     </div>
 </div>
 
-<script>
-    (function(){
-        const lb = document.getElementById('lb-report');
-        const img = document.getElementById('lb-report-img');
-        const cap = document.getElementById('lb-report-caption');
-        const btn = lb.querySelector('.close');
-        window.openReportLightbox = function(src, caption){ if(!src) return; img.src = src; cap.textContent = caption || ''; lb.classList.add('active'); lb.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; };
-        window.closeReportLightbox = function(){ lb.classList.remove('active'); lb.setAttribute('aria-hidden','true'); img.src=''; cap.textContent=''; document.body.style.overflow=''; };
-        lb.addEventListener('click',(e)=>{ if (e.target === lb || e.target === btn) closeReportLightbox(); });
-        document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeReportLightbox(); });
-    })();
-</script>
+<script src="/public/js/modal-report.js"></script>

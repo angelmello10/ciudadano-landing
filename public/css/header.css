@@ -1,0 +1,78 @@
+    /* ── Logo img ── */
+    .brand-logo-img {
+        height: 52px;
+        width: auto;
+        display: block;
+        transition: transform .3s ease;
+    }
+
+    .brand-link:hover .brand-logo-img {
+        transform: scale(1.06);
+    }
+
+    /* ── Separador vertical ── */
+    .brand-divider {
+        display: block;
+        width: 1.5px;
+        height: 36px;
+        background: linear-gradient(to bottom, transparent, rgba(157, 27, 50, .5) 30%, rgba(157, 27, 50, .5) 70%, transparent);
+        flex-shrink: 0;
+    }
+
+    /* ── Texto ── */
+    .brand-text-wrap {
+        display: flex;
+        flex-direction: column;
+        line-height: 1;
+        gap: 4px;
+    }
+
+    /* SIGIU — nombre principal */
+    .brand-sigiu {
+        font-size: 1.45rem;
+        font-weight: 900;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        background: linear-gradient(120deg, var(--primary, #9D1B32) 0%, #e11d48 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        transition: filter .2s;
+    }
+
+    .brand-link:hover .brand-sigiu {
+        filter: brightness(1.15);
+    }
+
+    /* Reporta tu ciudad — subtítulo */
+    .brand-tagline {
+        font-size: 0.62rem;
+        font-weight: 600;
+        letter-spacing: .22em;
+        text-transform: uppercase;
+        color: #94a3b8;
+        transition: color .2s;
+    }
+
+    html.dark .brand-tagline {
+        color: #64748b;
+    }
+
+    /* Responsive: en móvil esconde el tagline para que no apriete */
+    @media (max-width: 480px) {
+        .brand-logo-img {
+            height: 42px;
+        }
+
+        .brand-sigiu {
+            font-size: 1.2rem;
+        }
+
+        .brand-tagline {
+            display: none;
+        }
+
+        .brand-divider {
+            height: 28px;
+        }
+    }

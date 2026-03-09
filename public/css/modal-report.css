@@ -1,0 +1,47 @@
+    #lb-report {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 100000;
+    }
+
+    #lb-report.active {
+        display: flex;
+    }
+
+    #lb-report .inner {
+        max-width: 95vw;
+        max-height: 95vh;
+        position: relative;
+    }
+
+    #lb-report img {
+        display: block;
+        max-width: 95vw;
+        max-height: 95vh;
+        object-fit: contain;
+        border-radius: 10px;
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+    }
+
+    #lb-report .close {
+        position: absolute;
+        right: -8px;
+        top: -8px;
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        border: 0;
+        cursor: pointer;
+    }
+
+    #lb-report .caption {
+        margin-top: 8px;
+        text-align: center;
+        color: #e6eef8;
+    }

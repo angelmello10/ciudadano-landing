@@ -1,0 +1,138 @@
+    /* Carousel controls styling */
+    .map-carousel-controls {
+        position: absolute;
+        left: 50%;
+        bottom: 24px;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        z-index: 99999;
+        pointer-events: none;
+    }
+
+    .map-carousel-controls[aria-hidden="false"] {
+        pointer-events: auto;
+    }
+
+    .map-carousel-controls .mc-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 999px;
+        border: 0;
+        background: #ffffff;
+        color: #0f172a;
+        font-size: 22px;
+        line-height: 1;
+        box-shadow: 0 8px 20px rgba(2, 6, 23, 0.12);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .map-carousel-controls .mc-counter {
+        background: rgba(0, 0, 0, 0.6);
+        color: #fff;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    @media (max-width:720px) {
+        .map-carousel-controls {
+            bottom: 12px;
+            gap: 8px;
+        }
+
+        .map-carousel-controls .mc-btn {
+            width: 40px;
+            height: 40px;
+        }
+    }
+
+    /* Spinner keyframe */
+    @keyframes map-spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Loc button loading state */
+    .mps-loc-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    .mps-open-incident-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(157, 27, 50, 0.18);
+        background: rgba(157, 27, 50, 0.08);
+        color: #9d1b32;
+        font-size: 0.86rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background .18s ease, transform .18s ease, opacity .18s ease;
+    }
+
+    .mps-open-incident-btn:hover:not(:disabled) {
+        background: rgba(157, 27, 50, 0.14);
+        transform: translateY(-1px);
+    }
+
+    .mps-open-incident-btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    /* Filter select and small toolbar buttons styling */
+    .map-status-filter {
+        min-width: 150px;
+        padding: 6px 8px;
+        border-radius: 8px;
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        background: #fff;
+        font-size: 0.95rem;
+        color: #0f172a;
+    }
+
+    .map-filter-btn {
+        padding: 6px 8px;
+        border-radius: 6px;
+        border: 0;
+        background: #fff;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+        cursor: pointer;
+    }
+
+    /* Dark mode adjustments for select and buttons */
+    html.dark .map-status-filter {
+        background: #0b1220;
+        color: #e6eef8;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    html.dark .map-filter-btn,
+    html.dark .map-carousel-controls .mc-btn {
+        background: #0f1724;
+        color: #e6eef8;
+        box-shadow: 0 6px 18px rgba(2, 6, 23, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    html.dark .map-carousel-controls .mc-counter {
+        background: rgba(255, 255, 255, 0.08);
+        color: #e6eef8;
+    }
+
+    html.dark .mps-open-incident-btn {
+        background: rgba(157, 27, 50, 0.18);
+        border-color: rgba(251, 113, 133, 0.18);
+        color: #fecdd3;
+    }

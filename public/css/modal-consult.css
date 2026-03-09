@@ -1,0 +1,187 @@
+    /* â”€â”€ Consult modal result â”€â”€ */
+    .cq-banner {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        border-radius: 14px;
+        padding: 14px 16px;
+        margin-bottom: 12px;
+        background: #f8fafc;
+        border: 1px solid rgba(0, 0, 0, 0.07);
+        transition: background .2s, border-color .2s;
+    }
+
+    .cq-banner-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .cq-banner-body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .cq-banner-label {
+        display: block;
+        font-size: 0.62rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: #94a3b8;
+        margin-bottom: 3px;
+    }
+
+    .cq-banner-status {
+        display: block;
+        font-size: 1.15rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+    }
+
+    .cq-banner-id {
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 99px;
+        background: rgba(0, 0, 0, 0.05);
+        color: #64748b;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .cq-card {
+        background: #f8fafc;
+        border: 1px solid rgba(0, 0, 0, 0.07);
+        border-radius: 14px;
+        overflow: hidden;
+        margin-bottom: 4px;
+    }
+
+    .cq-divider {
+        height: 1px;
+        background: rgba(0, 0, 0, 0.06);
+        margin: 0 14px;
+    }
+
+    .cq-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 14px;
+        font-size: 0.83rem;
+        color: #334155;
+    }
+
+    .cq-row svg {
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .cq-row--type {
+        padding: 12px 14px;
+    }
+
+    .cq-type-text {
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .cq-meta-text {
+        line-height: 1.5;
+    }
+
+    .cq-row--desc .cq-meta-text {
+        color: #64748b;
+        font-style: italic;
+    }
+
+    /* dark */
+    html.dark .cq-banner {
+        background: #1e2532;
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    html.dark .cq-banner-id {
+        background: rgba(255, 255, 255, 0.07);
+        color: #94a3b8;
+    }
+
+    html.dark .cq-card {
+        background: #1e2532;
+        border-color: rgba(255, 255, 255, 0.07);
+    }
+
+    html.dark .cq-divider {
+        background: rgba(255, 255, 255, 0.06);
+    }
+
+    html.dark .cq-row {
+        color: #a0b4c8;
+    }
+
+    html.dark .cq-type-text {
+        color: #f1f5f9;
+    }
+
+    html.dark .cq-row--desc .cq-meta-text {
+        color: #64748b;
+    }
+
+    html.dark .cq-banner-id {
+        background: rgba(255, 255, 255, 0.07);
+        color: #94a3b8;
+    }
+
+    #lb-consult {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 100000;
+    }
+
+    #lb-consult.active {
+        display: flex;
+    }
+
+    #lb-consult .inner {
+        max-width: 95vw;
+        max-height: 95vh;
+        position: relative;
+    }
+
+    #lb-consult img {
+        display: block;
+        max-width: 95vw;
+        max-height: 95vh;
+        object-fit: contain;
+        border-radius: 10px;
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+    }
+
+    #lb-consult .close {
+        position: absolute;
+        right: -8px;
+        top: -8px;
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        border: 0;
+        cursor: pointer;
+    }
+
+    #lb-consult .caption {
+        margin-top: 8px;
+        text-align: center;
+        color: #e6eef8;
+    }

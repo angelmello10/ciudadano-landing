@@ -1,6 +1,8 @@
 <!-- Scroll progress bar -->
 <div id="nav-progress" aria-hidden="true"></div>
 
+<link rel="stylesheet" href="/public/css/header.css">
+
 <header class="site-header invert-color" id="site-header">
     <div class="container">
         <div class="site-header-inner">
@@ -25,16 +27,6 @@
                         <a class="header-link smooth-scroll" href="#como-funciona">Cómo funciona</a>
                         <a class="header-link smooth-scroll" href="#incidencias">Fotos / Reportes</a>
                     </div>
-                    <!-- <div class="nav-actions">
-                        <a class="header-link header-ghost modal-trigger" aria-controls="modal-consult" href="#0">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-                            Consultar folio
-                        </a>
-                        <a class="header-link header-cta modal-trigger" aria-controls="modal-report" href="#0">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                            Reportar ahora
-                        </a>
-                    </div> -->
                 </div>
             </nav>
 
@@ -58,125 +50,4 @@
     </div>
 </header>
 
-<style>
-    /* ── Logo img ── */
-    .brand-logo-img {
-        height: 52px;
-        width: auto;
-        display: block;
-        transition: transform .3s ease;
-    }
-    .brand-link:hover .brand-logo-img { transform: scale(1.06); }
-
-    /* ── Separador vertical ── */
-    .brand-divider {
-        display: block;
-        width: 1.5px;
-        height: 36px;
-        background: linear-gradient(to bottom, transparent, rgba(157,27,50,.5) 30%, rgba(157,27,50,.5) 70%, transparent);
-        flex-shrink: 0;
-    }
-
-    /* ── Texto ── */
-    .brand-text-wrap {
-        display: flex;
-        flex-direction: column;
-        line-height: 1;
-        gap: 4px;
-    }
-
-    /* SIGIU — nombre principal */
-    .brand-sigiu {
-        font-size: 1.45rem;
-        font-weight: 900;
-        letter-spacing: .14em;
-        text-transform: uppercase;
-        background: linear-gradient(120deg, var(--primary, #9D1B32) 0%, #e11d48 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        transition: filter .2s;
-    }
-    .brand-link:hover .brand-sigiu { filter: brightness(1.15); }
-
-    /* Reporta tu ciudad — subtítulo */
-    .brand-tagline {
-        font-size: 0.62rem;
-        font-weight: 600;
-        letter-spacing: .22em;
-        text-transform: uppercase;
-        color: #94a3b8;
-        transition: color .2s;
-    }
-    html.dark .brand-tagline { color: #64748b; }
-
-    /* Responsive: en móvil esconde el tagline para que no apriete */
-    @media (max-width: 480px) {
-        .brand-logo-img { height: 42px; }
-        .brand-sigiu    { font-size: 1.2rem; }
-        .brand-tagline  { display: none; }
-        .brand-divider  { height: 28px; }
-    }
-</style>
-
-<script>
-    /* Scroll progress + header shrink */
-    (function () {
-        const bar    = document.getElementById('nav-progress');
-        const header = document.getElementById('site-header');
-        let ticking  = false;
-        function onScroll() {
-            if (!ticking) {
-                requestAnimationFrame(() => {
-                    const scrolled = window.scrollY;
-                    const total    = document.documentElement.scrollHeight - window.innerHeight;
-                    if (bar)    bar.style.width = (total > 0 ? (scrolled / total) * 100 : 0) + '%';
-                    if (header) header.classList.toggle('is-scrolled', scrolled > 40);
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        }
-        window.addEventListener('scroll', onScroll, { passive: true });
-    })();
-
-    /* Dark mode toggle */
-    document.getElementById('dark-toggle').addEventListener('click', function(){
-        var isDark = document.documentElement.classList.toggle('dark');
-        try { localStorage.setItem('rc-theme', isDark ? 'dark' : 'light'); } catch(e){}
-    });
-
-    /* ── MOBILE NAV TOGGLE (propio, no depende de main.min.js) ── */
-    (function () {
-        var btn = document.getElementById('header-nav-toggle');
-        var nav = document.getElementById('header-nav');
-        if (!btn || !nav) return;
-
-        function openNav() {
-            nav.classList.add('mob-open');
-            btn.setAttribute('aria-expanded', 'true');
-            // también activa la animación de la hamburguesa del framework
-            nav.classList.add('is-active');
-        }
-        function closeNav() {
-            nav.classList.remove('mob-open', 'is-active');
-            btn.setAttribute('aria-expanded', 'false');
-        }
-        function isOpen() { return nav.classList.contains('mob-open'); }
-
-        btn.addEventListener('click', function (e) {
-            e.stopPropagation();
-            isOpen() ? closeNav() : openNav();
-        });
-
-        // cerrar al tocar un link
-        nav.querySelectorAll('.header-link').forEach(function (link) {
-            link.addEventListener('click', closeNav);
-        });
-
-        // cerrar al tocar fuera
-        document.addEventListener('click', function (e) {
-            if (isOpen() && !nav.contains(e.target) && e.target !== btn) closeNav();
-        });
-    })();
-</script>
+<script src="/public/js/header.js"></script>
