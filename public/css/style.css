@@ -7,7 +7,8 @@ html {
 }
 
 /* Make root and body fill viewport so footer can be pushed to bottom */
-html, body {
+html,
+body {
     height: 100%;
 }
 
@@ -816,35 +817,39 @@ strong {
 .button {
     display: -webkit-inline-box;
     display: inline-flex;
-    font-size: 16px;
+    font-size: 0.95rem;
     line-height: 24px;
-    letter-spacing: -0.1px;
+    letter-spacing: 0.01em;
     font-weight: 600;
-    padding: 11px 31px;
+    padding: 11px 32px;
     height: 48px;
     text-decoration: none !important;
-    color: #64748b;
-    background-color: #F3F5F8;
+    color: #475569;
+    background-color: #ffffff;
     border-width: 1px;
     border-style: solid;
-    border-color: #E7ECF2;
-    border-radius: 2px;
+    border-color: #cbd5e1;
+    border-radius: 12px;
     cursor: pointer;
     -webkit-box-pack: center;
     justify-content: center;
     text-align: center;
-    letter-spacing: inherit;
     white-space: nowrap;
-    -webkit-transition: background .15s ease;
-    transition: background .15s ease
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.04);
+    -webkit-transition: all .2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: all .2s cubic-bezier(0.2, 0.8, 0.2, 1)
 }
 
 .button:active {
-    outline: 0
+    outline: 0;
+    transform: translateY(1px);
 }
 
 .button:hover {
-    background-color: #E7ECF2
+    background-color: #f8fafc;
+    border-color: #94a3b8;
+    color: #0f172a;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
 }
 
 .button.is-loading {
@@ -890,12 +895,16 @@ strong {
 
 .button-dark {
     color: #fff;
-    background-color: #1e293b;
-    border-color: rgba(0, 0, 0, 0)
+    background-color: #0f172a;
+    border-color: #0f172a;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
 }
 
 .button-dark:hover {
-    background-color: #334155
+    background-color: #334155;
+    border-color: #334155;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.2);
+    color: #fff;
 }
 
 .button-dark.is-loading::after {
@@ -904,12 +913,15 @@ strong {
 
 .button-primary {
     color: #fff;
-    background-color: #9D1B32;
-    border-color: rgba(0, 0, 0, 0)
+    background: linear-gradient(135deg, #9d1b32 0%, #c42845 100%);
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(157, 27, 50, 0.25);
 }
 
 .button-primary:hover {
-    background-color: #7A1527
+    background: linear-gradient(135deg, #7a1426 0%, #a81c35 100%);
+    box-shadow: 0 6px 20px rgba(157, 27, 50, 0.4);
+    color: #fff;
 }
 
 .button-primary.is-loading::after {
@@ -1014,17 +1026,20 @@ fieldset {
 .form-radio input {
     -moz-appearance: none;
     -webkit-appearance: none;
-    background-color: #fff;
+    appearance: none;
+    background-color: #f8fafc;
     border-width: 1px;
     border-style: solid;
-    border-color: #E7ECF2
+    border-color: #cbd5e1;
+    transition: all 0.2s ease;
 }
 
 .form-input:hover,
 .form-select:hover,
 .form-checkbox input:hover,
 .form-radio input:hover {
-    border-color: #d6dfe9
+    border-color: #94a3b8;
+    background-color: #ffffff;
 }
 
 .form-input:active,
@@ -1036,7 +1051,9 @@ fieldset {
 .form-radio input:active,
 .form-radio input:focus {
     outline: none;
-    border-color: #94a3b8
+    background-color: #ffffff;
+    border-color: #9d1b32;
+    box-shadow: 0 0 0 3px rgba(157, 27, 50, 0.15);
 }
 
 .form-input[disabled],
@@ -1072,16 +1089,15 @@ fieldset {
 .form-input,
 .form-select {
     display: block;
-    font-size: 16px;
+    font-size: 1rem;
     line-height: 24px;
-    letter-spacing: -0.1px;
-    padding: 11px 15px;
+    padding: 11px 16px;
     height: 48px;
-    border-radius: 0;
-    color: #101D2D;
-    box-shadow: none;
+    border-radius: 12px;
+    color: #0f172a;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) inset;
     max-width: 100%;
-    width: 100%
+    width: 100%;
 }
 
 .form-input::-webkit-input-placeholder {
@@ -4132,18 +4148,21 @@ ul.pricing-item-features-list li.is-checked::after {
 .pac-container {
     z-index: 9999999 !important;
     border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,.18);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, .18);
     font-family: inherit;
 }
+
 .pac-item {
     padding: 8px 12px;
     font-size: .9rem;
     cursor: pointer;
 }
+
 .pac-item:hover,
 .pac-item-selected {
-    background: rgba(157,27,50,.08);
+    background: rgba(157, 27, 50, .08);
 }
+
 .pac-item-query {
     font-size: .9rem;
 }

@@ -510,6 +510,7 @@ function initMap() {
                     if (gMarkers[inc.id]) return; // ya existe y no cambió
                     gMarkers[inc.id] = buildMarker(gMap, inc);
                     gMarkerStatus[inc.id] = currStatus;
+
                     const pulse = new PulseOverlay(
                         new google.maps.LatLng(parseFloat(inc.latitud), parseFloat(inc.longitud)),
                         statusColor(statusType(inc.estatus))
@@ -629,3 +630,4 @@ function initMap() {
     window.mapFilterNext = next;
     window.mapFilterPrev = prev;
 })();
+

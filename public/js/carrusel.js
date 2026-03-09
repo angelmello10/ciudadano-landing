@@ -2,21 +2,16 @@
     'use strict';
 
     const UPLOADS = '/public/uploads/';
-    const AUTO_MS = 5000; // Aumentado un poco para dar tiempo de jugar con el slider
 
     let items = [];
     let current = 0;
-    let paused = false;
-    let autoTimer = null;
-    let ringRaf = null;
-    let ringStart = null;
 
     const stage = document.getElementById('cfl-stage');
+    if (!stage) return;
     const btnPrev = document.getElementById('cfl-prev');
     const btnNext = document.getElementById('cfl-next');
     const countEl = document.getElementById('cfl-count');
     const progFill = document.getElementById('cfl-prog');
-    const progLbl = document.getElementById('cfl-prog-label');
 
     function esc(s) {
         return String(s ?? '').replace(/[&<>"']/g, m =>
@@ -40,149 +35,161 @@
         const stLabel = esc(stRaw.charAt(0).toUpperCase() + stRaw.slice(1));
         const imgBefore = `${UPLOADS}${esc(inc.foto)}`;
         const imgAfter = `${UPLOADS}${esc(inc.foto_despues)}`;
+        const direccion = esc(inc.direccion || 'Sin dirección');
 
         const card = document.createElement('div');
         card.className = 'cfl-card';
         card.dataset.idx = idx;
         card.innerHTML = `
-            <!-- Comparador Antes/Después -->
-            <div class="cfl-comparer" data-comparer="${idx}">
-                <img src="${imgBefore}" alt="Antes" class="cfl-comparer-img cfl-comparer-before" loading="lazy" onerror="this.style.opacity=0.3">
-                <img src="${imgAfter}" alt="Después" class="cfl-comparer-img cfl-comparer-after" loading="lazy" onerror="this.style.opacity=0.3">
+            <div class="cfl-comparer">
+                <!-- Se añaden onerrors para evitar mostrar links rotos si falta la imagen -->
+                <img src="${imgBefore}" alt="Antes" class="cfl-img-before" draggable="false" loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IjEiPjwvc3ZnPg=='">
+                <div class="cfl-img-after-wrapper">
+                    <img src="${imgAfter}" alt="Después" class="cfl-img-after" draggable="false" loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IjEiPjwvc3ZnPg=='">
+                </div>
                 
-                <span class="cfl-comparer-label before">Antes</span>
-                <span class="cfl-comparer-label after">Después</span>
+                <div class="cfl-label cfl-label-before">Antes</div>
+                <div class="cfl-label cfl-label-after">Después</div>
                 
-                <div class="cfl-slider" style="left: 50%">
-                    <div class="cfl-slider-handle">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="15 18 9 12 15 6"></polyline>
-                            <polyline points="9 18 15 12 9 6"></polyline>
+                <div class="cfl-slider-container">
+                    <div class="cfl-slider-line"></div>
+                    <div class="cfl-slider-button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M13 16l-4-4 4-4"/>
+                            <path d="M11 16l4-4-4-4"/>
                         </svg>
                     </div>
                 </div>
             </div>
             
-            <div class="cfl-grad"></div>
-            
-            <div class="cfl-folio">${folio}</div>
-            
-            <div class="cfl-info">
-                <p class="cfl-tipo">${tipo}</p>
-                <p class="cfl-nombre">${esc(inc.direccion || 'Sin dirección')}</p>
-                <div class="cfl-row">
-                    <span class="cfl-pill ${stClass}">${stLabel}</span>
+            <div class="cfl-card-content">
+                <div class="cfl-card-header">
+                    <span class="cfl-folio">${folio}</span>
+                    <span class="cfl-status ${stClass}">${stLabel}</span>
                 </div>
+                <h3 class="cfl-category">${tipo}</h3>
+                <p class="cfl-address">${direccion}</p>
             </div>
             
             <div class="cfl-hint">
-                <span class="cfl-hint-icon">
-                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                </span>
+                <div class="cfl-hint-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </div>
             </div>
-            
-            <div class="cfl-autoplay-ring" id="cfl-ring-${idx}">
-                <svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="12.5"/></svg>
-            </div>`;
+        `;
 
-        // Inicializar el comparador en esta tarjeta
         initComparer(card.querySelector('.cfl-comparer'));
 
-        // Clic en carta lateral → navega a ella
         card.addEventListener('click', function (e) {
-            // No navegar si se está arrastrando el slider
-            if (e.target.closest('.cfl-comparer')) return;
-
+            if (e.target.closest('.cfl-slider-container')) return;
             const i = parseInt(this.dataset.idx);
-            if (i !== current) goTo(i, true);
+            if (i !== current) goTo(i);
         });
 
         return card;
     }
 
-    // Inicializar el slider del comparador
     function initComparer(container) {
         if (!container) return;
 
         let isDragging = false;
-        const afterImg = container.querySelector('.cfl-comparer-after');
-        const slider = container.querySelector('.cfl-slider');
+        const wrapper = container.querySelector('.cfl-img-after-wrapper');
+        const slider = container.querySelector('.cfl-slider-container');
+        const labelBefore = container.querySelector('.cfl-label-before');
+        const labelAfter = container.querySelector('.cfl-label-after');
 
         function updateSlider(x) {
             const rect = container.getBoundingClientRect();
-            let percentage = ((x - rect.left) / rect.width) * 100;
-            percentage = Math.max(5, Math.min(95, percentage));
+            let p = ((x - rect.left) / rect.width) * 100;
+            p = Math.max(0, Math.min(100, p));
+            wrapper.style.clipPath = `inset(0 0 0 ${p}%)`;
+            slider.style.left = `${p}%`;
 
-            afterImg.style.clipPath = `inset(0 0 0 ${percentage}%)`;
-            slider.style.left = `${percentage}%`;
+            if (labelBefore) labelBefore.style.opacity = p < 25 ? '0' : '1';
+            if (labelAfter) labelAfter.style.opacity = p > 75 ? '0' : '1';
         }
 
-        // Mouse events
+        function onStart(e) {
+            isDragging = true;
+            updateSlider(e.touches ? e.touches[0].clientX : e.clientX);
+            if (e.cancelable) e.preventDefault();
+        }
+        function onMove(e) {
+            if (!isDragging) return;
+            updateSlider(e.touches ? e.touches[0].clientX : e.clientX);
+        }
+        function onEnd() { isDragging = false; }
+
+        slider.addEventListener('mousedown', onStart);
+        container.addEventListener('touchstart', onStart, { passive: false });
+
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('touchmove', onMove, { passive: false });
+
+        document.addEventListener('mouseup', onEnd);
+        document.addEventListener('touchend', onEnd);
+
         container.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            updateSlider(e.clientX);
-            container.style.cursor = 'grabbing';
-            e.stopPropagation(); // Evitar que se active el clic de la tarjeta
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            updateSlider(e.clientX);
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            container.style.cursor = 'col-resize';
-        });
-
-        // Touch events
-        container.addEventListener('touchstart', (e) => {
-            isDragging = true;
-            updateSlider(e.touches[0].clientX);
-            e.stopPropagation();
-        }, { passive: true });
-
-        container.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            updateSlider(e.touches[0].clientX);
-        }, { passive: true });
-
-        container.addEventListener('touchend', () => {
-            isDragging = false;
-        });
-
-        // Click para saltar
-        container.addEventListener('click', (e) => {
-            if (e.target.closest('.cfl-slider-handle')) return;
-            updateSlider(e.clientX);
-            e.stopPropagation();
+            if (!e.target.closest('.cfl-slider-container')) {
+                const card = container.closest('.cfl-card');
+                if (card && card.classList.contains('cfl-card-active')) {
+                    isDragging = true;
+                    updateSlider(e.clientX);
+                }
+            }
         });
     }
 
-    function getTransform(offset) {
+    function getTransform(offset, isMobile) {
         const abs = Math.abs(offset);
-        if (abs === 0) return { tx: 0, ry: 0, scl: 1, tz: 80, op: 1, filt: '' };
-        if (abs === 1) return { tx: offset * 270, ry: -offset * 44, scl: 0.80, tz: -30, op: 0.82, filt: '' };
-        if (abs === 2) return { tx: offset * 320, ry: -offset * 62, scl: 0.64, tz: -110, op: 0.50, filt: 'blur(1px)' };
-        return { tx: offset * 360, ry: -offset * 78, scl: 0.5, tz: -180, op: 0, filt: 'blur(3px)' };
+        const sign = Math.sign(offset);
+
+        if (abs === 0) return { tx: 0, scale: 1, tz: 0, ry: 0, op: 1, filt: 'none' };
+
+        let gap = isMobile ? 65 : 130;
+        let zGap = isMobile ? 80 : 180;
+        let rot = isMobile ? 35 : 55;
+        let sc = isMobile ? 0.85 : 0.8;
+
+        const tx = sign * (gap + (abs * 35));
+        const tz = -abs * zGap;
+        const ry = -sign * rot;
+        const scale = Math.pow(sc, abs);
+        const op = abs > 2 ? 0 : 1 - (abs * 0.25);
+        const filt = abs > 0 ? `blur(${abs * 2}px)` : 'none';
+
+        return { tx, scale, tz, ry, op, filt };
     }
 
-    function positionAll() {
-        stage.querySelectorAll('.cfl-card').forEach(card => {
+    function positionCards() {
+        const cards = stage.querySelectorAll('.cfl-card');
+        const isMobile = window.innerWidth <= 768;
+
+        cards.forEach((card) => {
             const i = parseInt(card.dataset.idx);
             const offset = i - current;
             const abs = Math.abs(offset);
-            const t = getTransform(offset);
-            card.style.transform = `translateX(${t.tx}px) rotateY(${t.ry}deg) scale(${t.scl}) translateZ(${t.tz}px)`;
+
+            const t = getTransform(offset, isMobile);
+            card.style.transform = `translateX(${t.tx}px) translateZ(${t.tz}px) rotateY(${t.ry}deg) scale(${t.scale})`;
+            card.style.zIndex = 100 - abs;
             card.style.opacity = t.op;
             card.style.filter = t.filt;
-            card.style.zIndex = 20 - abs;
-            card.style.pointerEvents = abs <= 2 ? 'auto' : 'none';
-            card.classList.toggle('cfl-card-active', abs === 0);
 
-            // update hint arrow direction
-            const poly = card.querySelector('.cfl-hint-icon svg polyline');
-            if (poly) poly.setAttribute('points', offset < 0 ? '15 18 9 12 15 6' : '9 18 15 12 9 6');
+            if (abs === 0) {
+                card.classList.add('cfl-card-active');
+                card.style.pointerEvents = 'auto';
+            } else {
+                card.classList.remove('cfl-card-active');
+                card.style.pointerEvents = abs <= 2 ? 'auto' : 'none';
+            }
+
+            const hintArrow = card.querySelector('.cfl-hint-icon polyline');
+            if (hintArrow) {
+                hintArrow.setAttribute('points', offset < 0 ? '15 18 9 12 15 6' : '9 18 15 12 9 6');
+            }
         });
     }
 
@@ -191,84 +198,53 @@
         const n = items.length;
         if (countEl) countEl.textContent = `${current + 1} / ${n}`;
         if (progFill) progFill.style.width = `${((current + 1) / n) * 100}%`;
-        if (progLbl) progLbl.textContent = `${current + 1} de ${n}`;
         if (btnPrev) btnPrev.disabled = current === 0;
         if (btnNext) btnNext.disabled = current === n - 1;
     }
 
-    function goTo(idx, userAction) {
+    function goTo(idx) {
         if (!items.length) return;
         current = Math.max(0, Math.min(idx, items.length - 1));
-        positionAll();
+        positionCards();
         updateUI();
-        if (userAction) resetAutoplay();
-    }
-
-    /* ring SVG de autoplay */
-    function drawRing(progress) {
-        const ringEl = document.getElementById(`cfl-ring-${current}`);
-        if (!ringEl) return;
-        const circle = ringEl.querySelector('circle');
-        if (circle) circle.style.strokeDashoffset = 78.5 * (1 - progress);
-    }
-    function clearAllRings() {
-        stage.querySelectorAll('.cfl-autoplay-ring circle').forEach(c => {
-            c.style.strokeDashoffset = '78.5';
-        });
-    }
-    function startRingAnim() {
-        if (ringRaf) cancelAnimationFrame(ringRaf);
-        ringStart = null;
-        function raf(ts) {
-            if (!ringStart) ringStart = ts;
-            if (paused) { ringStart = ts - ((ts - ringStart)); ringRaf = requestAnimationFrame(raf); return; }
-            const progress = Math.min((ts - ringStart) / AUTO_MS, 1);
-            drawRing(progress);
-            if (progress < 1) ringRaf = requestAnimationFrame(raf);
-        }
-        ringRaf = requestAnimationFrame(raf);
-    }
-    function resetAutoplay() {
-        clearTimeout(autoTimer);
-        clearAllRings();
-        if (ringRaf) { cancelAnimationFrame(ringRaf); ringRaf = null; }
-        if (paused) return;
-        startRingAnim();
-        autoTimer = setTimeout(() => {
-            goTo(current + 1 < items.length ? current + 1 : 0, false);
-            resetAutoplay();
-        }, AUTO_MS);
     }
 
     function render(rows) {
+        if (!stage) return;
         stage.innerHTML = '';
-        items = rows.filter(r => r && r.foto && r.foto_despues).slice(0, 20);
+        items = rows.filter(r => r && r.foto && r.foto_despues).slice(0, 15);
         if (!items.length) {
-            stage.innerHTML = '<p style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#64748b;white-space:nowrap">No hay reportes con fotos de antes y despu&eacute;s.</p>';
+            stage.innerHTML = '<p style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#64748b;font-weight:600;">No hay reportes con fotos de antes y despu&eacute;s para mostrar.</p>';
             return;
         }
+
         items.forEach((inc, i) => stage.appendChild(buildCard(inc, i)));
         current = 0;
-        positionAll();
+
+        void stage.offsetWidth;
+        positionCards();
         updateUI();
-        resetAutoplay();
     }
 
-    if (btnPrev) btnPrev.addEventListener('click', () => goTo(current - 1, true));
-    if (btnNext) btnNext.addEventListener('click', () => goTo(current + 1, true));
+    if (btnPrev) btnPrev.addEventListener('click', () => goTo(current - 1));
+    if (btnNext) btnNext.addEventListener('click', () => goTo(current + 1));
 
     document.addEventListener('keydown', e => {
         if (!items.length) return;
-        if (e.key === 'ArrowLeft') goTo(current - 1, true);
-        if (e.key === 'ArrowRight') goTo(current + 1, true);
+        const rect = stage.getBoundingClientRect();
+        if (rect.top >= -200 && rect.bottom <= window.innerHeight + 200) {
+            if (e.key === 'ArrowLeft') goTo(current - 1);
+            if (e.key === 'ArrowRight') goTo(current + 1);
+        }
     });
 
-    const stageWrap = stage.parentElement;
-    stageWrap.addEventListener('mouseenter', () => { paused = true; });
-    stageWrap.addEventListener('mouseleave', () => { paused = false; if (!autoTimer) resetAutoplay(); });
+    window.addEventListener('resize', () => {
+        if (items.length) positionCards();
+    });
 
     fetch('/public/api/incidencias.php?limit=20')
         .then(r => r.json())
         .then(d => render(d?.ok ? (d.rows || []) : []))
-        .catch(() => { stage.innerHTML = '<p style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#ef4444">Error al cargar</p>'; });
+        .catch(() => { if (stage) stage.innerHTML = '<p style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#ef4444;font-weight:600;">Error al cargar datos</p>'; });
+
 })();

@@ -81,7 +81,6 @@
         <!-- Bottom bar -->
         <div class="ft-bottom">
             <p class="ft-copy">&copy; 2026 Reporte Ciudadano &mdash; Todos los derechos reservados.</p>
-            <p class="ft-made">Hecho con <span class="ft-heart">&#9829;</span> para la comunidad</p>
         </div>
 
     </div><!-- /ft-container -->
