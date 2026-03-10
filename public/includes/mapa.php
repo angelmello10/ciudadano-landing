@@ -1,17 +1,14 @@
-﻿<link rel="stylesheet" href="/public/css/mapa.css">
+<link rel="stylesheet" href="/public/css/mapa.css">
 
 <section id="mapa" class="mps-section">
     <div class="mps-container">
 
         <!-- Header -->
-        <div class="mps-header">
-            <div>
-                <div class="mps-eyebrow">
-                    <span class="mps-eyebrow-dot"></span>
-                    Monitoreo en tiempo real
-                </div>
-                <h2 class="mps-title">Centro de <span>monitoreo</span> ciudadano</h2>
-                <p class="mps-sub">Visualiza incidencias activas, estadísticas de resolución y reportes de tu comunidad.</p>
+        <div class="section-header center-content mb-48 reveal-from-bottom">
+            <div class="container-xs">
+                <span class="section-label">Monitoreo en tiempo real</span>
+                <h2 class="mt-0 mb-16">Centro de <span class="hero-accent">monitoreo</span> ciudadano</h2>
+                <p class="m-0">Consulta incidencias activas, estadísticas y reportes de tu comunidad al instante.</p>
             </div>
         </div>
 

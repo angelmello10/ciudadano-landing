@@ -4,16 +4,12 @@
     <div class="container">
 
         <!-- ── Header ── -->
-        <div class="ftrs-header reveal-from-bottom">
-            <div class="ftrs-eyebrow">
-                <span class="ftrs-pulse" aria-hidden="true"></span>
-                ¿Cómo funciona?
+        <div class="section-header center-content mb-64 reveal-from-bottom">
+            <div class="container-xs">
+                <span class="section-label">¿Cómo funciona?</span>
+                <h2 class="mt-0 mb-16">Tres pasos, <span class="hero-accent">resultado inmediato</span></h2>
+                <p class="m-0">Reportar una incidencia es tan rápido como tomar una foto.</p>
             </div>
-            <h2 class="ftrs-title">
-                Tres pasos,
-                <span class="ftrs-title-grad">resultado inmediato</span>
-            </h2>
-            <p class="ftrs-subtitle">Reportar una incidencia es tan rápido como tomar una foto.</p>
         </div>
 
         <!-- ── Steps ── -->

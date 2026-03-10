@@ -1,4 +1,4 @@
-﻿<link rel="stylesheet" href="/public/css/carrusel.css">
+<link rel="stylesheet" href="/public/css/carrusel.css">
 
 <section class="cfl-section" id="incidencias">
     <!-- Decoración de fondo premium -->
@@ -7,14 +7,11 @@
 
     <div class="cfl-container">
 
-        <div class="cfl-header">
-            <div>
-                <div class="cfl-eyebrow">
-                    <span class="cfl-eyebrow-pulse"></span>
-                    Transparencia y Acción
-                </div>
-                <h2 class="cfl-title">El poder del <span>Antes y Después</span></h2>
-                <p class="cfl-sub">Navega por las incidencias resueltas. Desliza el separador para visualizar el cambio logrado gracias al reporte ciudadano.</p>
+        <div class="section-header reveal-from-bottom mb-48" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 24px;">
+            <div class="container-xs" style="margin: 0; text-align: left;">
+                <span class="section-label">Transparencia y Acción</span>
+                <h2 class="mt-0 mb-16">El poder del <span class="hero-accent">Antes y Después</span></h2>
+                <p class="m-0">Desliza el separador para visualizar el cambio logrado gracias al reporte ciudadano.</p>
             </div>
             <div class="cfl-controls">
                 <span class="cfl-count" id="cfl-count">0 / 0</span>
