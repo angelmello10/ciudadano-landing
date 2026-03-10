@@ -129,20 +129,39 @@ async function refreshHeroStats() {
             return totalNum ? (n / totalNum) * 100 : 0;
         }
 
-        // Primera carga: animación countUp; recargas: valor directo
+        // Animación de barras
+        function animateBars() {
+            setBar('hs-total-bar', pctOf(s.total));
+            setBar('hs-resueltos-bar', pctOf(s.resueltos));
+            setBar('hs-en-bar', pctOf(s.en_proceso));
+            setBar('hs-pending-bar', pctOf(s.pendientes));
+        }
+
         if (!refreshHeroStats._loaded) {
-            countUp('hs-total', s.total || 0, 1400);
-            countUp('hs-resueltos', s.resueltos || 0, 1600);
-            countUp('en', s.en_proceso || 0, 1500);
-            countUp('hs-pending', s.pendientes || 0, 1700);
-            countUp('hm-active', active || 0, 1500);
-            // animate bars
-            setTimeout(() => {
-                setBar('hs-total-bar', pctOf(s.total));
-                setBar('hs-resueltos-bar', pctOf(s.resueltos));
-                setBar('hs-en-bar', pctOf(s.en_proceso));
-                setBar('hs-pending-bar', pctOf(s.pendientes));
-            }, 200);
+            // Setup IntersectionObserver so stats don't animate until visible
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        countUp('hs-total', s.total || 0, 1400);
+                        countUp('hs-resueltos', s.resueltos || 0, 1600);
+                        countUp('en', s.en_proceso || 0, 1500);
+                        countUp('hs-pending', s.pendientes || 0, 1700);
+                        countUp('hm-active', active || 0, 1500);
+                        
+                        setTimeout(animateBars, 200);
+                        obs.disconnect(); // Only animate once
+                    }
+                });
+            }, { threshold: 0.15 }); // Trigger when 15% of the stats section is visible
+            
+            const statsElement = document.querySelector('.hero-stats-strip');
+            if (statsElement) {
+                observer.observe(statsElement);
+            } else {
+                // Fallback si no lo encuentra (no debería pasar)
+                animateBars();
+            }
+            
             refreshHeroStats._loaded = true;
         } else {
             set('hs-total', s.total || 0);
@@ -150,11 +169,8 @@ async function refreshHeroStats() {
             set('en', s.en_proceso || 0);
             set('hs-pending', s.pendientes || 0);
             set('hm-active', active || 0);
-            // update bars on subsequent refreshes
-            setBar('hs-total-bar', pctOf(s.total));
-            setBar('hs-resueltos-bar', pctOf(s.resueltos));
-            setBar('hs-en-bar', pctOf(s.en_proceso));
-            setBar('hs-pending-bar', pctOf(s.pendientes));
+            
+            animateBars();
         }
     } catch (_) { /* silently ignore */ }
 }

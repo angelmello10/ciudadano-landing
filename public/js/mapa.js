@@ -597,7 +597,7 @@ function initMap() {
                 `hace ${Math.round(seg / 60)}m`;
     }
 
-    function cargarIncidencias() {
+    function cargarIncidencias(updateTable = true) {
         fetch('/public/api/incidencias.php?limit=300')
             .then(r => r.json())
             .then(data => {
@@ -683,7 +683,9 @@ function initMap() {
 
                 /* ─ tabla ─ */
                 allIncidentsData = data.rows; // Save for filtering
-                buildTable(data.rows);
+                if (updateTable) {
+                    buildTable(data.rows);
+                }
 
                 /* ─ badge ─ */
                 lastUpdate = Date.now();
@@ -693,8 +695,14 @@ function initMap() {
             .catch(err => console.error('Error cargando incidencias:', err));
     }
 
-    cargarIncidencias(); // carga inicial — sin polling para no interrumpir al usuario
-    setInterval(actualizarBadge, 30000);   // actualiza solo el texto del badge
+    cargarIncidencias(); 
+    
+    // Polling: actualiza mapa y stats cada 30s, pero NO refresca la tabla para no saltar
+    setInterval(() => {
+        cargarIncidencias(false);
+    }, 30000);
+
+    setInterval(actualizarBadge, 5000);   // actualiza el texto "hace X s" cada 5s para mayor precisión
 
     // Notifica a otros componentes que el API de Maps ya está lista
     document.dispatchEvent(new Event('googleMapsReady'));

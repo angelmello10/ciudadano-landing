@@ -95,23 +95,70 @@
         if (!container) return;
 
         let isDragging = false;
+        let isAutoAnimating = true;
+        let autoAnimFrame;
+        let p = 50;
+        let animDirection = 1; // 1 = right, -1 = left
+
         const wrapper = container.querySelector('.cfl-img-after-wrapper');
         const slider = container.querySelector('.cfl-slider-container');
         const labelBefore = container.querySelector('.cfl-label-before');
         const labelAfter = container.querySelector('.cfl-label-after');
 
+        function _setSliderState(pct) {
+            pct = Math.max(0, Math.min(100, pct));
+            wrapper.style.clipPath = `inset(0 0 0 ${pct}%)`;
+            slider.style.left = `${pct}%`;
+
+            if (labelBefore) labelBefore.style.opacity = pct < 25 ? '0' : '1';
+            if (labelAfter) labelAfter.style.opacity = pct > 75 ? '0' : '1';
+        }
+
+        function autoAnimate() {
+            if (!isAutoAnimating) return;
+            
+            const card = container.closest('.cfl-card');
+            // Sólo deslizar si es la tarjeta actual al frente
+            if (card && card.classList.contains('cfl-card-active')) {
+                p += 0.35 * animDirection;
+                if (p > 85) animDirection = -1;
+                if (p < 15) animDirection = 1;
+                _setSliderState(p);
+            }
+            autoAnimFrame = requestAnimationFrame(autoAnimate);
+        }
+
+        let interactTimeout;
+
+        function resumeAutoDelayed() {
+            clearTimeout(interactTimeout);
+            interactTimeout = setTimeout(() => {
+                const card = container.closest('.cfl-card');
+                if (card && card.classList.contains('cfl-card-active') && !isDragging) {
+                    if (!isAutoAnimating) {
+                        isAutoAnimating = true;
+                        autoAnimFrame = requestAnimationFrame(autoAnimate);
+                    }
+                }
+            }, 2500);
+        }
+
+        function stopAuto() {
+            clearTimeout(interactTimeout);
+            if (isAutoAnimating) {
+                isAutoAnimating = false;
+                cancelAnimationFrame(autoAnimFrame);
+            }
+        }
+
         function updateSlider(x) {
             const rect = container.getBoundingClientRect();
-            let p = ((x - rect.left) / rect.width) * 100;
-            p = Math.max(0, Math.min(100, p));
-            wrapper.style.clipPath = `inset(0 0 0 ${p}%)`;
-            slider.style.left = `${p}%`;
-
-            if (labelBefore) labelBefore.style.opacity = p < 25 ? '0' : '1';
-            if (labelAfter) labelAfter.style.opacity = p > 75 ? '0' : '1';
+            let pct = ((x - rect.left) / rect.width) * 100;
+            _setSliderState(pct);
         }
 
         function onStart(e) {
+            stopAuto();
             isDragging = true;
             updateSlider(e.touches ? e.touches[0].clientX : e.clientX);
             if (e.cancelable) e.preventDefault();
@@ -120,7 +167,10 @@
             if (!isDragging) return;
             updateSlider(e.touches ? e.touches[0].clientX : e.clientX);
         }
-        function onEnd() { isDragging = false; }
+        function onEnd() { 
+            isDragging = false; 
+            resumeAutoDelayed();
+        }
 
         slider.addEventListener('mousedown', onStart);
         container.addEventListener('touchstart', onStart, { passive: false });
@@ -135,11 +185,18 @@
             if (!e.target.closest('.cfl-slider-container')) {
                 const card = container.closest('.cfl-card');
                 if (card && card.classList.contains('cfl-card-active')) {
+                    stopAuto();
                     isDragging = true;
                     updateSlider(e.clientX);
                 }
             }
         });
+
+        container.addEventListener('mouseleave', () => {
+             if (!isDragging) resumeAutoDelayed();
+        });
+
+        autoAnimFrame = requestAnimationFrame(autoAnimate);
     }
 
     function getTransform(offset, isMobile) {

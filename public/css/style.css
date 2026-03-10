@@ -2485,7 +2485,7 @@ textarea.form-input {
 
 .body-wrap {
     position: relative;
-    overflow: hidden;
+    overflow-x: clip;
     display: -webkit-box;
     display: flex;
     -webkit-box-orient: vertical;

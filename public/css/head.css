@@ -1,4 +1,4 @@
-/* ═══════════════════════════════════════════════════
+﻿/* ═══════════════════════════════════════════════════
            DESIGN SYSTEM — Reporte Ciudadano
         ═══════════════════════════════════════════════════ */
 :root {
@@ -110,7 +110,7 @@ html.dark body {
     -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
     border-bottom: 1px solid rgba(0, 0, 0, 0.07) !important;
     box-shadow: 0 1px 12px rgba(0, 0, 0, 0.06);
-    position: sticky !important;
+    position: relative !important;
     top: 0;
     z-index: 200 !important;
     transition: background .3s, border-color .3s, box-shadow .3s, padding .3s;
@@ -134,6 +134,43 @@ html.dark .site-header.is-scrolled {
     background: rgba(6, 8, 12, 0.92) !important;
     border-bottom-color: rgba(157, 27, 50, 0.3) !important;
     box-shadow: 0 4px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Floating glass effect on desktop */
+@media (min-width: 1024px) {
+    .site-header {
+        position: fixed !important;
+        margin-top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 92%;
+        max-width: 1200px;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.07) !important;
+        transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .site-header.is-scrolled {
+        margin-top: 16px;
+        width: 75%;
+        border-radius: 999px;
+        padding-left: 14px;
+        padding-right: 14px;
+        background: rgba(255, 255, 255, 0.85) !important;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+        backdrop-filter: blur(28px) saturate(200%) !important;
+        -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+    }
+
+    html.dark .site-header {
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    html.dark .site-header.is-scrolled {
+        background: rgba(6, 8, 12, 0.82) !important;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    }
 }
 
 /* Brand */
@@ -789,7 +826,7 @@ html.dark .hero-figure-badge {
     background: linear-gradient(90deg, rgb(157, 27, 50) 0%, rgb(196, 40, 69) 100%);
     box-shadow: 0 6px 18px rgba(157, 27, 50, 0.12) inset, 0 4px 14px rgba(157, 27, 50, 0.08);
     border-radius: 999px;
-    transition: width .9s cubic-bezier(.2, .9, .2, 1);
+    transition: width 1.8s ease-out;
 }
 
 html.dark .hero-stats-strip {
@@ -1508,12 +1545,10 @@ html.dark .ftrs-cta--final:hover {
     inset: 0;
     pointer-events: none;
     background:
-        radial-gradient(ellipse 1000px 600px at 15% 60%, rgba(157, 27, 50, 0.28) 0%, transparent 70%),
-        radial-gradient(ellipse 800px 500px at 85% 25%, rgba(157, 27, 50, 0.20) 0%, transparent 65%),
+        radial-gradient(ellipse 800px 500px at 85% 25%, rgba(157, 27, 50, 0.18) 0%, transparent 65%),
         radial-gradient(ellipse 600px 600px at 50% 10%, rgba(157, 27, 50, 0.14) 0%, transparent 60%);
     background-blend-mode: screen;
     opacity: 1;
-    animation: hero-pulse 10s ease-in-out infinite alternate;
 }
 
 .mps-section::after {
@@ -2406,10 +2441,8 @@ html.dark .mps-section {
 
 html.dark .mps-section::before {
     background:
-        radial-gradient(ellipse 1000px 600px at 15% 60%, rgba(157, 27, 50, 0.55) 0%, transparent 70%),
-        radial-gradient(ellipse 800px 500px at 85% 25%, rgba(157, 27, 50, 0.35) 0%, transparent 65%),
-        radial-gradient(ellipse 600px 600px at 50% 10%, rgba(157, 27, 50, 0.25) 0%, transparent 60%);
-    animation: hero-pulse 10s ease-in-out infinite alternate;
+        radial-gradient(ellipse 800px 500px at 85% 25%, rgba(157, 27, 50, 0.38) 0%, transparent 65%),
+        radial-gradient(ellipse 600px 600px at 50% 10%, rgba(157, 27, 50, 0.30) 0%, transparent 60%);
 }
 
 html.dark .mps-section::after {
@@ -2694,17 +2727,15 @@ html.dark .mps-folio input::placeholder {
     padding: 8rem 0;
 }
 
-.incidents-table-section::before {
+.incidents-table-section::after {
     content: '';
     position: absolute;
     inset: 0;
     pointer-events: none;
     background:
-        radial-gradient(ellipse 70% 60% at 10% 40%, rgba(157, 27, 50, 0.22) 0%, transparent 65%),
-        radial-gradient(ellipse 50% 70% at 88% 15%, rgba(157, 27, 50, 0.18) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 40% at 50% 100%, rgba(157, 27, 50, 0.12) 0%, transparent 55%);
+        radial-gradient(ellipse 800px 800px at -5% 30%, rgba(157, 27, 50, 0.22) 0%, transparent 65%),
+        radial-gradient(ellipse 800px 800px at 105% 70%, rgba(157, 27, 50, 0.18) 0%, transparent 65%);
     z-index: 0;
-    animation: hero-pulse 10s ease-in-out infinite alternate;
 }
 
 .incidents-table-section .container {
@@ -2716,14 +2747,35 @@ html.dark .incidents-table-section {
     background: #0d1117;
 }
 
-html.dark .incidents-table-section::before {
+html.dark .incidents-table-section::after {
     background:
-        radial-gradient(ellipse 70% 60% at 10% 40%, rgba(157, 27, 50, 0.45) 0%, transparent 65%),
-        radial-gradient(ellipse 50% 70% at 88% 15%, rgba(157, 27, 50, 0.25) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 40% at 50% 100%, rgba(157, 27, 50, 0.20) 0%, transparent 55%);
+        radial-gradient(ellipse 800px 800px at -5% 30%, rgba(157, 27, 50, 0.45) 0%, transparent 65%),
+        radial-gradient(ellipse 800px 800px at 105% 70%, rgba(157, 27, 50, 0.35) 0%, transparent 65%);
 }
 
 /* Toolbar */
+.incidents-table-section .section-header {
+    position: relative;
+    z-index: 1;
+}
+
+.incidents-table-section .section-header::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 800px;
+    height: 300px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(ellipse at center, rgba(157, 27, 50, 0.15) 0%, transparent 60%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+html.dark .incidents-table-section .section-header::before {
+    background: radial-gradient(ellipse at center, rgba(157, 27, 50, 0.25) 0%, transparent 60%);
+}
+
 .incidents-toolbar {
     display: flex;
     justify-content: space-between;
