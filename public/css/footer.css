@@ -1,9 +1,16 @@
     /* ── Footer ── */
     .ft {
-        background: linear-gradient(170deg, #07090f 0%, #0d0f18 60%, #100a10 100%);
-        border-top: 1px solid rgba(157, 27, 50, 0.22);
+        background: #ffffff;
+        /* Light mode default */
+        border-top: 1px solid rgba(157, 27, 50, 0.1);
         position: relative;
         margin-top: auto;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    html.dark .ft {
+        background: linear-gradient(170deg, #07090f 0%, #0d0f18 60%, #100a10 100%);
+        border-top-color: rgba(157, 27, 50, 0.22);
     }
 
     .ft-accent-line {
@@ -25,7 +32,11 @@
         grid-template-columns: 1.8fr 1fr 1fr 1.3fr;
         gap: 48px;
         padding-bottom: 52px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    html.dark .ft-grid {
+        border-bottom-color: rgba(255, 255, 255, 0.06);
     }
 
     /* Brand */
@@ -99,31 +110,48 @@
         width: 34px;
         height: 34px;
         border-radius: 10px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(0, 0, 0, 0.03);
+        border: 1px solid rgba(0, 0, 0, 0.08);
         color: #64748b;
         text-decoration: none;
         transition: background .2s, color .2s, border-color .2s, transform .2s;
     }
 
     .ft-social-btn:hover {
+        background: rgba(157, 27, 50, 0.1);
+        border-color: rgba(157, 27, 50, 0.3);
+        color: var(--primary);
+        transform: translateY(-2px);
+    }
+
+    html.dark .ft-social-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #94a3b8;
+    }
+
+    html.dark .ft-social-btn:hover {
         background: rgba(157, 27, 50, 0.2);
         border-color: rgba(157, 27, 50, 0.5);
-        color: #f87171;
-        transform: translateY(-2px);
+        color: #fca5a5;
     }
 
     /* Column headings */
     .ft-heading {
-        font-size: 0.7rem;
+        font-size: 0.75rem;
         font-weight: 800;
         letter-spacing: 0.1em;
         text-transform: uppercase;
-        color: #f1f5f9;
+        color: #0f172a;
         margin: 0 0 18px;
         padding-bottom: 10px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
         position: relative;
+    }
+
+    html.dark .ft-heading {
+        color: #f1f5f9;
+        border-bottom-color: rgba(255, 255, 255, 0.07);
     }
 
     .ft-heading::after {
@@ -168,8 +196,12 @@
     }
 
     .ft-links a:hover {
-        color: #f1f5f9;
+        color: var(--primary);
         gap: 10px;
+    }
+
+    html.dark .ft-links a:hover {
+        color: #f1f5f9;
     }
 
     .ft-links a:hover::before {
@@ -214,8 +246,13 @@
     .ft-copy,
     .ft-made {
         font-size: 0.76rem;
-        color: #334155;
+        color: #64748b;
         margin: 0;
+    }
+
+    html.dark .ft-copy,
+    html.dark .ft-made {
+        color: #334155;
     }
 
     .ft-heart {

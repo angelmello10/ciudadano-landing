@@ -13,22 +13,45 @@ html.dark .cfl-section {
     background: #06080c;
 }
 
-/* Glowing Background Effects */
+/*Glowing Background Effects */
 .cfl-bg-glow {
     position: absolute;
-    width: 1000px;
-    height: 1000px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    inset: 0;
     pointer-events: none;
-    background: radial-gradient(circle at center, rgba(157, 27, 50, 0.08) 0%, transparent 60%);
+    background:
+        radial-gradient(ellipse at 85% 15%, rgba(157, 27, 50, 0.55) 0%, transparent 60%),
+        radial-gradient(ellipse at 15% 85%, rgba(157, 27, 50, 0.45) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 50%, rgba(157, 27, 50, 0.3) 0%, transparent 70%);
     z-index: 0;
+    animation: cfl-glow-pulse 10s ease-in-out infinite alternate;
+    opacity: 0.8;
 }
 
-html.dark .cfl-bg-glow {
-    background: radial-gradient(circle at center, rgba(157, 27, 50, 0.15) 0%, transparent 60%);
+
+
+@keyframes cfl-glow-pulse {
+    0% {
+        opacity: 0.7;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
 }
+
+
+
+html.dark .cfl-bg-glow {
+    background:
+        radial-gradient(circle at 50% 100%, rgba(157, 27, 50, 0.8) 0%, transparent 60%),
+        radial-gradient(circle at 10% 20%, rgba(157, 27, 50, 0.45) 0%, transparent 45%),
+        radial-gradient(circle at 90% 80%, rgba(157, 27, 50, 0.25) 0%, transparent 40%);
+    opacity: 0.9;
+}
+
+
 
 .cfl-bg-grid {
     position: absolute;
@@ -146,6 +169,7 @@ html.dark .cfl-title {
     background: linear-gradient(135deg, var(--primary, #9d1b32), #f43f5e);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .cfl-sub {
@@ -508,6 +532,7 @@ html.dark .cfl-card-active {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    line-clamp: 2;
     overflow: hidden;
 }
 

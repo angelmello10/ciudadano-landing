@@ -3,6 +3,11 @@ let gMap = null;
 const gMarkers = {};       // keyed by incident id
 const gMarkerStatus = {};  // keyed by incident id → estatus actual
 let currentMapIncidentId = null;
+let allIncidentsData = []; // Store for filtering and table rendering
+let tableCurrentPage = 1;
+const tableItemsPerPage = 5;
+let tableSortBy = 'id';
+let tableSortOrder = 'desc'; // desc | asc
 
 function syncCurrentIncidentButton() {
     const btn = document.getElementById('map-open-incident-btn');
@@ -185,33 +190,179 @@ function buildMarker(map, inc) {
 
 function buildTable(rows) {
     const tbody = document.getElementById('incidents-tbody');
+    const countText = document.getElementById('it-count-text');
     if (!tbody) return;
+
+    if (countText) {
+        countText.innerHTML = `<strong>${rows.length}</strong> reportes`;
+    }
+
+    // 1. Sort
+    const sorted = [...rows].sort((a, b) => {
+        let valA = a[tableSortBy];
+        let valB = b[tableSortBy];
+        if (tableSortBy === 'id') { valA = parseInt(valA); valB = parseInt(valB); }
+        if (typeof valA === 'string') valA = valA.toLowerCase();
+        if (typeof valB === 'string') valB = valB.toLowerCase();
+        
+        if (valA < valB) return tableSortOrder === 'asc' ? -1 : 1;
+        if (valA > valB) return tableSortOrder === 'asc' ? 1 : -1;
+        return 0;
+    });
+
+    // 2. Pagination slice
+    const total = sorted.length;
+    const totalPages = Math.ceil(total / tableItemsPerPage);
+    if (tableCurrentPage > totalPages && totalPages > 0) tableCurrentPage = totalPages;
+    if (tableCurrentPage < 1) tableCurrentPage = 1;
+
+    const start = (tableCurrentPage - 1) * tableItemsPerPage;
+    const end = start + tableItemsPerPage;
+    const pagedRows = sorted.slice(start, end);
+
     tbody.innerHTML = '';
-    if (!rows || rows.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:#64748b">Aún no hay incidencias registradas.</td></tr>';
+    if (total === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:48px;color:#64748b;font-style:italic">No hay incidencias que coincidan con los filtros.</td></tr>';
+        updatePaginationUI(0, 0, 0, 0);
         return;
     }
-    rows.forEach(inc => {
+
+    pagedRows.forEach((inc, index) => {
         const type = statusType(inc.estatus);
         const pillClass = statusPillClass(type);
         const hasLocation = inc.latitud && inc.longitud;
-        const date = inc.created_at ? new Date(inc.created_at).toLocaleDateString('es-MX') : '—';
+        const date = inc.created_at ? new Date(inc.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' }) : '—';
+        const folio = String(inc.id);
+
         const tr = document.createElement('tr');
+        tr.style.setProperty('--delay', (index * 0.05) + 's');
+
         tr.innerHTML = `
-                <td><strong>${inc.id}</strong></td>
-                <td>${inc.tipo_incidencia || '—'}</td>
-                <td>${inc.direccion || '—'}</td>
-                <td>${inc.nombre_ciudadano || 'Anónimo'}</td>
+                <td><span style="font-weight:800;color:var(--primary)">#${folio}</span></td>
+                <td><span style="font-weight:700">${inc.tipo_incidencia || 'Gral.'}</span></td>
+                <td><div style="max-width:220px;overflow:hidden;text-overflow:ellipsis" title="${inc.direccion}">${inc.direccion || '—'}</div></td>
+                <td>${inc.nombre_ciudadano || '<span style="opacity:0.6">Anónimo</span>'}</td>
                 <td><span class="status-pill ${pillClass}">${inc.estatus || 'pendiente'}</span></td>
-                <td>${date}</td>
-                <td>
+                <td><span style="font-size:0.8rem;color:#64748b">${date}</span></td>
+                <td style="text-align: right">
                     ${hasLocation
-                ? `<button class="button button-primary button-sm" onclick="verEnMapa(${inc.id})">Ver en mapa</button>`
-                : '<span style="color:#aaa;font-size:12px">Sin ubicación</span>'}
+                ? `<button class="button button-sm" onclick="verEnMapa(${inc.id})">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;vertical-align:middle"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            Ubicar
+                           </button>`
+                : '<span style="opacity:0.4;font-size:0.75rem;font-weight:600">Sin GPS</span>'}
                 </td>`;
         tbody.appendChild(tr);
     });
+
+    updatePaginationUI(total, totalPages, Math.min(end, total), start + 1);
 }
+
+function updatePaginationUI(total, totalPages, currentEnd, currentStart) {
+    const rangeEl = document.getElementById('tp-range');
+    const pagesEl = document.getElementById('tp-pages');
+    const prevBtn = document.getElementById('tp-prev');
+    const nextBtn = document.getElementById('tp-next');
+    const pagContainer = document.getElementById('table-pagination');
+
+    if (!pagContainer) return;
+
+    if (total === 0) {
+        pagContainer.style.display = 'none';
+        return;
+    }
+    pagContainer.style.display = 'flex';
+
+    if (rangeEl) {
+        rangeEl.innerHTML = `Mostrando <strong>${currentStart}-${currentEnd}</strong> de <strong>${total}</strong>`;
+    }
+
+    if (prevBtn) prevBtn.disabled = tableCurrentPage === 1;
+    if (nextBtn) nextBtn.disabled = tableCurrentPage === totalPages;
+
+    if (pagesEl) {
+        pagesEl.innerHTML = '';
+        const maxVisible = 5;
+        let startPage = Math.max(1, tableCurrentPage - 2);
+        let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+        if (endPage - startPage < maxVisible - 1) startPage = Math.max(1, endPage - maxVisible + 1);
+
+        for (let i = startPage; i <= endPage; i++) {
+            const btn = document.createElement('button');
+            btn.textContent = i;
+            btn.className = `tp-page-btn ${i === tableCurrentPage ? 'is-active' : ''}`;
+            btn.onclick = () => jumpToTablePage(i);
+            pagesEl.appendChild(btn);
+        }
+    }
+}
+
+window.prevTablePage = function () { if (tableCurrentPage > 1) jumpToTablePage(tableCurrentPage - 1); };
+window.nextTablePage = function () { 
+    const totalPages = Math.ceil(getActiveIncidents().length / tableItemsPerPage);
+    if (tableCurrentPage < totalPages) jumpToTablePage(tableCurrentPage + 1); 
+};
+window.jumpToTablePage = function (p) {
+    tableCurrentPage = p;
+    filterIncidentsTable(false); // don't reset page
+    const toolbar = document.querySelector('.incidents-toolbar');
+    if (toolbar) toolbar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+window.sortTable = function(col) {
+    if (tableSortBy === col) {
+        tableSortOrder = (tableSortOrder === 'asc') ? 'desc' : 'asc';
+    } else {
+        tableSortBy = col;
+        tableSortOrder = 'desc';
+    }
+    filterIncidentsTable(false);
+};
+
+function getActiveIncidents() {
+    const query = (document.getElementById('table-search')?.value || '').toLowerCase().trim();
+    const statusFilter = document.getElementById('table-status-filter')?.value || 'all';
+
+    return allIncidentsData.filter(inc => {
+        const matchesStatus = (statusFilter === 'all' || (inc.estatus && inc.estatus.toLowerCase() === statusFilter));
+        if (!matchesStatus) return false;
+
+        if (query === '') return true;
+        const folio = String(inc.id);
+        const address = (inc.direccion || '').toLowerCase();
+        const type = (inc.tipo_incidencia || '').toLowerCase();
+        return folio.includes(query) || address.includes(query) || type.includes(query);
+    });
+}
+
+// ── TABLE SEARCH & FILTERING ──
+window.filterIncidentsTable = function (resetPage = true) {
+    if (resetPage) tableCurrentPage = 1;
+
+    const noResults = document.getElementById('table-no-results');
+    const tableWrap = document.querySelector('.incidents-table-wrap');
+
+    const filtered = getActiveIncidents();
+
+    if (filtered.length === 0) {
+        tableWrap.style.display = 'none';
+        noResults.style.display = 'block';
+        updatePaginationUI(0, 0, 0, 0);
+    } else {
+        tableWrap.style.display = 'block';
+        noResults.style.display = 'none';
+        buildTable(filtered);
+    }
+};
+
+window.clearTableSearch = function () {
+    const input = document.getElementById('table-search');
+    const select = document.getElementById('table-status-filter');
+    if (input) input.value = '';
+    if (select) select.value = 'all';
+    filterIncidentsTable();
+};
+
 
 /* ── Smooth fly-to: zoom out → pan → zoom in ── */
 function smoothNavigateTo(position, targetZoom, onArrival) {
@@ -531,6 +682,7 @@ function initMap() {
                 }
 
                 /* ─ tabla ─ */
+                allIncidentsData = data.rows; // Save for filtering
                 buildTable(data.rows);
 
                 /* ─ badge ─ */
@@ -541,9 +693,8 @@ function initMap() {
             .catch(err => console.error('Error cargando incidencias:', err));
     }
 
-    cargarIncidencias(); // carga inicial
-    setInterval(cargarIncidencias, 30000); // polling cada 30 s
-    setInterval(actualizarBadge, 10000);   // actualiza el texto del badge
+    cargarIncidencias(); // carga inicial — sin polling para no interrumpir al usuario
+    setInterval(actualizarBadge, 30000);   // actualiza solo el texto del badge
 
     // Notifica a otros componentes que el API de Maps ya está lista
     document.dispatchEvent(new Event('googleMapsReady'));
