@@ -14,6 +14,12 @@ define('UPLOADS_DIR', __DIR__ . '/../uploads/');
 define('UPLOADS_URL', '/uploads/');
 
 // =============================================
+//  API KEY para sincronización entre proyectos
+//  Cambia este valor por una clave secreta única
+// =============================================
+define('API_KEY', 'tu_clave_secreta_aqui_' . md5('landingPage-railway-2026'));
+
+// =============================================
 //  CABECERAS CORS — permite llamadas desde tu dominio
 // =============================================
 header('Content-Type: application/json; charset=utf-8');

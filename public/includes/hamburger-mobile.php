@@ -1,7 +1,4 @@
-﻿<!-- â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• 
-     HAMBURGER MÃ“VIL â€” componente independiente
-     Solo visible en pantallas â‰¤ 768px
-â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â•  -->
+﻿
 <link rel="stylesheet" href="/public/css/hamburger-mobile.css">
 
 <div id="mob-overlay" class="mob-overlay"></div>
