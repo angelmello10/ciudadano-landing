@@ -17,7 +17,7 @@ define('UPLOADS_URL', '/uploads/');
 //  API KEY para sincronización entre proyectos
 //  Cambia este valor por una clave secreta única
 // =============================================
-define('API_KEY', 'ReporteUrbano2026_' . md5('reporteurbano.site-railway-sync-' . date('Y')));
+define('API_KEY', 'ReporteUrbano2026_SyncKey_Hostinger_Railway');
 
 // =============================================
 //  CABECERAS CORS — permite llamadas desde tu dominio
