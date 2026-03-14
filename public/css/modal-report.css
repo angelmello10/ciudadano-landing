@@ -1,47 +1,172 @@
-    #lb-report {
-        position: fixed;
-        inset: 0;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        background: rgba(0, 0, 0, 0.8);
-        z-index: 100000;
-    }
+/* ── STEPPER UI ── */
+.modal-stepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding: 0 10px;
+}
 
-    #lb-report.active {
-        display: flex;
-    }
+.step-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    z-index: 1;
+}
 
-    #lb-report .inner {
-        max-width: 95vw;
-        max-height: 95vh;
-        position: relative;
-    }
+.step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
 
-    #lb-report img {
-        display: block;
-        max-width: 95vw;
-        max-height: 95vh;
-        object-fit: contain;
-        border-radius: 10px;
-        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
-    }
+.step-indicator.active .step-num {
+    background: var(--primary, #9D1B32);
+    color: #fff;
+    box-shadow: 0 0 0 4px rgba(157, 27, 50, 0.15);
+}
 
-    #lb-report .close {
-        position: absolute;
-        right: -8px;
-        top: -8px;
-        width: 36px;
-        height: 36px;
-        border-radius: 999px;
-        background: rgba(0, 0, 0, 0.5);
-        color: #fff;
-        border: 0;
-        cursor: pointer;
-    }
+.step-indicator.completed .step-num {
+    background: #10b981;
+    color: #fff;
+}
 
-    #lb-report .caption {
-        margin-top: 8px;
-        text-align: center;
-        color: #e6eef8;
-    }
+.step-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.step-indicator.active .step-label {
+    color: var(--primary, #9D1B32);
+}
+
+.step-line {
+    flex: 1;
+    height: 2px;
+    background: #f1f5f9;
+    margin: 0 10px;
+    margin-top: -18px;
+    position: relative;
+    z-index: 0;
+}
+
+/* ── STEP CONTENT ── */
+.modal-step {
+    display: none;
+    animation: fadeInStep 0.4s var(--ease-out) forwards;
+}
+
+.modal-step.is-active {
+    display: block;
+}
+
+@keyframes fadeInStep {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-step-footer {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.btn-prev-step {
+    flex: 0.4;
+    padding: 12px;
+    border-radius: 10px;
+    background: #f1f5f9;
+    color: #475569;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-next-step {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    background: var(--primary, #9D1B32);
+    color: #fff;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: 0 4px 12px rgba(157, 27, 50, 0.2);
+}
+
+html.dark .step-num { background: #1e293b; color: #64748b; }
+html.dark .step-line { background: #1e293b; }
+html.dark .btn-prev-step { background: #1e293b; color: #cbd5e1; }
+
+/* Existing Lightbox styles */
+#lb-report {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 100000;
+}
+
+#lb-report.active {
+    display: flex;
+}
+
+#lb-report .inner {
+    max-width: 95vw;
+    max-height: 95vh;
+    position: relative;
+}
+
+#lb-report img {
+    display: block;
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+}
+
+#lb-report .close {
+    position: absolute;
+    right: -8px;
+    top: -8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border: 0;
+    cursor: pointer;
+}
+
+#lb-report .caption {
+    margin-top: 8px;
+    text-align: center;
+    color: #e6eef8;
+}

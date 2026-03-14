@@ -1,4 +1,4 @@
-﻿/* ═══════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
            DESIGN SYSTEM — Reporte Ciudadano
         ═══════════════════════════════════════════════════ */
 :root {
@@ -110,10 +110,17 @@ html.dark body {
     -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
     border-bottom: 1px solid rgba(0, 0, 0, 0.07) !important;
     box-shadow: 0 1px 12px rgba(0, 0, 0, 0.06);
-    position: relative !important;
-    top: 0;
-    z-index: 200 !important;
-    transition: background .3s, border-color .3s, box-shadow .3s, padding .3s;
+    /* Ultra-fluid Liquid Physics Engine */
+    transition: 
+        background 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+        margin 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+        width 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+        border-radius 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+        padding 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, margin, width, border-radius, background;
+    transform-style: preserve-3d;
 }
 
 /* Scrolled state */
@@ -142,25 +149,26 @@ html.dark .site-header.is-scrolled {
         position: fixed !important;
         margin-top: 20px;
         left: 50%;
-        transform: translateX(-50%);
-        width: 92%;
+        width: 94%;
         max-width: 1200px;
-        border-radius: 24px;
-        border: 1px solid rgba(255, 255, 255, 0.4) !important;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.07) !important;
-        transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        border-radius: 28px;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        transform: translateX(-50%) translate3d(0, 0, 0);
     }
 
     .site-header.is-scrolled {
-        margin-top: 16px;
-        width: 75%;
-        border-radius: 999px;
-        padding-left: 14px;
-        padding-right: 14px;
+        margin-top: 12px;
+        width: 82%; /* Longer navbar, more spacious */
+        max-width: 1120px;
+        border-radius: 999px; /* Keep it ultra-round */
+        padding: 5px 24px;
         background: rgba(255, 255, 255, 0.85) !important;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-        backdrop-filter: blur(28px) saturate(200%) !important;
-        -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+        box-shadow: 
+            0 20px 45px -10px rgba(0, 0, 0, 0.12),
+            0 0 0 1px rgba(255, 255, 255, 0.7) inset;
+        transform: translateX(-50%) translate3d(0, -4px, 0);
+        backdrop-filter: blur(28px) saturate(190%) !important;
+        -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
     }
 
     html.dark .site-header {
@@ -2093,24 +2101,27 @@ html.dark .ftrs-cta--final:hover {
 /* ── Pin details card (click on marker) — light mode base ── */
 .pin-details-card {
     position: absolute;
-    bottom: 16px;
-    left: 16px;
-    width: min(320px, calc(100% - 32px));
-    background: rgba(255, 255, 255, 0.97);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-radius: 18px;
+    bottom: 24px;
+    left: 24px;
+    width: 340px;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 24px;
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: calc(100% - 32px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(0, 0, 0, 0.07);
+    max-height: calc(100% - 48px);
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(0, 0, 0, 0.05),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
     opacity: 0;
-    transform: translateY(10px) scale(.97);
+    transform: translateX(-20px) scale(.95);
     pointer-events: none;
-    transition: opacity .25s ease, transform .28s cubic-bezier(.34, 1.56, .64, 1);
+    transition: opacity .4s cubic-bezier(0.4, 0, 0.2, 1), transform .45s cubic-bezier(0.18, 0.89, 0.32, 1.28);
     z-index: 20;
     scrollbar-width: thin;
-    scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+    scrollbar-color: rgba(157, 27, 50, 0.2) transparent;
 }
 
 .pin-details-card::-webkit-scrollbar {
@@ -2155,17 +2166,20 @@ html.dark .pin-details-card::-webkit-scrollbar-thumb {
 .pd-folio-badge {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    font-size: 0.68rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
+    gap: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
     color: #64748b;
     text-transform: uppercase;
+    background: rgba(0, 0, 0, 0.03);
+    padding: 4px 10px;
+    border-radius: 8px;
 }
 
 .pd-folio-badge strong {
-    color: #1e293b;
-    font-weight: 700;
+    color: var(--primary, #9d1b32);
+    font-weight: 800;
 }
 
 .pin-details-close {
@@ -2197,12 +2211,13 @@ html.dark .pin-details-card::-webkit-scrollbar-thumb {
 }
 
 .pd-title {
-    font-size: 0.92rem;
+    font-size: 1.15rem;
     font-weight: 800;
     color: #0f172a;
-    line-height: 1.3;
+    line-height: 1.2;
     flex: 1;
     margin: 0;
+    letter-spacing: -0.01em;
 }
 
 .pd-status-pill {
@@ -2215,26 +2230,46 @@ html.dark .pin-details-card::-webkit-scrollbar-thumb {
 .pd-row {
     display: flex;
     align-items: flex-start;
-    gap: 7px;
-    padding: 6px 14px 0;
+    gap: 12px;
+    padding: 12px 16px 0;
     color: #475569;
-    font-size: 0.75rem;
-    line-height: 1.45;
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+.pd-row-icon-wrap {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(157, 27, 50, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--primary, #9d1b32);
 }
 
 .pd-row-icon {
     flex-shrink: 0;
-    margin-top: 1px;
-    color: #94a3b8;
+    opacity: 0.85;
 }
 
 .pd-row-text {
     flex: 1;
+    font-weight: 500;
 }
 
 .pd-desc-text {
     color: #64748b;
     font-style: italic;
+    background: rgba(0, 0, 0, 0.02);
+    padding: 8px 12px;
+    border-radius: 10px;
+    border-left: 3px solid rgba(157, 27, 50, 0.2);
+}
+
+html.dark .pd-desc-text {
+    background: rgba(255, 255, 255, 0.03);
 }
 
 /* pd-body: no longer needs to scroll on its own */
@@ -2244,17 +2279,78 @@ html.dark .pin-details-card::-webkit-scrollbar-thumb {
 
 /* Photo */
 .pd-photo-row {
-    padding: 10px 14px 0;
+    padding: 16px 16px 0;
     display: none;
+}
+
+.pd-photo-wrap {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: zoom-in;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.pd-photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 50%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.pd-photo-wrap:hover .pd-photo-overlay {
+    opacity: 1;
+}
+
+.pd-photo-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #0f172a;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+    transform: translateY(10px);
+    transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: auto;
+}
+
+.pd-photo-wrap:hover .pd-photo-btn {
+    transform: translateY(0);
+}
+
+.pd-photo-btn:hover {
+    background: #fff;
+    transform: translateY(-2px) scale(1.05);
+}
+
+.pd-photo-btn svg {
+    color: var(--primary, #9d1b32);
 }
 
 .pd-photo-img {
     width: 100%;
-    height: 110px;
+    height: 150px;
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: 16px;
     display: block;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+}
+
+.pd-photo-img:hover {
+    transform: scale(1.02);
 }
 
 /* Footer */
@@ -2290,23 +2386,33 @@ html.dark .pin-details-card::-webkit-scrollbar-thumb {
 .pd-directions-btn {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
     flex-shrink: 0;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    background: linear-gradient(135deg, var(--primary, #9d1b32), #e11d48);
     color: #fff;
-    border-radius: 20px;
-    padding: 6px 12px;
+    border-radius: 99px;
+    padding: 8px 16px;
     text-decoration: none;
-    transition: opacity .15s, transform .15s;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
     white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(157, 27, 50, 0.25);
 }
 
 .pd-directions-btn:hover {
-    opacity: 0.88;
-    transform: translateY(-1px);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(157, 27, 50, 0.4);
+    filter: brightness(1.1);
+}
+
+.pd-directions-btn svg {
+    transition: transform 0.3s ease;
+}
+
+.pd-directions-btn:hover svg {
+    transform: translate(2px, -2px);
 }
 
 /* Keep old pin-meta hidden (no longer used) */
@@ -3960,12 +4066,18 @@ html.dark .incidents-table-wrap::-webkit-scrollbar-track {
 
 /* map — pin-details-card dark mode */
 html.dark .pin-details-card {
-    background: rgba(10, 12, 22, 0.94);
-    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.07);
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(25px) saturate(200%);
+    -webkit-backdrop-filter: blur(25px) saturate(200%);
+    box-shadow:
+        0 30px 70px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 html.dark .pd-folio-badge {
-    color: #64748b;
+    background: rgba(255, 255, 255, 0.05);
+    color: #94a3b8;
 }
 
 html.dark .pd-folio-badge strong {
@@ -3998,20 +4110,19 @@ html.dark .pd-desc-text {
     color: #64748b;
 }
 
-html.dark .pd-photo-img {
-    border-color: rgba(255, 255, 255, 0.07);
+html.dark .pd-row-icon-wrap {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fb7185;
 }
 
-html.dark .pd-footer {
-    border-top-color: rgba(255, 255, 255, 0.06);
+html.dark .pd-photo-btn {
+    background: rgba(30, 41, 59, 0.9);
+    color: #f8fafc;
 }
 
-html.dark .pd-footer-item {
-    color: #475569;
-}
-
-html.dark .pd-footer-item svg {
-    color: #334155;
+html.dark [data-status="resuelto"],
+html.dark .status-pill.pill-resuelto {
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
 }
 
 html.dark .stats-grid .stat-card {

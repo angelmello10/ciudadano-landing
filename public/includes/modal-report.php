@@ -21,125 +21,142 @@
             </button>
         </div>
 
-        <div class="modal-custom-body">
+        <div class="modal-custom-body" style="padding-top:10px;">
+            <!-- Stepper Header -->
+            <div class="modal-stepper">
+                <div class="step-indicator active" data-step="1">
+                    <span class="step-num">1</span>
+                    <span class="step-label">Categoría</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step-indicator" data-step="2">
+                    <span class="step-num">2</span>
+                    <span class="step-label">Detalles</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step-indicator" data-step="3">
+                    <span class="step-num">3</span>
+                    <span class="step-label">Contacto</span>
+                </div>
+            </div>
+
             <form id="form-report">
-                <!-- Row 1: name + email -->
-                <div class="mf-row">
+                <!-- STEP 1: CATEGORY -->
+                <div class="modal-step is-active" data-step="1">
                     <div class="modal-form-group">
-                        <label class="form-label-custom" for="reporter-name">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            Tu nombre
+                        <label class="form-label-custom" for="failure-type">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            ¿Qué quieres reportar?
                         </label>
-                        <input id="reporter-name" class="form-input-custom" type="text" placeholder="Nombre completo" required>
+                        <select id="failure-type" class="form-input-custom" required>
+                            <option value="" disabled selected>Selecciona una opción</option>
+                            <option value="bache">Bache</option>
+                            <option value="iluminacion">Iluminación</option>
+                            <option value="camaras">Cámara de seguridad</option>
+                            <option value="semaforos">Semáforo</option>
+                            <option value="coladeras">Coladera</option>
+                            <option value="otro">Otro (especificar)</option>
+                        </select>
                     </div>
+                    <div id="failure-type-other-wrap" class="modal-form-group" style="display:none;margin-top:12px;">
+                        <label class="form-label-custom" for="failure-type-other">Especifique la falla</label>
+                        <input id="failure-type-other" class="form-input-custom" type="text" placeholder="Ej: Árbol caído, Fuga de agua...">
+                    </div>
+                </div>
+
+                <!-- STEP 2: DETAILS (Location & Photo) -->
+                <div class="modal-step" data-step="2">
                     <div class="modal-form-group">
-                        <label class="form-label-custom" for="reporter-email">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                            Correo
+                        <label class="form-label-custom" for="location">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            Ubicación <span style="color:var(--primary);font-size:0.7rem;">(requiere GPS)</span>
                         </label>
-                        <input id="reporter-email" class="form-input-custom" type="email" placeholder="tu@correo.com" required>
-                    </div>
-                </div>
-
-                <div class="modal-form-group">
-                    <label class="form-label-custom" for="failure-type">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                        Tipo de falla
-                    </label>
-                    <select id="failure-type" class="form-input-custom" required>
-                        <option value="" disabled selected>Selecciona el tipo de falla</option>
-                        <option value="bache">Bache</option>
-                        <option value="iluminacion">Iluminación</option>
-                        <option value="camaras">Cámara de seguridad</option>
-                        <option value="semaforos">Semáforo</option>
-                        <option value="coladeras">Coladera</option>
-                        <option value="otro">Otro</option>
-                    </select>
-                </div>
-
-                <div class="modal-form-group">
-                    <label class="form-label-custom" for="location">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                        Ubicación o Dirección <span style="color:var(--primary);font-size:0.7rem;">(requiere GPS)</span>
-                    </label>
-                    <div class="input-with-btn">
-                        <input id="location" class="form-input-custom" type="text" placeholder="Escribe una dirección o usa GPS..." autocomplete="off">
-                        <button type="button" id="get-location" class="btn-geo" title="Usar mi ubicación actual">
-                            <span class="btn-geo-icon">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="12" y1="0" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="24"/><line x1="0" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="24" y2="12"/></svg>
-                            </span>
-                            <span class="btn-geo-label">GPS</span>
-                            <span class="btn-geo-spin" aria-hidden="true">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                                    <circle cx="12" cy="12" r="9" stroke-opacity="0.25"/>
-                                    <path d="M12 3 A9 9 0 0 1 21 12" />
-                                </svg>
-                            </span>
-                        </button>
-                    </div>
-                    <small style="display:block;margin:4px 0 6px;color:#9ca3af;font-size:0.75rem;">Activa el GPS para mayor precisión o toca el mapa.</small>
-                    <div id="report-map-container" style="height:230px;border-radius:10px;overflow:hidden;border:1.5px solid #e0e0e0;position:relative;">
-                        <div id="report-map" style="width:100%;height:100%;"></div>
-                        <div style="position:absolute;bottom:7px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.55);color:#fff;font-size:0.7rem;padding:3px 10px;border-radius:20px;pointer-events:none;white-space:nowrap;">Toca el mapa o arrastra el pin para precisar</div>
-                    </div>
-                    <small id="location-status" class="field-hint" style="margin-top:4px;"></small>
-                    <input type="hidden" id="lat">
-                    <input type="hidden" id="lng">
-                </div>
-
-                <!-- Row 2: photo -->
-                <div class="modal-form-group">
-                    <label class="form-label-custom" for="photo">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                        Evidencia fotográfica <span class="optional-tag">Opcional</span>
-                    </label>
-
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;">
-                        <!-- Cámara en vivo -->
-                        <button type="button" id="btn-open-camera" style="padding:10px 8px;border-radius:8px;font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;background:var(--primary,#9D1B32);color:#fff;border:none;">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                            Tomar foto
-                        </button>
-                        <!-- Subir archivo -->
-                        <label for="photo" style="padding:10px 8px;border-radius:8px;font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;background:#f9fafb;color:#374151;border:1.5px dashed #d1d5db;position:relative;">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9D1B32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-                            Subir imagen
-                            <input id="photo" type="file" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;">
-                        </label>
-                    </div>
-
-                    <small id="photo-name" class="field-hint"></small>
-                    <div id="photo-preview-wrap" style="display:none;margin-top:12px;position:relative;">
-                        <img id="photo-preview" src="" alt="Vista previa" style="width:100%;height:200px;border-radius:12px;object-fit:cover;border:1px solid rgba(0,0,0,0.08);box-shadow:0 4px 18px rgba(0,0,0,0.06);cursor:zoom-in;">
-                        <button id="photo-preview-btn" type="button" style="position:absolute;right:12px;top:12px;background:rgba(0,0,0,0.6);color:#fff;border:0;padding:8px 10px;border-radius:8px;cursor:pointer;display:none;">Ver foto</button>
-                    </div>
-
-                    <!-- Overlay cámara en vivo -->
-                    <div id="camera-overlay" style="display:none;flex-direction:column;gap:0;margin-top:8px;border-radius:10px;overflow:hidden;border:1px solid #e0e0e0;">
-                        <video id="camera-video" autoplay playsinline muted style="width:100%;max-height:240px;object-fit:cover;display:block;background:#000;"></video>
-                        <canvas id="camera-canvas" style="display:none;"></canvas>
-                        <div style="display:flex;gap:6px;padding:8px;background:#000;">
-                            <button type="button" id="btn-snap" style="flex:1;padding:8px;border-radius:6px;background:var(--primary,#9D1B32);color:#fff;border:none;font-size:0.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
-                                Capturar
+                        <div class="input-with-btn">
+                            <input id="location" class="form-input-custom" type="text" placeholder="Escribe una dirección o usa GPS..." autocomplete="off">
+                            <button type="button" id="get-location" class="btn-geo" title="Usar mi ubicación actual">
+                                <span class="btn-geo-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="12" y1="0" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="24"/><line x1="0" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="24" y2="12"/></svg>
+                                </span>
+                                <span class="btn-geo-label">GPS</span>
+                                <span class="btn-geo-spin" aria-hidden="true">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                                        <circle cx="12" cy="12" r="9" stroke-opacity="0.25"/>
+                                        <path d="M12 3 A9 9 0 0 1 21 12" />
+                                    </svg>
+                                </span>
                             </button>
-                            <button type="button" id="btn-close-camera" style="padding:8px 14px;border-radius:6px;background:#1a1a1a;color:#888;border:none;font-size:0.85rem;cursor:pointer;">Cancelar</button>
+                        </div>
+                        <div id="report-map-container" class="skeleton" style="height:180px;border-radius:10px;overflow:hidden;border:1.5px solid #e0e0e0;position:relative;margin-top:8px;">
+                            <div id="report-map" style="width:100%;height:100%;"></div>
+                        </div>
+                        <input type="hidden" id="lat">
+                        <input type="hidden" id="lng">
+                        <small id="location-status" class="field-hint" style="margin-top:4px;"></small>
+                    </div>
+
+                    <div class="modal-form-group">
+                        <label class="form-label-custom">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                            Evidencia fotográfica
+                        </label>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;">
+                            <button type="button" id="btn-open-camera" style="padding:10px 8px;border-radius:8px;font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;background:var(--primary,#9D1B32);color:#fff;border:none;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                Tomar foto
+                            </button>
+                            <label for="photo" style="padding:10px 8px;border-radius:8px;font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;background:#f9fafb;color:#374151;border:1.5px dashed #d1d5db;position:relative;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9D1B32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                                Subir archivo
+                                <input id="photo" type="file" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;">
+                            </label>
+                        </div>
+                        <div id="photo-preview-wrap" style="display:none;margin-top:10px;">
+                            <img id="photo-preview" src="" alt="Vista previa" style="width:100%;height:120px;border-radius:10px;object-fit:cover;">
+                        </div>
+                        <div id="camera-overlay" style="display:none;margin-top:8px;border-radius:10px;overflow:hidden;border:1px solid #e0e0e0;">
+                            <video id="camera-video" autoplay playsinline muted style="width:100%;max-height:180px;object-fit:cover;background:#000;"></video>
+                            <canvas id="camera-canvas" style="display:none;"></canvas>
+                            <div style="display:flex;gap:4px;padding:6px;background:#000;">
+                                <button type="button" id="btn-snap" style="flex:1;padding:8px;border-radius:6px;background:var(--primary);color:#fff;border:none;font-size:0.8rem;">Capturar</button>
+                                <button type="button" id="btn-close-camera" style="padding:8px;border-radius:6px;background:#333;color:#fff;border:none;font-size:0.8rem;">Cerrar</button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="modal-form-group">
-                    <label class="form-label-custom" for="description">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
-                        Descripción <span class="optional-tag">Opcional</span>
-                    </label>
-                    <textarea id="description" class="form-input-custom" rows="3" placeholder="Detalles adicionales sobre el problema..."></textarea>
+                <!-- STEP 3: CONTACT & DESCRIPTION -->
+                <div class="modal-step" data-step="3">
+                    <div class="mf-row">
+                        <div class="modal-form-group">
+                            <label class="form-label-custom" for="reporter-name">Tu nombre</label>
+                            <input id="reporter-name" class="form-input-custom" type="text" placeholder="Nombre completo">
+                        </div>
+                        <div class="modal-form-group">
+                            <label class="form-label-custom" for="reporter-email">Correo</label>
+                            <input id="reporter-email" class="form-input-custom" type="email" placeholder="tu@correo.com">
+                        </div>
+                    </div>
+                    <div class="modal-form-group">
+                        <label class="form-label-custom" for="description">Descripción</label>
+                        <textarea id="description" class="form-input-custom" rows="3" placeholder="Detalles adicionales..."></textarea>
+                    </div>
                 </div>
 
-                <button type="submit" class="btn-submit-modal">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                    Enviar Reporte
-                </button>
+                <!-- Footer Buttons -->
+                <div class="modal-step-footer">
+                    <button type="button" class="btn-prev-step" style="display:none;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        Anterior
+                    </button>
+                    <button type="button" class="btn-next-step">
+                        Siguiente
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                    </button>
+                    <button type="submit" class="btn-submit-modal" style="display:none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                        Enviar Reporte
+                    </button>
+                </div>
             </form>
 
             <!-- Success state -->

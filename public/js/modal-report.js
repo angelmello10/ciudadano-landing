@@ -347,6 +347,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function doResize() {
             google.maps.event.trigger(pickerMap, 'resize');
+            // Remove skeleton once map is presumably ready
+            if (mapContainer) mapContainer.classList.remove('skeleton');
+            
             // Second resize after animation completes to ensure tiles paint
             setTimeout(() => google.maps.event.trigger(pickerMap, 'resize'), 350);
             const lat = parseFloat(document.getElementById('lat').value);
@@ -392,11 +395,90 @@ document.addEventListener('DOMContentLoaded', () => {
     startPickerMap();
     // ── END MAP PICKER ────────────────────────────────────────────
 
+    // ── STEPPER LOGIC ───────────────────────────────────────────
+    const ftSelect = document.getElementById('failure-type');
+    const ftOtherWrap = document.getElementById('failure-type-other-wrap');
+    if (ftSelect && ftOtherWrap) {
+        ftSelect.addEventListener('change', () => {
+            ftOtherWrap.style.display = ftSelect.value === 'otro' ? 'block' : 'none';
+        });
+    }
+
+    let currentStep = 1;
+    const totalSteps = 3;
+    const steps = document.querySelectorAll('.modal-step');
+    const indicators = document.querySelectorAll('.step-indicator');
+    const btnNext = document.querySelector('.btn-next-step');
+    const btnPrev = document.querySelector('.btn-prev-step');
+    const btnSubmit = document.querySelector('.btn-submit-modal');
+
+    function updateStepper() {
+        steps.forEach(s => s.classList.remove('is-active'));
+        indicators.forEach(ind => {
+            const stepNum = parseInt(ind.dataset.step);
+            ind.classList.remove('active', 'completed');
+            if (stepNum === currentStep) ind.classList.add('active');
+            if (stepNum < currentStep) ind.classList.add('completed');
+        });
+
+        const activeStep = document.querySelector(`.modal-step[data-step="${currentStep}"]`);
+        if (activeStep) activeStep.classList.add('is-active');
+
+        btnPrev.style.display = currentStep === 1 ? 'none' : 'flex';
+        
+        if (currentStep === totalSteps) {
+            btnNext.style.display = 'none';
+            btnSubmit.style.display = 'flex';
+        } else {
+            btnNext.style.display = 'flex';
+            btnSubmit.style.display = 'none';
+        }
+    }
+
+    function validateStep(n) {
+        if (n === 1) {
+            const type = document.getElementById('failure-type').value;
+            if (!type) { alert('Por favor selecciona el tipo de falla.'); return false; }
+        }
+        if (n === 2) {
+            const lat = document.getElementById('lat').value;
+            if (!lat) { alert('Por favor selecciona la ubicación en el mapa.'); return false; }
+        }
+        return true;
+    }
+
+    if (btnNext) {
+        btnNext.addEventListener('click', () => {
+            if (validateStep(currentStep)) {
+                currentStep++;
+                updateStepper();
+            }
+        });
+    }
+
+    if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+            currentStep--;
+            updateStepper();
+        });
+    }
+
+    // Reset stepper when modal closes/opens
+    const modalObserver = new MutationObserver(() => {
+        if (!modalReportEl.classList.contains('is-active')) {
+            currentStep = 1;
+            updateStepper();
+        }
+    });
+    if (modalReportEl) modalObserver.observe(modalReportEl, { attributes: true, attributeFilter: ['class'] });
+
+    // ── END STEPPER LOGIC ───────────────────────────────────────
+
     const formReport = document.getElementById('form-report');
     if (formReport) {
         formReport.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = formReport.querySelector('button[type="submit"]');
+            const btn = btnSubmit;
             btn.disabled = true;
             btn.textContent = 'Enviando...';
             try {
