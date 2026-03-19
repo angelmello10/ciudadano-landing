@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Muestra preview de un File (ya sea de input o de cámara)
     async function showPhotoPreview(file) {
         if (!file) return;
-        photoName.textContent = '\u2714 Foto lista';
+        if (photoName) photoName.textContent = '\u2714 Foto lista';
         try {
             const data = await readFileAsDataURL(file);
             photoPreview.src = data || '';
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cameraFile = null; // borra foto de cámara si elige archivo
             const f = photoInput.files && photoInput.files[0];
             if (f) showPhotoPreview(f);
-            else { photoPreviewWrap.style.display = 'none'; photoName.textContent = ''; }
+            else { photoPreviewWrap.style.display = 'none'; if (photoName) photoName.textContent = 'Subir archivo'; }
         });
     }
 
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (photoInput) photoInput.value = '';
                 cameraFile = null;
                 photoPreviewWrap.style.display = 'none';
-                photoName.textContent = '';
+                if (photoName) photoName.textContent = 'Subir archivo';
             } catch (err) {
                 if (err.name === 'NotAllowedError') {
                     alert('Permiso de cámara denegado. Actívalo en la configuración de tu navegador y vuelve a intentarlo.');
