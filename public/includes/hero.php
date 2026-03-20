@@ -31,17 +31,6 @@
                     <div class="hero-figure split-item-image split-item-image-fill illustration-element-01 reveal-from-bottom">
                         <div class="hero-map-card">
                             <!-- Card header bar -->
-                            <div class="hero-map-header">
-                                <div class="hero-map-header-title">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                                    Mapa en vivo
-                                </div>
-                                <div class="hero-map-header-right">
-                                    <span class="hero-map-header-dot"></span>
-                                    <span class="hero-map-header-badge">NEZA</span>
-                                </div>
-                            </div>
-                            <!-- Map iframe -->
                             <div class="hero-map-wrap">
                                 <iframe
                                     class="hero-map-iframe"
