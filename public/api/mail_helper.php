@@ -4,31 +4,35 @@
  * Usa mail() nativo de PHP (funciona directo en Hostinger).
  */
 
-define('MAIL_FROM_NAME',  'Reportes Ciudadanos');
-define('MAIL_FROM_EMAIL', 'sigiu@reporteurbano.com'); // El hosting inyecta su dominio real
+define('MAIL_FROM_NAME', 'Reportes Ciudadanos');
+define('MAIL_FROM_EMAIL', 'soporte@reporteurbano.site'); // Basado en el dominio real .site
 
 /**
  * Envía email de confirmación cuando se crea un reporte.
  */
-function enviarCorreoConfirmacion(array $inc): bool {
+function enviarCorreoConfirmacion(array $inc): bool
+{
     $to = $inc['email'] ?? null;
-    if (!$to || !filter_var($to, FILTER_VALIDATE_EMAIL)) return false;
+    if (!$to || !filter_var($to, FILTER_VALIDATE_EMAIL))
+        return false;
 
     $nombre = htmlspecialchars($inc['nombre_ciudadano'] ?? 'Ciudadano');
-    $folio  = (int)($inc['id'] ?? 0);
-    $tipo   = htmlspecialchars($inc['tipo_incidencia'] ?? 'No especificado');
-    $dir    = htmlspecialchars($inc['direccion'] ?? 'No especificada');
-    $desc   = htmlspecialchars($inc['descripcion'] ?? 'Sin descripción');
+    $folio = (int)($inc['id'] ?? 0);
+    $tipo = htmlspecialchars($inc['tipo_incidencia'] ?? 'No especificado');
+    $dir = htmlspecialchars($inc['direccion'] ?? 'No especificada');
+    $desc = htmlspecialchars($inc['descripcion'] ?? 'Sin descripción');
     $status = htmlspecialchars($inc['estatus'] ?? 'pendiente');
-    $fecha  = date('d/m/Y H:i');
+    $fecha = date('d/m/Y H:i');
 
     $statusColor = '#f59e0b'; // amarillo por defecto (pendiente)
     $statusLabel = ucfirst($status);
     if (stripos($status, 'proceso') !== false || stripos($status, 'activo') !== false) {
         $statusColor = '#3b82f6';
-    } elseif (stripos($status, 'resuelto') !== false) {
+    }
+    elseif (stripos($status, 'resuelto') !== false) {
         $statusColor = '#22c55e';
-    } elseif (stripos($status, 'rechaz') !== false) {
+    }
+    elseif (stripos($status, 'rechaz') !== false) {
         $statusColor = '#ef4444';
     }
 
@@ -38,22 +42,25 @@ function enviarCorreoConfirmacion(array $inc): bool {
         $subject = "Reporte #{$folio} — Resuelto";
         $headerGradient = 'linear-gradient(135deg,#16a34a 0%,#34d399 100%)';
         $title = 'Reporte Resuelto';
-        $lead  = 'Tu reporte ha sido marcado como resuelto.';
-    } elseif (stripos($statusLower, 'proceso') !== false || stripos($statusLower, 'activo') !== false) {
+        $lead = 'Tu reporte ha sido marcado como resuelto.';
+    }
+    elseif (stripos($statusLower, 'proceso') !== false || stripos($statusLower, 'activo') !== false) {
         $subject = "Reporte #{$folio} — En proceso";
         $headerGradient = 'linear-gradient(135deg,#0ea5e9 0%,#60a5fa 100%)';
         $title = 'En Proceso';
-        $lead  = 'Tu reporte está siendo atendido por el equipo responsable.';
-    } elseif (stripos($statusLower, 'rechaz') !== false) {
+        $lead = 'Tu reporte está siendo atendido por el equipo responsable.';
+    }
+    elseif (stripos($statusLower, 'rechaz') !== false) {
         $subject = "Reporte #{$folio} — Rechazado";
         $headerGradient = 'linear-gradient(135deg,#ef4444 0%,#f97316 100%)';
         $title = 'Reporte Rechazado';
-        $lead  = 'Lamentablemente tu reporte fue rechazado. Revisa los detalles.';
-    } else {
+        $lead = 'Lamentablemente tu reporte fue rechazado. Revisa los detalles.';
+    }
+    else {
         $subject = "Reporte #{$folio} registrado — Reportes Ciudadanos";
         $headerGradient = 'linear-gradient(135deg,#9D1B32 0%,#c42845 100%)';
         $title = 'Reporte Registrado';
-        $lead  = 'Tu incidencia ha sido recibida exitosamente.';
+        $lead = 'Tu incidencia ha sido recibida exitosamente.';
     }
 
     $html = <<<HTML
@@ -158,25 +165,29 @@ function enviarCorreoConfirmacion(array $inc): bool {
 </html>
 HTML;
 
-    $headers  = "MIME-Version: 1.0\r\n";
+    $headers = "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
     $headers .= "From: " . MAIL_FROM_NAME . " <" . MAIL_FROM_EMAIL . ">\r\n";
     $headers .= "Reply-To: " . MAIL_FROM_EMAIL . "\r\n";
     $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
 
+    // El parámetro "-f" es crucial en muchos hostings para establecer el "Envelope From"
     $sent = false;
     try {
-        $sent = (bool) @mail($to, $subject, $html, $headers);
-    } catch (Throwable $e) {
+        $sent = (bool)@mail($to, $subject, $html, $headers, "-f" . MAIL_FROM_EMAIL);
+    }
+    catch (Throwable $e) {
         $sent = false;
     }
 
-    // Logging simple send attempts for debugging (no sensitive data)
+    // Logging detallado para depuración
     $logDir = __DIR__ . '/../../logs';
-    if (!is_dir($logDir)) @mkdir($logDir, 0755, true);
+    if (!is_dir($logDir))
+        @mkdir($logDir, 0755, true);
     $logFile = $logDir . '/mail.log';
     $now = date('Y-m-d H:i:s');
-    $entry = sprintf("%s\tID:%s\tTO:%s\tSUBJECT:%s\tSENT:%s\n", $now, $folio, $to, str_replace("\n", ' ', $subject), $sent ? 'OK' : 'FAIL');
+    $statusMsg = $sent ? 'OK' : 'FAIL';
+    $entry = sprintf("[%s] Folio:#%s | To:%s | Result:%s | Domain:%s\n", $now, $folio, $to, $statusMsg, $_SERVER['SERVER_NAME'] ?? 'local');
     @file_put_contents($logFile, $entry, FILE_APPEND | LOCK_EX);
 
     return $sent;
