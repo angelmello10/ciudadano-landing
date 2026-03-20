@@ -1,14 +1,26 @@
 <?php
 /**
  * mail_helper.php — Envía correos de notificación al ciudadano
- * Usa mail() nativo de PHP (funciona directo en Hostinger).
+ * Usa PHPMailer con SMTP para máxima fiabilidad (funciona en localhost y Hostinger).
  */
 
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
 define('MAIL_FROM_NAME', 'Reportes Ciudadanos');
-define('MAIL_FROM_EMAIL', 'soporte@reporteurbano.site'); // Basado en el dominio real .site
+define('MAIL_FROM_EMAIL', 'soporte@reporteurbano.site');
+
+// --- Configuración SMTP (HOSTINGER) ---
+define('SMTP_HOST', 'smtp.hostinger.com');
+define('SMTP_USER', 'soporte@reporteurbano.site');
+define('SMTP_PASS', 'V0mDCeU2vD+');
+define('SMTP_PORT', 465);
 
 /**
- * Envía email de confirmación cuando se crea un reporte.
+ * Envía email de confirmación usando PHPMailer (SMTP)
  */
 function enviarCorreoConfirmacion(array $inc): bool
 {
@@ -16,15 +28,15 @@ function enviarCorreoConfirmacion(array $inc): bool
     if (!$to || !filter_var($to, FILTER_VALIDATE_EMAIL))
         return false;
 
-    $nombre = htmlspecialchars($inc['nombre_ciudadano'] ?? 'Ciudadano');
     $folio = (int)($inc['id'] ?? 0);
+    $nombre = htmlspecialchars($inc['nombre_ciudadano'] ?? 'Ciudadano');
     $tipo = htmlspecialchars($inc['tipo_incidencia'] ?? 'No especificado');
     $dir = htmlspecialchars($inc['direccion'] ?? 'No especificada');
     $desc = htmlspecialchars($inc['descripcion'] ?? 'Sin descripción');
     $status = htmlspecialchars($inc['estatus'] ?? 'pendiente');
     $fecha = date('d/m/Y H:i');
 
-    $statusColor = '#f59e0b'; // amarillo por defecto (pendiente)
+    $statusColor = '#f59e0b';
     $statusLabel = ucfirst($status);
     if (stripos($status, 'proceso') !== false || stripos($status, 'activo') !== false) {
         $statusColor = '#3b82f6';
@@ -36,7 +48,7 @@ function enviarCorreoConfirmacion(array $inc): bool
         $statusColor = '#ef4444';
     }
 
-    // Determina asunto, cabecera y mensaje según estatus
+    // Determina asunto y textos según estatus
     $statusLower = strtolower($status);
     if (stripos($statusLower, 'resuelto') !== false) {
         $subject = "Reporte #{$folio} — Resuelto";
@@ -54,7 +66,7 @@ function enviarCorreoConfirmacion(array $inc): bool
         $subject = "Reporte #{$folio} — Rechazado";
         $headerGradient = 'linear-gradient(135deg,#ef4444 0%,#f97316 100%)';
         $title = 'Reporte Rechazado';
-        $lead = 'Lamentablemente tu reporte fue rechazado. Revisa los detalles.';
+        $lead = 'Lamentablemente tu reporte fue rechazado.';
     }
     else {
         $subject = "Reporte #{$folio} registrado — Reportes Ciudadanos";
@@ -63,7 +75,30 @@ function enviarCorreoConfirmacion(array $inc): bool
         $lead = 'Tu incidencia ha sido recibida exitosamente.';
     }
 
-    $html = <<<HTML
+    $mail = new PHPMailer(true);
+
+    try {
+        // Configuraciones de Servidor SMTP
+        $mail->isSMTP();
+        $mail->Host = SMTP_HOST;
+        $mail->SMTPAuth = true;
+        $mail->Username = SMTP_USER;
+        $mail->Password = SMTP_PASS;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port = SMTP_PORT;
+        $mail->CharSet = 'UTF-8';
+
+        // Remitente y Destinatario
+        $mail->setFrom(MAIL_FROM_EMAIL, MAIL_FROM_NAME);
+        $mail->addAddress($to, $nombre);
+        $mail->addReplyTo(MAIL_FROM_EMAIL, MAIL_FROM_NAME);
+
+        // Contenido del Email
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+
+        $html = <<<HTML
+
 <!DOCTYPE html>
 <html lang="es">
 <head><meta charset="UTF-8"></head>
@@ -71,7 +106,7 @@ function enviarCorreoConfirmacion(array $inc): bool
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f3f8;padding:32px 16px;">
 <tr><td align="center">
 <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
-
+    
     <!-- Header -->
     <tr>
         <td style="background:{$headerGradient};padding:28px 32px;text-align:center;">
@@ -84,80 +119,28 @@ function enviarCorreoConfirmacion(array $inc): bool
     <!-- Body -->
     <tr>
         <td style="padding:28px 32px;">
-            <p style="margin:0 0 18px;color:#334155;font-size:15px;line-height:1.5;">
-                Hola <strong>{$nombre}</strong>,<br>
-                Aquí están los detalles del reporte:
-            </p>
-
-            <!-- Folio badge -->
-            <div style="text-align:center;margin:20px 0;">
-                <span style="display:inline-block;background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:12px 28px;font-size:26px;font-weight:800;color:#9D1B32;letter-spacing:1px;">
-                    #{$folio}
-                </span>
-            </div>
-
-            <!-- Info card -->
-            <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;margin:20px 0;">
+            <p style="margin:0 0 18px;color:#334155;font-size:15px;line-height:1.5;">Hola <strong>{$nombre}</strong>,<br>Aquí los detalles del reporte:</p>
+            <div style="text-align:center;margin:20px 0;"><span style="display:inline-block;background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:12px 28px;font-size:26px;font-weight:800;color:#9D1B32;letter-spacing:1px;">#{$folio}</span></div>
+            
+            <table width="100%" style="background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;margin:20px 0;">
                 <tr>
                     <td style="padding:18px 20px;">
-                        <table width="100%" cellpadding="0" cellspacing="0">
-                            <tr>
-                                <td style="padding:6px 0;color:#64748b;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Tipo de falla</td>
-                                <td style="padding:6px 0;color:#0f172a;font-size:14px;font-weight:600;text-align:right;">{$tipo}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" style="border-bottom:1px solid #e2e8f0;padding:0;height:1px;"></td>
-                            </tr>
-                            <tr>
-                                <td style="padding:6px 0;color:#64748b;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Ubicación</td>
-                                <td style="padding:6px 0;color:#0f172a;font-size:14px;text-align:right;">{$dir}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" style="border-bottom:1px solid #e2e8f0;padding:0;height:1px;"></td>
-                            </tr>
-                            <tr>
-                                <td style="padding:6px 0;color:#64748b;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Descripción</td>
-                                <td style="padding:6px 0;color:#0f172a;font-size:14px;text-align:right;">{$desc}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" style="border-bottom:1px solid #e2e8f0;padding:0;height:1px;"></td>
-                            </tr>
-                            <tr>
-                                <td style="padding:6px 0;color:#64748b;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Fecha</td>
-                                <td style="padding:6px 0;color:#0f172a;font-size:14px;text-align:right;">{$fecha}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" style="border-bottom:1px solid #e2e8f0;padding:0;height:1px;"></td>
-                            </tr>
-                            <tr>
-                                <td style="padding:8px 0;color:#64748b;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Estatus</td>
-                                <td style="padding:8px 0;text-align:right;">
-                                    <span style="display:inline-block;background:{$statusColor};color:#fff;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;">
-                                        {$statusLabel}
-                                    </span>
-                                </td>
-                            </tr>
+                        <table width="100%">
+                            <tr><td style="color:#64748b;font-size:12px;font-weight:600;text-transform:uppercase;">Tipo</td><td style="color:#0f172a;font-size:14px;font-weight:600;text-align:right;">{$tipo}</td></tr>
+                            <tr><td style="color:#64748b;font-size:12px;font-weight:600;text-transform:uppercase;">Ubicación</td><td style="color:#0f172a;font-size:14px;text-align:right;">{$dir}</td></tr>
+                            <tr><td style="color:#64748b;font-size:12px;font-weight:600;text-transform:uppercase;">Descripción</td><td style="color:#0f172a;font-size:14px;text-align:right;">{$desc}</td></tr>
+                            <tr><td style="color:#64748b;font-size:12px;font-weight:600;text-transform:uppercase;">Fecha</td><td style="color:#0f172a;font-size:14px;text-align:right;">{$fecha}</td></tr>
+                            <tr><td style="color:#64748b;font-size:12px;font-weight:600;text-transform:uppercase;">Estatus</td><td style="text-align:right;"><span style="background:{$statusColor};color:#fff;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:700;">{$statusLabel}</span></td></tr>
                         </table>
                     </td>
                 </tr>
             </table>
-
-            <p style="margin:18px 0 0;color:#64748b;font-size:13px;line-height:1.5;text-align:center;">
-                Guarda tu número de folio <strong>#{$folio}</strong> para consultar el avance de tu reporte en cualquier momento.
-            </p>
+            <p style="margin:18px 0 0;color:#64748b;font-size:11px;text-align:center;">Guarda tu número de folio para consultas futuras.</p>
         </td>
     </tr>
 
     <!-- Footer -->
-    <tr>
-        <td style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:18px 32px;text-align:center;">
-            <p style="margin:0;color:#94a3b8;font-size:11px;">
-                Este es un correo automático de Reportes Ciudadanos.<br>
-                No responder a este correo.
-            </p>
-        </td>
-    </tr>
-
+    <tr><td style="background:#f8fafc;padding:18px;text-align:center;font-size:10px;color:#94a3b8;">Sistema de Reportes Ciudadanos - noreply@reporteurbano.site</td></tr>
 </table>
 </td></tr>
 </table>
@@ -165,29 +148,25 @@ function enviarCorreoConfirmacion(array $inc): bool
 </html>
 HTML;
 
-    $headers = "MIME-Version: 1.0\r\n";
-    $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-    $headers .= "From: " . MAIL_FROM_NAME . " <" . MAIL_FROM_EMAIL . ">\r\n";
-    $headers .= "Reply-To: " . MAIL_FROM_EMAIL . "\r\n";
-    $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+        $mail->Body = $html;
+        $mail->AltBody = "Reporte #{$folio} Registrado. Tipo: {$tipo}, Estatus: {$statusLabel}, Ubicación: {$dir}";
 
-    // El parámetro "-f" es crucial en muchos hostings para establecer el "Envelope From"
-    $sent = false;
-    try {
-        $sent = (bool)@mail($to, $subject, $html, $headers, "-f" . MAIL_FROM_EMAIL);
+        $sent = $mail->send();
     }
-    catch (Throwable $e) {
+    catch (Exception $e) {
         $sent = false;
+        error_log("PHPMailer Error: " . $mail->ErrorInfo);
     }
 
-    // Logging detallado para depuración
+    // Logging detallado
     $logDir = __DIR__ . '/../../logs';
     if (!is_dir($logDir))
         @mkdir($logDir, 0755, true);
     $logFile = $logDir . '/mail.log';
     $now = date('Y-m-d H:i:s');
     $statusMsg = $sent ? 'OK' : 'FAIL';
-    $entry = sprintf("[%s] Folio:#%s | To:%s | Result:%s | Domain:%s\n", $now, $folio, $to, $statusMsg, $_SERVER['SERVER_NAME'] ?? 'local');
+    $errorInfo = !$sent ? ' | Error: ' . ($mail->ErrorInfo ?? 'Unknown') : '';
+    $entry = sprintf("[%s] Folio:#%s | To:%s | Result:%s | Env:SMTP%s\n", $now, $folio, $to, $statusMsg, $errorInfo);
     @file_put_contents($logFile, $entry, FILE_APPEND | LOCK_EX);
 
     return $sent;
