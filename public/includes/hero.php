@@ -8,10 +8,8 @@
                 <div class="split-item">
                     <div class="hero-content split-item-content center-content-mobile reveal-from-top">
                         <!-- <span class="hero-eyebrow">Plataforma ciudadana 24/7</span> -->
-                        <h1 class="mt-0 mb-16">Reporta incidencias y mejora tu <span class="hero-accent">ciudad</span> en minutos</h1>
-                        <p class="mt-0 mb-32">Conecta con tu municipio de forma rápida, transparente y
-                            desde cualquier dispositivo. Tu reporte se registra al instante y puedes darle
-                            seguimiento en tiempo real.</p>
+                        <h1 class="mt-0 mb-16">Reporta incidencias <span class="hero-accent">en segundos</span> de tu localidad</h1>
+                        <p class="mt-0 mb-32">Mejora tu entorno: reporta fallas urbanas y monitorea la reparación en vivo con total transparencia.</p>
                         <div class="button-group">
                             <a class="button button-primary button-wide-mobile modal-trigger"
                                 aria-controls="modal-report" href="#0">
@@ -41,20 +39,6 @@
                                 <div class="hero-map-header-right">
                                     <span class="hero-map-header-dot"></span>
                                     <span class="hero-map-header-badge">NEZA</span>
-                                </div>
-                            </div>
-                            <!-- Floating notification pill -->
-                            <div class="hero-map-notif">
-                                <div class="hero-map-notif-icon">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white"
-                                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                        <circle cx="12" cy="10" r="3"></circle>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <div class="hero-map-notif-title">Nuevo reporte</div>
-                                    <div class="hero-map-notif-sub">Hace 2 min &middot; Pendiente</div>
                                 </div>
                             </div>
                             <!-- Map iframe -->
