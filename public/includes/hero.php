@@ -22,7 +22,7 @@
                                     <line x1="12" y1="8" x2="12" y2="12"></line>
                                     <line x1="12" y1="16" x2="12.01" y2="16"></line>
                                 </svg>
-                                Crear reporte ahora
+                                Enviar Reporte
                             </a>
                             <a class="button button-dark button-wide-mobile modal-trigger"
                                 aria-controls="modal-consult" href="#0">Ver estatus de mi reporte</a>
