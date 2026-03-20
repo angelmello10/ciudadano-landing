@@ -3599,7 +3599,7 @@ html.dark .hero-folio-input {
 /* ── HERO MAP CARD ── */
 .hero-map-card {
     position: relative;
-    border-radius: var(--r-xl);
+    border-radius: 60px;
     overflow: visible;
     border: 1px solid rgba(0, 0, 0, 0.09);
     background: rgba(255, 255, 255, 0.75);
@@ -3607,18 +3607,9 @@ html.dark .hero-folio-input {
     box-shadow: var(--shadow-xl), 0 0 0 1px rgba(255, 255, 255, 0.7) inset;
 }
 
-/* Colored top-accent line */
+/* Accent line removed as per user request */
 .hero-map-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--primary) 0%, #e85d75 50%, transparent 100%);
-    border-radius: var(--r-xl) var(--r-xl) 0 0;
-    pointer-events: none;
-    z-index: 12;
+    display: none;
 }
 
 html.dark .hero-map-card {
@@ -3752,10 +3743,10 @@ html.dark .hero-map-header-badge {
 /* Map iframe wrapper */
 .hero-map-wrap {
     position: relative;
-    border-radius: var(--r-lg);
+    border-radius: 50px;
     overflow: hidden;
     aspect-ratio: 4 / 3;
-    margin: 0 10px;
+    margin: 10px;
     box-shadow: var(--shadow-xl), 0 0 0 1px rgba(0, 0, 0, 0.06);
 }
 
