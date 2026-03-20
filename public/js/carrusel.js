@@ -220,13 +220,31 @@
         return { tx, scale, tz, ry, op, filt };
     }
 
+    let autoRotateTimer;
+    const ROTATION_INTERVAL = 5000; // 5 segundos por tarjeta
+
+    function startAutoRotation() {
+        stopAutoRotation();
+        autoRotateTimer = setInterval(() => {
+            if (!items.length) return;
+            goTo((current + 1) % items.length);
+        }, ROTATION_INTERVAL);
+    }
+
+    function stopAutoRotation() {
+        clearInterval(autoRotateTimer);
+    }
+
     function positionCards() {
         const cards = stage.querySelectorAll('.cfl-card');
         const isMobile = window.innerWidth <= 768;
 
         cards.forEach((card) => {
             const i = parseInt(card.dataset.idx);
-            const offset = i - current;
+            let offset = i - current;
+            
+            // Lógica para bucle visual más suave (opcional para 3D, pero mejor manual por ahora)
+            const n = items.length;
             const abs = Math.abs(offset);
 
             const t = getTransform(offset, isMobile);
@@ -255,13 +273,17 @@
         const n = items.length;
         if (countEl) countEl.textContent = `${current + 1} / ${n}`;
         if (progFill) progFill.style.width = `${((current + 1) / n) * 100}%`;
-        if (btnPrev) btnPrev.disabled = current === 0;
-        if (btnNext) btnNext.disabled = current === n - 1;
+        
+        // Los botones ya no se desactivan para permitir el bucle infinito
+        if (btnPrev) btnPrev.disabled = false;
+        if (btnNext) btnNext.disabled = false;
     }
 
     function goTo(idx) {
         if (!items.length) return;
-        current = Math.max(0, Math.min(idx, items.length - 1));
+        const n = items.length;
+        // Bucle infinito circular
+        current = (idx + n) % n;
         positionCards();
         updateUI();
     }
@@ -281,17 +303,42 @@
         void stage.offsetWidth;
         positionCards();
         updateUI();
+        startAutoRotation(); // Iniciar giro al cargar
     }
 
-    if (btnPrev) btnPrev.addEventListener('click', () => goTo(current - 1));
-    if (btnNext) btnNext.addEventListener('click', () => goTo(current + 1));
+    if (btnPrev) btnPrev.addEventListener('click', () => {
+        stopAutoRotation();
+        goTo(current - 1);
+        startAutoRotation();
+    });
+
+    if (btnNext) btnNext.addEventListener('click', () => {
+        stopAutoRotation();
+        goTo(current + 1);
+        startAutoRotation();
+    });
+
+    // Pausar al pasar el mouse por el carrusel
+    stage.addEventListener('mouseenter', stopAutoRotation);
+    stage.addEventListener('mouseleave', () => {
+        // Solo reanudar si no estamos arrastrando nada
+        startAutoRotation();
+    });
 
     document.addEventListener('keydown', e => {
         if (!items.length) return;
         const rect = stage.getBoundingClientRect();
         if (rect.top >= -200 && rect.bottom <= window.innerHeight + 200) {
-            if (e.key === 'ArrowLeft') goTo(current - 1);
-            if (e.key === 'ArrowRight') goTo(current + 1);
+            if (e.key === 'ArrowLeft') {
+                stopAutoRotation();
+                goTo(current - 1);
+                startAutoRotation();
+            }
+            if (e.key === 'ArrowRight') {
+                stopAutoRotation();
+                goTo(current + 1);
+                startAutoRotation();
+            }
         }
     });
 
